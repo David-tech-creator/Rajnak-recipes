@@ -23,14 +23,13 @@ export async function middleware(req: NextRequest) {
     supabaseAnonKey,
     {
       cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value
+        getAll() {
+          return req.cookies.getAll()
         },
-        set(name: string, value: string, options: { path: string; maxAge: number }) {
-          res.cookies.set(name, value, options)
-        },
-        remove(name: string, options: { path: string }) {
-          res.cookies.set(name, '', { ...options, maxAge: 0 })
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            res.cookies.set(name, value, options)
+          })
         },
       },
     }

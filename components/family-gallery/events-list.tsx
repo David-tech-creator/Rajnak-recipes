@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase-client"
+import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"

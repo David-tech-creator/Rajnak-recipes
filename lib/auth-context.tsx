@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { supabase } from "@/lib/supabase-client"
+import { supabase } from "@/lib/supabase"
 import type { User } from "@supabase/supabase-js"
 import { useToast } from "@/hooks/use-toast"
 

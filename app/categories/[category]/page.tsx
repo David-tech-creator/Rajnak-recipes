@@ -23,8 +23,9 @@ export async function generateStaticParams() {
   return paths
 }
 
-export async function generateMetadata({ params }: { params: { category: string } }) {
-  const decodedCategory = decodeURIComponent(params.category).replace(/-/g, " ")
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
+  const { category } = await params
+  const decodedCategory = decodeURIComponent(category).replace(/-/g, " ")
 
   // Find the category in our defined categories
   const categoryGroup = CATEGORY_GROUPS.find((group) => group.name.toLowerCase() === decodedCategory.toLowerCase())
@@ -53,9 +54,10 @@ export async function generateMetadata({ params }: { params: { category: string 
   }
 }
 
-export default async function CategoryPage({ params }: { params: { category: string } }) {
+export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const supabase = createServerSupabaseClient()
-  const decodedCategory = decodeURIComponent(params.category).replace(/-/g, " ")
+  const { category } = await params
+  const decodedCategory = decodeURIComponent(category).replace(/-/g, " ")
 
   // Format the category name with proper capitalization
   const formattedCategory = decodedCategory

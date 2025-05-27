@@ -274,9 +274,10 @@ export function RecipeForm({ recipe, isEditing = false }: RecipeFormProps) {
               <Button
                 type="button"
                 onClick={addIngredient}
-                className="bg-transparent text-gray-600 hover:text-gray-900 hover:bg-transparent p-0"
+                variant="ghost"
+                size="sm"
               >
-                <Plus className="h-5 w-5 mr-1" />
+                <Plus className="h-4 w-4 mr-1" />
                 Add Ingredient
               </Button>
             </div>
@@ -297,7 +298,7 @@ export function RecipeForm({ recipe, isEditing = false }: RecipeFormProps) {
                     size="icon"
                     onClick={() => removeIngredient(index)}
                     disabled={ingredients.length === 1}
-                    className="text-gray-400 hover:text-gray-600"
+
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -313,9 +314,10 @@ export function RecipeForm({ recipe, isEditing = false }: RecipeFormProps) {
               <Button
                 type="button"
                 onClick={addInstruction}
-                className="bg-transparent text-gray-600 hover:text-gray-900 hover:bg-transparent p-0"
+                variant="ghost"
+                size="sm"
               >
-                <Plus className="h-5 w-5 mr-1" />
+                <Plus className="h-4 w-4 mr-1" />
                 Add Step
               </Button>
             </div>
@@ -337,7 +339,7 @@ export function RecipeForm({ recipe, isEditing = false }: RecipeFormProps) {
                     size="icon"
                     onClick={() => removeInstruction(index)}
                     disabled={instructions.length === 1}
-                    className="flex-none mt-2 text-gray-400 hover:text-gray-600"
+                    className="flex-none mt-2"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -351,7 +353,7 @@ export function RecipeForm({ recipe, isEditing = false }: RecipeFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              className="border-gray-300 hover:bg-transparent hover:text-gray-900"
+
             >
               Cancel
             </Button>

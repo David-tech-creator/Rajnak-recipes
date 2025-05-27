@@ -72,7 +72,7 @@ export function CSVRecipeImporter() {
         )}
 
         {importResult && (
-          <Alert variant={importResult.errorCount > 0 ? "warning" : "default"}>
+          <Alert variant={importResult.errorCount > 0 ? "destructive" : "default"}>
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-500" />

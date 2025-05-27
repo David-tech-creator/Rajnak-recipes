@@ -12,8 +12,9 @@ export async function generateStaticParams() {
   return posts.filter((post) => post.params.slug !== "new")
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const recipe = getPostBySlug(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const recipe = getPostBySlug(slug)
 
   if (!recipe) {
     return {
@@ -29,16 +30,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 // Modify the page component to check for reserved slugs
-export default function RecipePage({ params }: { params: { slug: string } }) {
+export default async function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  
   // List of reserved slugs that should not be treated as recipe slugs
   const reservedSlugs = ["new", "edit", "create"]
 
   // If the slug is reserved, show a 404 page
-  if (reservedSlugs.includes(params.slug)) {
+  if (reservedSlugs.includes(slug)) {
     notFound()
   }
 
-  const recipe = getPostBySlug(params.slug)
+  const recipe = getPostBySlug(slug)
 
   if (!recipe) {
     notFound()
@@ -46,7 +49,7 @@ export default function RecipePage({ params }: { params: { slug: string } }) {
 
   // Get related recipes
   const relatedRecipes = getPostsByCategory(recipe.category)
-    .filter((post) => post.slug !== params.slug)
+    .filter((post) => post.slug !== slug)
     .slice(0, 3)
 
   return (

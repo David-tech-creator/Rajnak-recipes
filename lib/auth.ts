@@ -22,27 +22,22 @@ export const createClient = () => {
 }
 
 // Create a server client
-export const createServerSupabaseClient = () => {
-  const cookieStore = cookies()
+export const createServerSupabaseClient = async () => {
+  const cookieStore = await cookies()
 
   return createServerClient(
     supabaseUrl,
     supabaseAnonKey,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
+        getAll() {
+          return cookieStore.getAll()
         },
-        set(name: string, value: string, options: CookieOptions) {
+        setAll(cookiesToSet) {
           try {
-            cookieStore.set({ name, value, ...options })
-          } catch (error) {
-            // Handle cookies in read-only context during SSG
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value: '', ...options })
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
           } catch (error) {
             // Handle cookies in read-only context during SSG
           }

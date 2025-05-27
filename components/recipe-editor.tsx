@@ -453,11 +453,8 @@ export function RecipeEditor({ recipe, initialRecipe, isEditing = false }: Recip
               </CardHeader>
               <CardContent>
                 <DragDropImageUploader
-                  recipeId={recipe?.id}
-                  slug={slug}
-                  existingImages={images}
-                  onImagesUploaded={handleImagesUploaded}
-                  onImageRemove={handleImageRemove}
+                  images={images}
+                  onImagesChange={setImages}
                 />
               </CardContent>
             </Card>

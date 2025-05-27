@@ -63,11 +63,7 @@ export default function TestConnectionPage() {
     setIsTestingAuth(true)
 
     try {
-      const { error } = await signUp(testEmail, testPassword)
-
-      if (error) {
-        throw error
-      }
+      await signUp(testEmail, testPassword)
 
       toast({
         title: "Account created",
@@ -98,11 +94,7 @@ export default function TestConnectionPage() {
     setIsTestingAuth(true)
 
     try {
-      const { error } = await signIn(testEmail, testPassword)
-
-      if (error) {
-        throw error
-      }
+      await signIn(testEmail, testPassword)
 
       toast({
         title: "Signed in",

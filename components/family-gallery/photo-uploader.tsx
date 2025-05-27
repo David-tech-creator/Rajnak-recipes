@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
@@ -56,10 +56,10 @@ export function PhotoUploader({ onPhotoUploaded, eventId }: PhotoUploaderProps) 
     try {
       const fileExt = file.name.split(".").pop()
       const fileName = `family-${Date.now()}.${fileExt}`
-      const filePath = `family/${fileName}`
+      const filePath = fileName
 
       // Upload file to Supabase Storage
-      const { error: uploadError } = await supabase.storage.from("family").upload(filePath, file, {
+      const { error: uploadError } = await supabase.storage.from("family-photos").upload(filePath, file, {
         upsert: true,
         cacheControl: "3600",
       })
@@ -67,7 +67,7 @@ export function PhotoUploader({ onPhotoUploaded, eventId }: PhotoUploaderProps) 
       if (uploadError) throw uploadError
 
       // Get public URL
-      const { data } = supabase.storage.from("family").getPublicUrl(filePath)
+      const { data } = supabase.storage.from("family-photos").getPublicUrl(filePath)
       const imageUrl = data.publicUrl
 
       // Save photo details to database

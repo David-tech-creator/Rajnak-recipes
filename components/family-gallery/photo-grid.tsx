@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
@@ -37,11 +37,15 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
     try {
       // Extract file path from URL
       const url = photo.url
-      const path = url.split("/").pop()
-      const filePath = `family/${path}`
+      const fileName = url.split("/").pop()
+      if (!fileName) {
+        console.error("Could not extract filename from URL:", url)
+        return
+      }
+      const filePath = fileName
 
       // Delete file from storage
-      const { error: storageError } = await supabase.storage.from("family").remove([filePath])
+      const { error: storageError } = await supabase.storage.from("family-photos").remove([filePath])
 
       if (storageError) {
         console.error("Error deleting file from storage:", storageError)

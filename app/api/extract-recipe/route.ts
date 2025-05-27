@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
     // Call OpenAI API to extract recipe information
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
           
           Make sure to clean up and format the data properly. For ingredients and instructions, each item should be a separate string in the array.
           If you can't extract certain information, omit those fields from the JSON.
-          Do not include any explanations or text outside the JSON object.`,
+          Return only valid JSON, no explanations or text outside the JSON object.`,
         },
         {
           role: "user",
@@ -42,7 +42,6 @@ export async function POST(request: Request) {
         },
       ],
       temperature: 0.2,
-      response_format: { type: "json_object" },
     })
 
     // Parse the response

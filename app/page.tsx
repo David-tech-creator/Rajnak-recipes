@@ -1,10 +1,12 @@
 import Image from "next/image"
 import Link from "next/link"
-import { getLatestPosts, getFeaturedPosts } from "@/lib/posts"
+import { getRecipes } from "@/lib/supabase"
 
 export default async function Home() {
-  const featuredRecipes = await getFeaturedPosts(3)
-  const latestRecipes = await getLatestPosts(6)
+  const allRecipes = await getRecipes()
+  // Get featured recipes (first 3) and latest recipes (first 6)
+  const featuredRecipes = allRecipes.slice(0, 3)
+  const latestRecipes = allRecipes.slice(0, 6)
 
   return (
     <div>
@@ -49,40 +51,42 @@ export default async function Home() {
               <Image src="/placeholder.svg?height=400&width=400&text=About" alt="About" fill className="object-cover" />
               <div className="category-box-label">About</div>
             </Link>
-            <Link href="/favorites" className="category-box aspect-square relative block">
+            <Link href="/my-recipes" className="category-box aspect-square relative block">
               <Image
-                src="/placeholder.svg?height=400&width=400&text=Favorites"
-                alt="Favorites"
+                src="/placeholder.svg?height=400&width=400&text=My+Recipes"
+                alt="My Recipes"
                 fill
                 className="object-cover"
               />
-              <div className="category-box-label">Favorites</div>
+              <div className="category-box-label">My Recipes</div>
             </Link>
           </div>
         </div>
       </section>
 
       {/* Featured Recipes */}
-      <section className="py-16 bg-[rgb(var(--light-accent))]">
-        <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl mb-12">Featured Recipes</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredRecipes.map((recipe) => (
-              <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
-                <div className="aspect-[4/3] relative overflow-hidden">
-                  <Image
-                    src={recipe.image || "/placeholder.svg?height=400&width=600&text=Recipe"}
-                    alt={recipe.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <h3 className="recipe-card-title">{recipe.title}</h3>
-              </Link>
-            ))}
+      {featuredRecipes.length > 0 && (
+        <section className="py-16 bg-[rgb(var(--light-accent))]">
+          <div className="container mx-auto px-4">
+            <h2 className="text-center text-3xl mb-12">Featured Recipes</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featuredRecipes.map((recipe) => (
+                <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
+                  <div className="aspect-[4/3] relative overflow-hidden">
+                    <Image
+                      src={recipe.images?.[0] || "/placeholder.svg?height=400&width=600&text=Recipe"}
+                      alt={recipe.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <h3 className="recipe-card-title">{recipe.title}</h3>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Latest Recipes */}
       <section className="py-16">
@@ -93,7 +97,7 @@ export default async function Home() {
               <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <Image
-                    src={recipe.image || "/placeholder.svg?height=400&width=600&text=Recipe"}
+                    src={recipe.images?.[0] || "/placeholder.svg?height=400&width=600&text=Recipe"}
                     alt={recipe.title}
                     fill
                     className="object-cover"

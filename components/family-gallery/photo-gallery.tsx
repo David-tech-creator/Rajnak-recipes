@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { supabase } from "@/lib/supabase-client"
+import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
@@ -11,7 +11,11 @@ import { PhotoGrid } from "./photo-grid"
 import { Loader2, Upload, Calendar, Users, RefreshCcw } from "lucide-react"
 import type { FamilyPhoto } from "@/lib/types/family"
 
-export function PhotoGallery() {
+interface PhotoGalleryProps {
+  eventId?: string | number
+}
+
+export function PhotoGallery({ eventId }: PhotoGalleryProps = {}) {
   const [photos, setPhotos] = useState<FamilyPhoto[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -57,9 +61,12 @@ export function PhotoGallery() {
       let query = supabase
         .from("family_photos")
         .select("*")
-        .order("date", { ascending: false })
+        .order("created_at", { ascending: false })
 
-      if (activeTab !== "all") {
+      // If eventId is provided, filter by that specific event
+      if (eventId) {
+        query = query.eq("event_id", eventId)
+      } else if (activeTab !== "all") {
         query = query.eq("event_type", activeTab)
       }
 
@@ -148,13 +155,15 @@ export function PhotoGallery() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="holiday">Holidays</TabsTrigger>
-          <TabsTrigger value="birthday">Birthdays</TabsTrigger>
-          <TabsTrigger value="dinner">Family Dinners</TabsTrigger>
-          <TabsTrigger value="other">Other</TabsTrigger>
-        </TabsList>
+        {!eventId && (
+          <TabsList className="grid grid-cols-5">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="holiday">Holidays</TabsTrigger>
+            <TabsTrigger value="birthday">Birthdays</TabsTrigger>
+            <TabsTrigger value="dinner">Family Dinners</TabsTrigger>
+            <TabsTrigger value="other">Other</TabsTrigger>
+          </TabsList>
+        )}
 
         <TabsContent value={activeTab} className="mt-6">
           {isLoading ? (
@@ -162,7 +171,7 @@ export function PhotoGallery() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : photos.length > 0 ? (
-            <PhotoGrid photos={photos} onPhotoUpdated={fetchPhotos} />
+            <PhotoGrid photos={photos} />
           ) : (
             <div className="text-center py-12 bg-muted/50 rounded-lg">
               <Calendar className="h-12 w-12 mx-auto text-gray-400 mb-4" />

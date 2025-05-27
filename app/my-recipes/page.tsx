@@ -82,7 +82,7 @@ export default function MyRecipesPage() {
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-12">
           <h1 className="text-3xl">My Recipes</h1>
-          <Button asChild className="bg-gray-900 hover:bg-gray-800 sans-serif text-xs py-6">
+          <Button asChild>
             <Link href="/recipes/new">
               <Plus className="mr-2 h-4 w-4" />
               Add New Recipe
@@ -95,12 +95,12 @@ export default function MyRecipesPage() {
         ) : recipes.length === 0 ? (
           <div className="text-center py-12 bg-[rgb(var(--light-accent))] p-12">
             <p className="mb-6">You haven't created any recipes yet.</p>
-            <Button asChild className="bg-gray-900 hover:bg-gray-800 sans-serif text-xs py-6">
-              <Link href="/recipes/new">
-                <Plus className="mr-2 h-4 w-4" />
-                Create Your First Recipe
-              </Link>
-            </Button>
+                      <Button asChild size="lg">
+            <Link href="/recipes/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Your First Recipe
+            </Link>
+          </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { Button } from "@/components/ui/button"
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState("")
@@ -30,9 +31,9 @@ export function NewsletterSignup() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <button type="submit" className="px-6 py-2 bg-gray-800 text-white font-medium">
+          <Button type="submit" className="rounded-none px-6">
             GO
-          </button>
+          </Button>
         </form>
       </div>
     </section>

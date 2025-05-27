@@ -1,4 +1,5 @@
 import type React from "react"
+import { Suspense } from "react"
 import "./globals.css"
 import type { Metadata } from "next"
 import { Cormorant_Garamond, Montserrat } from "next/font/google"
@@ -36,12 +37,14 @@ export default function RootLayout({
         <link rel="icon" href="/images/rajnak-family-logo.png" type="image/png" />
       </head>
       <body className={`${cormorant.variable} ${montserrat.variable}`}>
-        <AuthProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <Toaster />
-        </AuthProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <Toaster />
+          </AuthProvider>
+        </Suspense>
       </body>
     </html>
   )

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
@@ -97,12 +97,12 @@ export function EventGallery({ eventId }: EventGalleryProps) {
         // First, get the file paths from the URLs
         const filePaths = photos.map((photo) => {
           const url = photo.url
-          const path = url.split("/").pop()
-          return `family/${path}`
-        })
+          const fileName = url.split("/").pop()
+          return fileName
+        }).filter(Boolean)
 
         // Delete files from storage
-        const { error: storageError } = await supabase.storage.from("family").remove(filePaths)
+        const { error: storageError } = await supabase.storage.from("family-photos").remove(filePaths)
 
         if (storageError) {
           console.error("Error deleting photo files:", storageError)

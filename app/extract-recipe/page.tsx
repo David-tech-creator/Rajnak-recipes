@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
@@ -130,15 +131,15 @@ export default function ExtractRecipePage() {
               </TabsList>
 
               <TabsContent value="upload" className="mt-0">
-                <FileUploader onExtracted={handleTextExtraction} isExtracting={isExtracting} />
+                <FileUploader onRecipeExtracted={setExtractedRecipe} />
               </TabsContent>
 
               <TabsContent value="url" className="mt-0">
-                <UrlExtractor onExtracted={handleTextExtraction} isExtracting={isExtracting} />
+                <UrlExtractor onRecipeExtracted={setExtractedRecipe} />
               </TabsContent>
 
               <TabsContent value="text" className="mt-0">
-                <TextExtractor onExtracted={handleTextExtraction} isExtracting={isExtracting} />
+                <TextExtractor onRecipeExtracted={setExtractedRecipe} />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -153,12 +154,15 @@ export default function ExtractRecipePage() {
         </Card>
       ) : (
         <div className="max-w-4xl mx-auto">
-          <RecipePreview
-            recipe={extractedRecipe}
-            rawText={rawText}
-            onSave={handleSaveRecipe}
-            onReset={resetExtraction}
-          />
+          <RecipePreview recipe={extractedRecipe} />
+          <div className="flex justify-center gap-4 mt-6">
+            <Button onClick={resetExtraction} variant="outline">
+              Reset
+            </Button>
+            <Button onClick={() => handleSaveRecipe(extractedRecipe)}>
+              Save Recipe
+            </Button>
+          </div>
         </div>
       )}
     </div>

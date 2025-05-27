@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase-client"
+import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
