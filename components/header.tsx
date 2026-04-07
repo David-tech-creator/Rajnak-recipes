@@ -8,7 +8,13 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { Search, Menu, X, User, ChevronDown } from "lucide-react"
-import { CATEGORY_GROUPS } from "@/lib/categories"
+
+const RECIPE_CATEGORIES = [
+  { name: "Family Recipes", slug: "family-recipes" },
+  { name: "Found Recipes", slug: "found-recipes" },
+  { name: "Quick & Easy", slug: "quick-and-easy" },
+  { name: "Christmas & Easter", slug: "christmas-and-easter" },
+]
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -174,7 +180,7 @@ export function Header() {
                 Categories <ChevronDown className="ml-1 h-4 w-4" />
               </button>
               <div className="absolute left-0 mt-2 w-64 bg-white shadow-md rounded-md overflow-hidden z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                <div className="max-h-96 overflow-y-auto py-2">
+                <div className="py-2">
                   <Link
                     href="/categories"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-medium"
@@ -182,24 +188,14 @@ export function Header() {
                     All Categories
                   </Link>
                   <div className="border-t border-gray-100 my-1"></div>
-                  {CATEGORY_GROUPS.map((group) => (
-                    <div key={group.name}>
-                      <Link
-                        href={`/categories/${group.name.toLowerCase().replace(/\s+/g, "-")}`}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-medium"
-                      >
-                        {group.name}
-                      </Link>
-                      {group.subcategories?.map((subcat) => (
-                        <Link
-                          key={subcat}
-                          href={`/categories/${subcat.toLowerCase().replace(/\s+/g, "-")}`}
-                          className="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 pl-8"
-                        >
-                          {subcat}
-                        </Link>
-                      ))}
-                    </div>
+                  {RECIPE_CATEGORIES.map((cat) => (
+                    <Link
+                      key={cat.slug}
+                      href={`/categories/${cat.slug}`}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      {cat.name}
+                    </Link>
                   ))}
                 </div>
               </div>
