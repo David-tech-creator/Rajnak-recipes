@@ -9,8 +9,8 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
 
 // Client for browser usage (with anon key)
 export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   {
     auth: {
       persistSession: true,
@@ -21,12 +21,10 @@ export const supabase = createClient(
 
 // Function to create a server-side client (with service role key)
 export function createServerSupabaseClient() {
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error("Missing env.SUPABASE_SERVICE_ROLE_KEY")
-  }
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    key,
     {
       auth: { persistSession: false },
     }

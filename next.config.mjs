@@ -8,7 +8,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    domains: ['ympkbokirbnndytnfvem.supabase.co'],
+    domains: ['rhvrklxoxedwwzyikesd.supabase.co'],
   },
 }
 

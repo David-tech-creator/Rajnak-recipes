@@ -1,43 +1,48 @@
-import { Suspense } from "react"
-import { getRecipes } from "@/lib/supabase"
-import { RecipeGrid } from "@/components/recipe-grid"
-import { Button } from "@/components/ui/button"
+import { getAllPosts, getAllCategories } from "@/lib/posts"
+import Image from "next/image"
 import Link from "next/link"
-import { Plus } from "lucide-react"
 
-export default async function RecipesPage() {
-  const recipes = await getRecipes()
+export default function RecipesPage() {
+  const recipes = getAllPosts()
+  const categories = getAllCategories()
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold mb-2">All Recipes</h1>
-          <p className="text-gray-600">Discover delicious recipes from around the world</p>
-        </div>
-        <Button asChild>
-          <Link href="/recipes/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Recipe
-          </Link>
-        </Button>
+      <div className="mb-8">
+        <h1 className="text-4xl text-center mb-2">All Recipes</h1>
+        <p className="text-gray-600 text-center">Rajnak Family, Friends and Found Recipes</p>
       </div>
 
-      <Suspense fallback={<div className="text-center py-12">Loading recipes...</div>}>
-        <RecipeGrid recipes={recipes} />
-      </Suspense>
+      {/* Category filter */}
+      <div className="flex flex-wrap justify-center gap-3 mb-12">
+        {categories.map((category) => (
+          <Link
+            key={category}
+            href={`/categories/${encodeURIComponent(category.toLowerCase())}`}
+            className="px-4 py-2 border border-gray-300 text-sm hover:bg-gray-50 transition-colors"
+          >
+            {category}
+          </Link>
+        ))}
+      </div>
 
-      {recipes.length === 0 && (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500 mb-4">No recipes found. Be the first to add one!</p>
-          <Button asChild>
-            <Link href="/recipes/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Create First Recipe
-            </Link>
-          </Button>
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {recipes.map((recipe) => (
+          <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
+            <div className="aspect-[4/3] relative overflow-hidden">
+              <Image
+                src={recipe.image || "/placeholder.svg?height=400&width=600&text=Recipe"}
+                alt={recipe.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
+            <h3 className="recipe-card-title">{recipe.title}</h3>
+            <p className="text-sm text-gray-500 px-4 pb-4">{recipe.category}</p>
+          </Link>
+        ))}
+      </div>
     </div>
   )
 } 
