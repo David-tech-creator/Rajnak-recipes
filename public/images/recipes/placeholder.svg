@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5efe6"/>
+      <stop offset="50%" style="stop-color:#ede4d4"/>
+      <stop offset="100%" style="stop-color:#e8dece"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect x="30" y="30" width="740" height="540" rx="4" fill="none" stroke="#c4a87c" stroke-width="0.5" opacity="0.5"/>
+  <text x="400" y="270" text-anchor="middle" font-size="60" fill="#c4a87c" opacity="0.5">&#127860;</text>
+  <text x="400" y="340" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#8a7a6a" letter-spacing="3">RAJNAK RECIPE</text>
+  <line x1="330" y1="370" x2="470" y2="370" stroke="#c4a87c" stroke-width="0.5" opacity="0.4"/>
+</svg>

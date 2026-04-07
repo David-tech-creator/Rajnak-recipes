@@ -159,7 +159,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
                 <Link key={related.slug} href={`/recipes/${related.slug}`} className="recipe-card block">
                   <div className="aspect-[4/3] relative overflow-hidden">
                     <Image
-                      src={related.image || "/placeholder.svg?height=400&width=600&text=Recipe"}
+                      src={related.image || "/images/recipes/placeholder.svg"}
                       alt={related.title}
                       fill
                       className="object-cover"

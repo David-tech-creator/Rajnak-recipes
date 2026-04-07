@@ -82,7 +82,7 @@ export default function Home() {
                 <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
                   <div className="aspect-[4/3] relative overflow-hidden">
                     <Image
-                      src={recipe.image || "/placeholder.svg?height=400&width=600&text=Recipe"}
+                      src={recipe.image || "/images/recipes/placeholder.svg"}
                       alt={recipe.title}
                       fill
                       className="object-cover"
@@ -106,7 +106,7 @@ export default function Home() {
               <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <Image
-                    src={recipe.image || "/placeholder.svg?height=400&width=600&text=Recipe"}
+                    src={recipe.image || "/images/recipes/placeholder.svg"}
                     alt={recipe.title}
                     fill
                     className="object-cover"

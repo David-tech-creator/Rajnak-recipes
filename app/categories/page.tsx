@@ -36,7 +36,7 @@ export default function CategoriesPage() {
           >
             <div className="relative aspect-[4/3] overflow-hidden">
               <Image
-                src={category.coverImage || "/placeholder.svg?height=400&width=600&text=Recipes"}
+                src={category.coverImage || "/images/recipes/placeholder.svg"}
                 alt={category.name}
                 fill
                 className="object-cover"
