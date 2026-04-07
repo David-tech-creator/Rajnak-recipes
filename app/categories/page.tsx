@@ -2,6 +2,10 @@ import Link from "next/link"
 import Image from "next/image"
 import { getAllCategories, getPostsByCategory, getAllPosts } from "@/lib/posts"
 
+function categoryToSlug(name: string): string {
+  return name.toLowerCase().replace(/&/g, "and").replace(/\s+/g, "-")
+}
+
 export default function CategoriesPage() {
   const categories = getAllCategories()
   const allRecipes = getAllPosts()
@@ -12,6 +16,7 @@ export default function CategoriesPage() {
     const coverImage = recipes.find((r) => r.image)?.image
     return {
       name: category,
+      slug: categoryToSlug(category),
       count: recipes.length,
       coverImage,
     }
@@ -26,7 +31,7 @@ export default function CategoriesPage() {
         {categoryData.map((category) => (
           <Link
             key={category.name}
-            href={`/categories/${encodeURIComponent(category.name.toLowerCase())}`}
+            href={`/categories/${category.slug}`}
             className="recipe-card block"
           >
             <div className="relative aspect-[4/3] overflow-hidden">

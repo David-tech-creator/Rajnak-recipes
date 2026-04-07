@@ -38,7 +38,7 @@ export default function Home() {
               />
               <div className="category-box-label">All Recipes</div>
             </Link>
-            <Link href="/categories/family recipes" className="category-box aspect-square relative block overflow-hidden">
+            <Link href="/categories/family-recipes" className="category-box aspect-square relative block overflow-hidden">
               <Image
                 src="/images/recipes/mammas-gulasch-soup.jpg"
                 alt="Family Recipes"
@@ -48,7 +48,7 @@ export default function Home() {
               />
               <div className="category-box-label">Family Recipes</div>
             </Link>
-            <Link href="/categories/christmas %26 easter" className="category-box aspect-square relative block overflow-hidden">
+            <Link href="/categories/christmas-and-easter" className="category-box aspect-square relative block overflow-hidden">
               <Image
                 src="/images/recipes/christmas-dinner-1.jpg"
                 alt="Christmas & Easter"
@@ -58,7 +58,7 @@ export default function Home() {
               />
               <div className="category-box-label">Christmas & Easter</div>
             </Link>
-            <Link href="/categories/quick %26 easy" className="category-box aspect-square relative block overflow-hidden">
+            <Link href="/categories/quick-and-easy" className="category-box aspect-square relative block overflow-hidden">
               <Image
                 src="/images/recipes/chicken-vegetable-wok.jpg"
                 alt="Quick & Easy"

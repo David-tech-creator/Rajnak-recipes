@@ -3,32 +3,39 @@ import Link from "next/link"
 import Image from "next/image"
 import { getAllCategories, getPostsByCategory } from "@/lib/posts"
 
+// Convert category name to URL slug: "Christmas & Easter" -> "christmas-and-easter"
+function categoryToSlug(name: string): string {
+  return name.toLowerCase().replace(/&/g, "and").replace(/\s+/g, "-")
+}
+
+// Find category by matching its slug
+function findCategoryBySlug(slug: string, categories: string[]): string | undefined {
+  return categories.find((c) => categoryToSlug(c) === slug)
+}
+
 export function generateStaticParams() {
   const categories = getAllCategories()
   return categories.map((category) => ({
-    category: encodeURIComponent(category.toLowerCase()),
+    category: categoryToSlug(category),
   }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params
-  const decodedCategory = decodeURIComponent(category)
+  const allCategories = getAllCategories()
+  const matched = findCategoryBySlug(category, allCategories)
 
   return {
-    title: `${decodedCategory} Recipes | Rajnax: Dishes We Love`,
-    description: `Browse our collection of ${decodedCategory} recipes`,
+    title: `${matched || category} Recipes | Rajnax: Dishes We Love`,
+    description: `Browse our collection of ${matched || category} recipes`,
   }
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params
-  const decodedCategory = decodeURIComponent(category)
 
-  // Find recipes matching this category (case-insensitive)
   const allCategories = getAllCategories()
-  const matchedCategory = allCategories.find(
-    (c) => c.toLowerCase() === decodedCategory.toLowerCase()
-  )
+  const matchedCategory = findCategoryBySlug(category, allCategories)
 
   if (!matchedCategory) {
     notFound()

@@ -18,7 +18,7 @@ export default function RecipesPage() {
         {categories.map((category) => (
           <Link
             key={category}
-            href={`/categories/${encodeURIComponent(category.toLowerCase())}`}
+            href={`/categories/${category.toLowerCase().replace(/&/g, "and").replace(/\s+/g, "-")}`}
             className="px-4 py-2 border border-gray-300 text-sm hover:bg-gray-50 transition-colors"
           >
             {category}
