@@ -1,7 +1,15 @@
 import Image from "next/image"
 import Link from "next/link"
-import { getFeaturedPosts, getLatestPosts, getAllPosts, categoryToSlug, getPostsByCategory } from "@/lib/posts"
+import {
+  getFeaturedPosts,
+  getLatestPosts,
+  getAllPosts,
+  categoryToSlug,
+  getPostsByCategory,
+  defaultBylineFor,
+} from "@/lib/posts"
 import { SprigDivider } from "@/components/sprig-divider"
+import { RecipeCard } from "@/components/recipe-card"
 
 const FEATURED_CATEGORIES: Array<{ name: string; image: string }> = [
   { name: "Family Recipes", image: "/images/recipes/mammas-gulasch-soup.jpg" },
@@ -13,7 +21,10 @@ const FEATURED_CATEGORIES: Array<{ name: string; image: string }> = [
 export default function Home() {
   const featuredRecipes = getFeaturedPosts(3)
   const latestRecipes = getLatestPosts(6)
-  const totalCount = getAllPosts().length
+  const allRecipes = getAllPosts()
+  const totalCount = allRecipes.length
+  const numberFor = (slug: string) =>
+    String(allRecipes.findIndex((r) => r.slug === slug) + 1).padStart(2, "0")
 
   // Pick the first featured recipe as the editorial composition hero.
   const composition = featuredRecipes[0]
@@ -192,24 +203,15 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {latestRecipes.map((recipe) => (
-            <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
-              <div className="aspect-[4/5] relative overflow-hidden">
-                <Image
-                  src={recipe.image || "/images/recipes/placeholder.svg"}
-                  alt={recipe.title}
-                  fill
-                  className="object-cover"
-                  style={{ filter: "saturate(0.92)" }}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </div>
-              <div className="py-5 text-center">
-                <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
-                  {recipe.category}
-                </div>
-                <h3 className="recipe-card-title">{recipe.title}</h3>
-              </div>
-            </Link>
+            <RecipeCard
+              key={recipe.slug}
+              slug={recipe.slug}
+              title={recipe.title}
+              category={recipe.category}
+              image={recipe.image}
+              number={numberFor(recipe.slug)}
+              byline={recipe.byline ?? defaultBylineFor(recipe.category)}
+            />
           ))}
         </div>
 

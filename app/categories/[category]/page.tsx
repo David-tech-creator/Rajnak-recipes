@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
-import { getAllCategories, getPostsByCategory, categoryToSlug } from "@/lib/posts"
+import { getAllCategories, getPostsByCategory, categoryToSlug, getAllPosts, defaultBylineFor } from "@/lib/posts"
 import { SprigDivider } from "@/components/sprig-divider"
+import { RecipeCard } from "@/components/recipe-card"
 
 function findCategoryBySlug(slug: string, categories: string[]): string | undefined {
   return categories.find((c) => categoryToSlug(c) === slug)
@@ -69,23 +69,22 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
       {recipes.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {recipes.map((recipe) => (
-            <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
-              <div className="aspect-[4/5] relative overflow-hidden">
-                <Image
-                  src={recipe.image || "/images/recipes/placeholder.svg"}
-                  alt={recipe.title}
-                  fill
-                  className="object-cover"
-                  style={{ filter: "saturate(0.92)" }}
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-              <div className="py-5 text-center">
-                <h3 className="recipe-card-title">{recipe.title}</h3>
-              </div>
-            </Link>
-          ))}
+          {(() => {
+            const all = getAllPosts()
+            const numberFor = (slug: string) =>
+              String(all.findIndex((r) => r.slug === slug) + 1).padStart(2, "0")
+            return recipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.slug}
+                slug={recipe.slug}
+                title={recipe.title}
+                category={recipe.category}
+                image={recipe.image}
+                number={numberFor(recipe.slug)}
+                byline={recipe.byline ?? defaultBylineFor(recipe.category)}
+              />
+            ))
+          })()}
         </div>
       ) : (
         <p className="text-center py-12 font-serif italic text-ink-muted text-lg">

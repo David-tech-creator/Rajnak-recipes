@@ -1,4 +1,4 @@
-import { getAllPosts, getAllCategories, categoryToSlug } from "@/lib/posts"
+import { getAllPosts, getAllCategories, categoryToSlug, defaultBylineFor } from "@/lib/posts"
 import { RecipesGrid } from "./recipes-grid"
 import { SprigDivider } from "@/components/sprig-divider"
 
@@ -10,12 +10,14 @@ export default function RecipesPage() {
   const recipes = getAllPosts()
   const categories = getAllCategories()
 
-  const lite = recipes.map((r) => ({
+  const lite = recipes.map((r, i) => ({
     slug: r.slug,
     title: r.title,
     category: r.category,
     image: r.image,
     ingredients: r.ingredients ?? [],
+    number: String(i + 1).padStart(2, "0"),
+    byline: r.byline ?? defaultBylineFor(r.category),
   }))
 
   return (

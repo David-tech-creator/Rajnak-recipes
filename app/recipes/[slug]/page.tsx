@@ -1,10 +1,11 @@
-import { getPostBySlug, getAllPostSlugs, getPostsByCategory, categoryToSlug, getAllPosts } from "@/lib/posts"
+import { getPostBySlug, getAllPostSlugs, getPostsByCategory, categoryToSlug, getAllPosts, defaultBylineFor } from "@/lib/posts"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { SprigDivider } from "@/components/sprig-divider"
 import { RecipeInteractive } from "@/components/recipe-interactive"
 import { PrintButton } from "@/components/print-button"
+import { RecipeCard } from "@/components/recipe-card"
 
 export function generateStaticParams() {
   const posts = getAllPostSlugs()
@@ -163,6 +164,19 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
             {contentParagraphs[0] && !contentParagraphs[0].startsWith("## ") && (
               <p className="lede mt-4">{contentParagraphs[0]}</p>
             )}
+
+            {recipe.kitchenNote && (
+              <p className="hand text-[24px] md:text-[28px] mt-6 leading-tight">
+                &ldquo;{recipe.kitchenNote}&rdquo;
+              </p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-4 mt-8">
+              <a href="#ingredients" className="btn">Open the recipe</a>
+              {recipe.story && (
+                <a href="#story" className="btn btn--link">Read the story</a>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -173,7 +187,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
 
           {/* The Story — origin, tradition, context. Authentic only. */}
           {recipe.story && (
-            <section className="max-w-2xl mx-auto mb-12">
+            <section id="story" className="max-w-2xl mx-auto mb-12 scroll-mt-16">
               <div className="eyebrow eyebrow--lingon text-center mb-3">The Story</div>
               <div className="recipe-prose text-[19px]">
                 {recipe.story
@@ -202,13 +216,14 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
           )}
 
           {(ingredientLines.length > 0 || recipe.instructions.length > 0) && (
-            <RecipeInteractive
-              slug={slug}
-              baseServings={recipe.servings}
-              ingredients={ingredientLines}
-              instructions={recipe.instructions}
-              kitchenNote={recipe.kitchenNote}
-            />
+            <div id="ingredients" className="scroll-mt-16">
+              <RecipeInteractive
+                slug={slug}
+                baseServings={recipe.servings}
+                ingredients={ingredientLines}
+                instructions={recipe.instructions}
+              />
+            </div>
           )}
 
           {recipe.signoff && (
@@ -235,24 +250,15 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {relatedRecipes.map((related) => (
-                <Link key={related.slug} href={`/recipes/${related.slug}`} className="recipe-card block">
-                  <div className="aspect-[4/5] relative overflow-hidden">
-                    <Image
-                      src={related.image || "/images/recipes/placeholder.svg"}
-                      alt={related.title}
-                      fill
-                      className="object-cover"
-                      style={{ filter: "saturate(0.92)" }}
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                  </div>
-                  <div className="py-5 text-center">
-                    <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
-                      {related.category}
-                    </div>
-                    <h3 className="recipe-card-title">{related.title}</h3>
-                  </div>
-                </Link>
+                <RecipeCard
+                  key={related.slug}
+                  slug={related.slug}
+                  title={related.title}
+                  category={related.category}
+                  image={related.image}
+                  number={String(allSlugs.indexOf(related.slug) + 1).padStart(2, "0")}
+                  byline={related.byline ?? defaultBylineFor(related.category)}
+                />
               ))}
             </div>
           </div>

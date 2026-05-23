@@ -1,8 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
+import { RecipeCard } from "@/components/recipe-card"
 
 type LiteRecipe = {
   slug: string
@@ -10,6 +9,8 @@ type LiteRecipe = {
   category: string
   image?: string
   ingredients: string[]
+  number?: string
+  byline?: string
 }
 
 type CategoryOption = { name: string; slug: string }
@@ -102,24 +103,15 @@ export function RecipesGrid({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {shown.map((recipe) => (
-            <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
-              <div className="aspect-[4/5] relative overflow-hidden">
-                <Image
-                  src={recipe.image || "/images/recipes/placeholder.svg"}
-                  alt={recipe.title}
-                  fill
-                  className="object-cover"
-                  style={{ filter: "saturate(0.92)" }}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </div>
-              <div className="py-5 text-center">
-                <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
-                  {recipe.category}
-                </div>
-                <h3 className="recipe-card-title">{recipe.title}</h3>
-              </div>
-            </Link>
+            <RecipeCard
+              key={recipe.slug}
+              slug={recipe.slug}
+              title={recipe.title}
+              category={recipe.category}
+              image={recipe.image}
+              number={recipe.number}
+              byline={recipe.byline}
+            />
           ))}
         </div>
       )}

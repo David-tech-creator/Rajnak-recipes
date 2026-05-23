@@ -47,6 +47,19 @@ export type Recipe = {
   story?: string
   /** Easy / Medium / Showpiece — appears in the meta row. */
   difficulty?: string
+  /** Short handwritten line under the recipe card title (e.g. "— Sunday morning, always"). */
+  byline?: string
+}
+
+const DEFAULT_BYLINES: Record<string, string> = {
+  "Family Recipes": "from the family book",
+  "Found Recipes": "picked up along the way",
+  "Quick & Easy": "Tuesday-night supper",
+  "Christmas & Easter": "the long-table dishes",
+}
+
+export function defaultBylineFor(category: string): string {
+  return DEFAULT_BYLINES[category] ?? "from the family book"
 }
 
 export function getAllPostSlugs() {
@@ -99,6 +112,7 @@ export function getPostBySlug(slug: string): Recipe | null {
       signoff: typeof data.signoff === "string" ? data.signoff : undefined,
       story: typeof data.story === "string" ? data.story : undefined,
       difficulty: typeof data.difficulty === "string" ? data.difficulty : undefined,
+      byline: typeof data.byline === "string" ? data.byline : undefined,
       content,
     }
   } catch (error) {

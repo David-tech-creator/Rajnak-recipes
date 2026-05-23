@@ -1,7 +1,7 @@
-import { getAllPosts, categoryToSlug } from "@/lib/posts"
-import Image from "next/image"
+import { getAllPosts, defaultBylineFor } from "@/lib/posts"
 import Link from "next/link"
 import { SprigDivider } from "@/components/sprig-divider"
+import { RecipeCard } from "@/components/recipe-card"
 
 export const metadata = {
   title: "Search | Rajnax: Dishes We Love",
@@ -15,6 +15,7 @@ export default async function SearchPage({
   const { q } = await searchParams
   const query = (q ?? "").trim()
   const all = getAllPosts()
+  const numberFor = (slug: string) => String(all.findIndex((r) => r.slug === slug) + 1).padStart(2, "0")
 
   const results = query
     ? all.filter((r) => {
@@ -73,29 +74,15 @@ export default async function SearchPage({
       {results.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {results.map((recipe) => (
-            <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
-              <div className="aspect-[4/5] relative overflow-hidden">
-                <Image
-                  src={recipe.image || "/images/recipes/placeholder.svg"}
-                  alt={recipe.title}
-                  fill
-                  className="object-cover"
-                  style={{ filter: "saturate(0.92)" }}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </div>
-              <div className="py-5 text-center">
-                <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
-                  <Link
-                    href={`/categories/${categoryToSlug(recipe.category)}`}
-                    className="hover:text-lingon-deep"
-                  >
-                    {recipe.category}
-                  </Link>
-                </div>
-                <h3 className="recipe-card-title">{recipe.title}</h3>
-              </div>
-            </Link>
+            <RecipeCard
+              key={recipe.slug}
+              slug={recipe.slug}
+              title={recipe.title}
+              category={recipe.category}
+              image={recipe.image}
+              number={numberFor(recipe.slug)}
+              byline={recipe.byline ?? defaultBylineFor(recipe.category)}
+            />
           ))}
         </div>
       )}
