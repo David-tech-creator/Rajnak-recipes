@@ -79,7 +79,9 @@ export function getPostBySlug(slug: string): Recipe | null {
       date: data.date || new Date().toISOString(),
       category: data.category || "Uncategorized",
       image: data.image || undefined,
-      ingredients: data.ingredients || [],
+      ingredients: Array.isArray(data.ingredients)
+        ? data.ingredients.map((i: unknown) => String(i ?? "").trim()).filter(Boolean)
+        : [],
       instructions,
       prepTime: data.prepTime,
       cookTime: data.cookTime,

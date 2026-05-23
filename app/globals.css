@@ -2,116 +2,403 @@
 @tailwind components;
 @tailwind utilities;
 
+/* —————————————————————————————————————————————————————————————
+   Rajnak — Heirloom Cookbook design system tokens
+   ————————————————————————————————————————————————————————————— */
 :root {
-  --foreground-rgb: 51, 51, 51;
-  --background-rgb: 255, 255, 255;
-  --accent-color: 165, 142, 110; /* Warm beige/brown from the image */
-  --light-accent: 245, 240, 230; /* Soft cream color from the image */
+  /* —— Ink & Paper —— */
+  --ink: #1f1a14;
+  --ink-soft: #3a3128;
+  --ink-muted: #6e5f50;
+  --rule: #c9b89a;
+  --rule-soft: #e4d8be;
+
+  --parchment: #f4ecdc;
+  --parchment-2: #efe6d0;
+  --cream: #fbf6ea;
+  --sand: #dcc8a0;
+  --paper-shadow:
+    0 1px 0 rgba(60, 40, 20, 0.04),
+    0 18px 40px -28px rgba(60, 40, 20, 0.22);
+
+  /* —— Accents —— */
+  --lingon: #8e2f2a;
+  --lingon-deep: #6e1f1c;
+  --lingon-soft: #c58a86;
+  --sage: #8a9474;
+  --forest: #4d5b3b;
+  --olive-leaf: #6f7a52;
+  --mushroom: #8c8378;
+
+  /* —— Type —— */
+  --serif: var(--font-cormorant), "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --serif-sc: var(--font-cormorant-sc), "Cormorant SC", var(--serif);
+  --hand: var(--font-caveat), "Snell Roundhand", cursive;
+
+  /* —— Scale (8pt) —— */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
+
+  --r-1: 1px; --r-2: 2px; --r-3: 4px; --r-pill: 999px;
+
+  /* —— Legacy hooks (still referenced by some shadcn helpers) —— */
+  --foreground-rgb: 31, 26, 20;
+  --background-rgb: 244, 236, 220;
+  --light-accent: 251, 246, 234;
 }
 
+html, body { margin: 0; padding: 0; }
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 18px;
-  line-height: 1.6;
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.55;
+  font-feature-settings: "onum" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background-image:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255, 250, 235, 0.6), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(220, 200, 160, 0.18), transparent 60%),
+    radial-gradient(700px 700px at 50% 120%, rgba(142, 47, 42, 0.04), transparent 60%);
+  background-attachment: fixed;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Cormorant Garamond", Georgia, serif;
+::selection { background: var(--lingon); color: var(--cream); }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--serif);
   font-weight: 500;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.005em;
+  color: var(--ink);
 }
 
-.sans-serif {
-  font-family: "Montserrat", sans-serif;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
+/* —————————————————————————————————————————————————————————————
+   Type utilities
+   ————————————————————————————————————————————————————————————— */
+.eyebrow,
+.caps {
+  font-family: var(--serif-sc);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
+.eyebrow {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+.eyebrow--lingon { color: var(--lingon); }
 
+.display-1 { font-size: 88px; line-height: 0.98; font-weight: 400; letter-spacing: -0.01em; }
+.display-2 { font-size: 64px; line-height: 1.02; font-weight: 400; letter-spacing: -0.005em; }
+.editorial-h1 { font-size: 64px; line-height: 1.04; font-weight: 400; letter-spacing: -0.005em; }
+.editorial-h2 { font-size: 44px; line-height: 1.1; font-weight: 400; letter-spacing: -0.003em; }
+.editorial-h3 { font-size: 32px; line-height: 1.15; font-weight: 500; }
+.lede {
+  font-size: 22px;
+  line-height: 1.45;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+.hand {
+  font-family: var(--hand);
+  color: var(--lingon-deep);
+  line-height: 1.25;
+}
+.num { font-feature-settings: "lnum" 1, "tnum" 1; }
+
+/* Mobile-aware editorial type */
+@media (max-width: 768px) {
+  .display-1 { font-size: 56px; }
+  .display-2 { font-size: 44px; }
+  .editorial-h1 { font-size: 44px; }
+  .editorial-h2 { font-size: 32px; }
+  .editorial-h3 { font-size: 26px; }
+  .lede { font-size: 19px; }
+  body { font-size: 18px; }
+}
+
+/* —————————————————————————————————————————————————————————————
+   Components
+   ————————————————————————————————————————————————————————————— */
+
+/* Buttons */
+.btn {
+  font-family: var(--serif-sc);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 14px 28px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--cream);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  border-radius: var(--r-1);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1;
+}
+.btn:hover { background: var(--lingon-deep); border-color: var(--lingon-deep); color: var(--cream); }
+.btn--ghost { background: transparent; color: var(--ink); }
+.btn--ghost:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.btn--lingon { background: var(--lingon); border-color: var(--lingon); }
+.btn--lingon:hover { background: var(--lingon-deep); border-color: var(--lingon-deep); }
+.btn--link {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
+}
+.btn--link:hover { color: var(--lingon-deep); border-color: var(--lingon-deep); background: transparent; }
+
+/* Tags */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--serif-sc);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-soft);
+  border-radius: var(--r-pill);
+  line-height: 1;
+}
+.tag .tag-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lingon); }
+.tag--solid { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.tag--sage { background: var(--sage); color: var(--cream); border-color: var(--sage); }
+.tag:hover { color: var(--ink); border-color: var(--ink); }
+
+/* Recipe card (re-skinned) */
+.recipe-card {
+  background: var(--cream);
+  border: 1px solid var(--rule-soft);
+  overflow: hidden;
+  display: block;
+  box-shadow: var(--paper-shadow);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+.recipe-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--rule);
+}
+.recipe-card-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.15;
+  margin: 0;
+  padding: 4px 24px 0;
+  text-align: center;
+  color: var(--ink);
+}
+
+/* Category box (categories index) */
+.category-box {
+  position: relative;
+  overflow: hidden;
+}
+.category-box-label {
+  position: absolute;
+  bottom: var(--s-4);
+  left: var(--s-4);
+  background: var(--cream);
+  color: var(--ink);
+  padding: 6px 14px;
+  font-family: var(--serif-sc);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border: 1px solid var(--ink);
+}
+
+/* Ingredient list */
+.ingredients {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--s-3);
+}
+.ingredients li {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--s-4);
+  padding-bottom: var(--s-3);
+  border-bottom: 1px dotted var(--rule);
+  align-items: baseline;
+}
+.ingredients .qty {
+  font-feature-settings: "lnum" 1, "tnum" 1;
+  color: var(--lingon-deep);
+  font-size: 17px;
+}
+.ingredients .item {
+  font-size: 18px;
+  color: var(--ink);
+}
+
+/* Pull quote */
+.pullquote {
+  border-left: 2px solid var(--lingon);
+  padding: var(--s-3) var(--s-6);
+  font-size: 28px;
+  line-height: 1.3;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-weight: 400;
+  margin: 0;
+}
+.pullquote cite {
+  display: block;
+  margin-top: var(--s-3);
+  font-style: normal;
+  font-family: var(--serif-sc);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--ink-muted);
+}
+
+/* Editorial section header */
+.editorial-head {
+  text-align: center;
+  padding: var(--s-7) var(--s-5);
+  background: var(--cream);
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.editorial-head .rule {
+  width: 80px;
+  height: 1px;
+  background: var(--ink);
+  margin: var(--s-4) auto 0;
+}
+
+/* Botanical sprig divider */
+.sprig {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  color: var(--olive-leaf);
+  margin: var(--s-6) 0;
+}
+.sprig .line {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+.sprig svg {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+/* Hairlines */
+.hairline { border-top: 1px solid var(--rule-soft); }
+.hairline--ink { border-top: 1px solid var(--ink); }
+.hairline--lingon { border-top: 1px solid var(--lingon); }
+
+/* Recipe meta row */
+.meta-row {
+  display: flex;
+  gap: var(--s-5);
+  align-items: center;
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+}
+.meta-row > div { display: flex; align-items: center; gap: 8px; }
+.meta-row svg { width: 18px; height: 18px; stroke: var(--olive-leaf); fill: none; stroke-width: 1.2; }
+.meta-row .v { font-feature-settings: "lnum" 1, "tnum" 1; font-size: 17px; }
+.meta-row .k {
+  font-family: var(--serif-sc);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* Prose tweaks for recipe content */
+.recipe-prose p { margin: 0 0 var(--s-4); line-height: 1.6; color: var(--ink-soft); }
+.recipe-prose h2 {
+  font-family: var(--serif-sc);
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--lingon);
+  margin: var(--s-7) 0 var(--s-3);
+  font-weight: 500;
+}
+
+/* Stamp/seal */
+.stamp {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: var(--lingon);
+  color: var(--cream);
+  display: grid;
+  place-items: center;
+  transform: rotate(-8deg);
+  font-family: var(--serif-sc);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  line-height: 1.1;
+  box-shadow: 0 10px 24px -10px rgba(142, 47, 42, 0.6);
+}
+.stamp em {
+  font-style: normal;
+  font-size: 20px;
+  font-family: var(--serif);
+  display: block;
+  letter-spacing: 0;
+  margin-top: 2px;
+}
+
+/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-.hero-overlay {
-  background-color: rgba(255, 255, 255, 0.85);
-  padding: 2rem 3rem;
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.category-box {
-  position: relative;
-  overflow: hidden;
-}
-
-.category-box-label {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.85);
-  padding: 1rem 2rem;
-  font-family: "Cormorant Garamond", Georgia, serif;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.recipe-card {
-  transition: transform 0.3s ease;
-}
-
-.recipe-card:hover {
-  transform: translateY(-5px);
-}
-
-.recipe-card-title {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin-top: 0.75rem;
-  text-align: center;
-}
-
+/* —————————————————————————————————————————————————————————————
+   Shadcn token bridge (keeps existing UI primitives consistent)
+   ————————————————————————————————————————————————————————————— */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 20%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 20%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 20%;
-    --primary: 0 0% 9%; /* Dark gray/black for primary buttons */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: var(--accent-color);
-    --radius: 0.3rem;
+    --background: 40 47% 91%;          /* parchment */
+    --foreground: 30 17% 10%;          /* ink */
+    --card: 42 60% 95%;                /* cream */
+    --card-foreground: 30 17% 10%;
+    --popover: 42 60% 95%;
+    --popover-foreground: 30 17% 10%;
+    --primary: 30 17% 10%;             /* ink */
+    --primary-foreground: 42 60% 95%;
+    --secondary: 40 40% 88%;
+    --secondary-foreground: 30 17% 10%;
+    --muted: 40 40% 88%;
+    --muted-foreground: 30 14% 38%;
+    --accent: 2 53% 36%;               /* lingonberry */
+    --accent-foreground: 42 60% 95%;
+    --destructive: 2 53% 36%;
+    --destructive-foreground: 42 60% 95%;
+    --border: 38 38% 70%;
+    --input: 38 38% 70%;
+    --ring: 2 53% 36%;
+    --radius: 0.2rem;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+  * { @apply border-border; }
 }

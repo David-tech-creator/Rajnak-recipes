@@ -45,17 +45,36 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Add olive colors to match the logo
-        olive: {
-          500: "#8A9A5B",
-          600: "#708238",
-          700: "#556B2F",
+        // Heirloom palette
+        parchment: {
+          DEFAULT: "#F4ECDC",
+          deep: "#EFE6D0",
         },
-        brown: {
-          500: "#A67C52",
-          600: "#8B5A2B",
-          700: "#704214",
+        cream: "#FBF6EA",
+        ink: {
+          DEFAULT: "#1F1A14",
+          soft: "#3A3128",
+          muted: "#6E5F50",
         },
+        rule: {
+          DEFAULT: "#C9B89A",
+          soft: "#E4D8BE",
+        },
+        sand: "#DCC8A0",
+        lingon: {
+          DEFAULT: "#8E2F2A",
+          deep: "#6E1F1C",
+          soft: "#C58A86",
+        },
+        sage: "#8A9474",
+        forest: "#4D5B3B",
+        oliveleaf: "#6F7A52",
+        mushroom: "#8C8378",
+      },
+      fontFamily: {
+        serif: ["var(--font-cormorant)", "Cormorant Garamond", "Georgia", "serif"],
+        "serif-sc": ["var(--font-cormorant-sc)", "Cormorant SC", "Cormorant Garamond", "serif"],
+        hand: ["var(--font-caveat)", "Snell Roundhand", "cursive"],
       },
       borderRadius: {
         lg: "var(--radius)",

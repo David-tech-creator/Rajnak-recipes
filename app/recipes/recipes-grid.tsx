@@ -42,7 +42,7 @@ export function RecipesGrid({
 
   return (
     <>
-      <div className="max-w-md mx-auto mb-8 flex border border-gray-300">
+      <div className="max-w-md mx-auto mb-10 flex items-center bg-cream border border-rule-soft">
         <input
           type="text"
           value={query}
@@ -51,14 +51,14 @@ export function RecipesGrid({
             setVisible(PAGE_SIZE)
           }}
           placeholder="Search recipes by name or ingredient…"
-          className="w-full py-2 px-4 focus:outline-none"
+          className="w-full py-3 px-5 bg-transparent text-ink placeholder:text-ink-muted/70 focus:outline-none font-serif italic text-[18px]"
           aria-label="Search recipes"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery("")}
-            className="px-3 text-sm text-gray-500 hover:text-gray-800"
+            className="px-4 font-serif-sc uppercase tracking-[0.18em] text-[10px] text-ink-muted hover:text-lingon-deep"
             aria-label="Clear search"
           >
             Clear
@@ -66,80 +66,96 @@ export function RecipesGrid({
         )}
       </div>
 
-      <div className="flex flex-wrap justify-center gap-3 mb-10">
-        <button
-          type="button"
+      <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
+        <CategoryButton
+          active={activeCategory === null}
           onClick={() => {
             setActiveCategory(null)
             setVisible(PAGE_SIZE)
           }}
-          className={`px-4 py-2 border text-sm transition-colors ${
-            activeCategory === null
-              ? "border-gray-800 bg-gray-800 text-white"
-              : "border-gray-300 hover:bg-gray-50"
-          }`}
         >
           All
-        </button>
+        </CategoryButton>
         {categories.map((c) => (
-          <button
+          <CategoryButton
             key={c.slug}
-            type="button"
+            active={activeCategory === c.name}
             onClick={() => {
               setActiveCategory(c.name)
               setVisible(PAGE_SIZE)
             }}
-            className={`px-4 py-2 border text-sm transition-colors ${
-              activeCategory === c.name
-                ? "border-gray-800 bg-gray-800 text-white"
-                : "border-gray-300 hover:bg-gray-50"
-            }`}
           >
             {c.name}
-          </button>
+          </CategoryButton>
         ))}
       </div>
 
-      <p className="text-center text-sm text-gray-500 mb-6">
+      <p className="text-center font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-10">
         Showing {shown.length} of {filtered.length}
-        {filtered.length !== recipes.length ? ` (filtered from ${recipes.length})` : ""}
+        {filtered.length !== recipes.length ? ` · filtered from ${recipes.length}` : ""}
       </p>
 
       {filtered.length === 0 ? (
-        <p className="text-center text-gray-500 py-12">
-          No recipes match. Try a different search or category.
+        <p className="text-center text-ink-muted italic py-16 font-serif text-lg">
+          No recipes match. Try a different keyword or category.
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {shown.map((recipe) => (
             <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
-              <div className="aspect-[4/3] relative overflow-hidden">
+              <div className="aspect-[4/5] relative overflow-hidden">
                 <Image
                   src={recipe.image || "/images/recipes/placeholder.svg"}
                   alt={recipe.title}
                   fill
                   className="object-cover"
+                  style={{ filter: "saturate(0.92)" }}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
-              <h3 className="recipe-card-title">{recipe.title}</h3>
-              <p className="text-sm text-gray-500 px-4 pb-4">{recipe.category}</p>
+              <div className="py-5 text-center">
+                <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
+                  {recipe.category}
+                </div>
+                <h3 className="recipe-card-title">{recipe.title}</h3>
+              </div>
             </Link>
           ))}
         </div>
       )}
 
       {visible < filtered.length && (
-        <div className="text-center mt-12">
-          <button
-            type="button"
-            onClick={() => setVisible((v) => v + PAGE_SIZE)}
-            className="px-6 py-3 border border-gray-300 text-sm hover:bg-gray-50"
-          >
-            Load more
+        <div className="text-center mt-16">
+          <button type="button" onClick={() => setVisible((v) => v + PAGE_SIZE)} className="btn btn--ghost">
+            Load more recipes
           </button>
         </div>
       )}
     </>
+  )
+}
+
+function CategoryButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        "font-serif-sc uppercase tracking-[0.22em] text-[11px] px-4 py-2 border transition-colors",
+        active
+          ? "bg-ink text-cream border-ink"
+          : "bg-transparent text-ink-soft border-rule hover:border-ink hover:text-ink",
+      ].join(" ")}
+    >
+      {children}
+    </button>
   )
 }

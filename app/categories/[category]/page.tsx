@@ -1,14 +1,9 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { getAllCategories, getPostsByCategory } from "@/lib/posts"
+import { getAllCategories, getPostsByCategory, categoryToSlug } from "@/lib/posts"
+import { SprigDivider } from "@/components/sprig-divider"
 
-// Convert category name to URL slug: "Christmas & Easter" -> "christmas-and-easter"
-function categoryToSlug(name: string): string {
-  return name.toLowerCase().replace(/&/g, "and").replace(/\s+/g, "-")
-}
-
-// Find category by matching its slug
 function findCategoryBySlug(slug: string, categories: string[]): string | undefined {
   return categories.find((c) => categoryToSlug(c) === slug)
 }
@@ -44,38 +39,44 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const recipes = getPostsByCategory(matchedCategory)
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <h1 className="text-3xl text-center mb-4">{matchedCategory}</h1>
-      <p className="text-center text-gray-500 mb-12">{recipes.length} recipes</p>
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-14">
+        <div className="eyebrow eyebrow--lingon">Category</div>
+        <h1 className="editorial-h1 mt-3 mb-3 font-normal">{matchedCategory}</h1>
+        <p className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
+          {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
+        </p>
+        <SprigDivider variant="berry" className="!mt-8 !mb-2 max-w-sm mx-auto" />
+      </div>
 
       {recipes.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {recipes.map((recipe) => (
             <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="recipe-card block">
-              <div className="aspect-[4/3] relative overflow-hidden">
+              <div className="aspect-[4/5] relative overflow-hidden">
                 <Image
                   src={recipe.image || "/images/recipes/placeholder.svg"}
                   alt={recipe.title}
                   fill
                   className="object-cover"
+                  style={{ filter: "saturate(0.92)" }}
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
-              <h3 className="recipe-card-title">{recipe.title}</h3>
+              <div className="py-5 text-center">
+                <h3 className="recipe-card-title">{recipe.title}</h3>
+              </div>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500">No recipes found in this category yet.</p>
-        </div>
+        <p className="text-center py-12 font-serif italic text-ink-muted text-lg">
+          No recipes found in this category yet.
+        </p>
       )}
 
-      <div className="text-center mt-12">
-        <Link
-          href="/categories"
-          className="inline-block border border-gray-300 px-6 py-3 text-sm hover:bg-gray-50 transition-colors"
-        >
+      <div className="text-center mt-16">
+        <Link href="/categories" className="btn btn--ghost">
           All Categories
         </Link>
       </div>
