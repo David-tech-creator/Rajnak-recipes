@@ -13,7 +13,7 @@ export function Footer() {
           <div className="text-center md:text-left">
             <div className={heading}>The Rajnak Family</div>
             <p className="text-ink-soft text-[16px] leading-[1.5] italic">
-              Recipe collection · est. four generations ago, somewhere between Hungary and Sweden.
+              Recipe collection · somewhere between Hungary and Sweden.
             </p>
           </div>
 

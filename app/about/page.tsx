@@ -8,7 +8,7 @@ export default function AboutPage() {
       <div className="max-w-3xl mx-auto text-center mb-12">
         <div className="eyebrow eyebrow--lingon">Our Story</div>
         <h1 className="editorial-h1 mt-3 mb-4 font-normal">
-          A family <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>, gathered over four generations.
+          A family <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>, gathered over generations.
         </h1>
         <p className="lede">
           Hungarian and Swedish recipes, written down on the backs of envelopes and in the

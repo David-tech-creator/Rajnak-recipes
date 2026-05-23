@@ -26,7 +26,7 @@ export default function RecipesPage() {
           All <em className="not-italic" style={{ color: "var(--lingon-deep)", fontStyle: "italic" }}>recipes</em>
         </h1>
         <p className="lede">
-          {recipes.length} dishes from four generations — Rajnak family, friends, and recipes found along the way.
+          {recipes.length} dishes from the Rajnak family, friends, and recipes found along the way.
         </p>
         <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
       </div>
