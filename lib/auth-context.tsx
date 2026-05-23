@@ -13,22 +13,20 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+export function AuthProvider({
+  children,
+  initialUser = null,
+}: {
+  children: React.ReactNode
+  initialUser?: User | null
+}) {
+  const [user, setUser] = useState<User | null>(initialUser)
+  const [loading, setLoading] = useState(false)
 
   // Single client instance per provider mount.
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
-    let active = true
-
-    supabase.auth.getUser().then(({ data }) => {
-      if (!active) return
-      setUser(data.user ?? null)
-      setLoading(false)
-    })
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -36,7 +34,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     return () => {
-      active = false
       subscription.unsubscribe()
     }
   }, [supabase])

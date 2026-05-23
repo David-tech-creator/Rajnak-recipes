@@ -7,6 +7,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { AuthProvider } from "@/lib/auth-context"
 import { Toaster } from "@/components/ui/toaster"
+import { createClient } from "@/lib/supabase/server"
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -65,11 +66,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Read the user on the server so the header reflects logged-in state on
+  // first paint — the browser client can lag behind on initial mount.
+  const supabase = await createClient()
+  const {
+    data: { user: initialUser },
+  } = await supabase.auth.getUser()
+
   return (
     <html
       lang="en"
@@ -86,7 +94,7 @@ export default function RootLayout({
             </div>
           }
         >
-          <AuthProvider>
+          <AuthProvider initialUser={initialUser}>
             <Header />
             <main>{children}</main>
             <Footer />
