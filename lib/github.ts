@@ -47,6 +47,28 @@ export async function commitFile({
   message: string
   author?: { name: string; email: string }
 }): Promise<void> {
+  await commitBuffer({
+    path,
+    buffer: Buffer.from(content, "utf8"),
+    message,
+    author,
+  })
+}
+
+/**
+ * Commit a raw binary buffer (image, PDF, etc.) under the same auth flow.
+ */
+export async function commitBuffer({
+  path,
+  buffer,
+  message,
+  author,
+}: {
+  path: string
+  buffer: Buffer
+  message: string
+  author?: { name: string; email: string }
+}): Promise<void> {
   const octokit = getOctokit()
   const existing = await getFile(path)
   await octokit.repos.createOrUpdateFileContents({
@@ -55,7 +77,7 @@ export async function commitFile({
     path,
     branch,
     message,
-    content: Buffer.from(content, "utf8").toString("base64"),
+    content: buffer.toString("base64"),
     sha: existing?.sha,
     author,
     committer: author,
