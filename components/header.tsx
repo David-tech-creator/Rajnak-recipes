@@ -99,12 +99,17 @@ export function Header() {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel className="font-serif-sc uppercase tracking-[0.22em] text-[10px] text-ink-muted">
-                    Administration
+                    Family Admin
                   </DropdownMenuLabel>
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
-                      <Link href="/admin/dashboard" className={dropdownItemClass}>
-                        Dashboard
+                      <Link href="/admin/recipes" className={dropdownItemClass}>
+                        Manage Recipes
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/recipes/new" className={dropdownItemClass}>
+                        Add a Recipe
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>

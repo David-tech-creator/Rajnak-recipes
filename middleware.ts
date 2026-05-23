@@ -6,7 +6,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-const protectedPaths = ["/account"]
+const protectedPaths = ["/account", "/admin"]
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
@@ -57,5 +57,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/account/:path*"],
+  matcher: ["/login", "/account/:path*", "/admin/:path*"],
 }
