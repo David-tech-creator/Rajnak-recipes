@@ -21,50 +21,47 @@ export default function Home() {
   return (
     <div>
       {/* ============================================================
-          HERO
+          HERO — full image, no cropping
           ============================================================ */}
-      <section className="relative w-full overflow-hidden">
-        <div className="relative h-[78vh] min-h-[520px] max-h-[820px] w-full">
+      <section className="relative w-full">
+        <div className="relative w-full">
           <Image
             src="/Hero-image.png"
             alt="A long, warmly lit family dining table"
-            fill
+            width={1537}
+            height={1023}
             priority
             sizes="100vw"
-            className="object-cover"
-            style={{ filter: "saturate(0.94)" }}
+            className="w-full h-auto block"
+            style={{ filter: "saturate(0.96)" }}
           />
-          {/* Warm parchment vignette so the cream text card stays legible */}
+
+          {/* Subtle gradient at the bottom so the editorial card stays legible */}
           <div
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-x-0 bottom-0 h-2/5 pointer-events-none"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(244,236,220,0.05) 0%, rgba(244,236,220,0.55) 70%, rgba(244,236,220,0.85) 100%)",
+                "linear-gradient(180deg, rgba(244,236,220,0) 0%, rgba(244,236,220,0.55) 60%, rgba(244,236,220,0.9) 100%)",
             }}
           />
 
-          {/* Centered editorial card */}
-          <div className="absolute inset-0 flex items-center justify-center px-6">
-            <div className="relative bg-cream/95 border border-rule-soft shadow-[var(--paper-shadow)] backdrop-blur-sm px-8 py-10 md:px-16 md:py-14 text-center max-w-2xl">
-              <div className="caps text-[11px] text-ink-muted flex items-center justify-center gap-3">
+          {/* Editorial card pinned to the bottom of the photo */}
+          <div className="absolute inset-x-0 bottom-4 md:bottom-10 lg:bottom-16 flex justify-center px-4">
+            <div className="relative bg-cream/95 border border-rule-soft shadow-[var(--paper-shadow)] backdrop-blur-sm px-6 py-6 md:px-12 md:py-10 text-center w-full max-w-xl">
+              <div className="caps text-[10px] md:text-[11px] text-ink-muted flex items-center justify-center gap-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-lingon inline-block" />
                 <span>The Rajnak Family</span>
                 <span>·</span>
                 <span>{totalCount} recipes</span>
               </div>
 
-              <h1 className="editorial-h1 md:display-2 mt-5 font-normal">
+              <h1 className="editorial-h2 md:editorial-h1 mt-3 md:mt-4 font-normal">
                 An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>.
               </h1>
 
-              <p className="hand text-[30px] md:text-[36px] mt-3">Hemlagad mat med kärlek.</p>
+              <p className="hand text-[24px] md:text-[30px] mt-2 md:mt-3">Hemlagad mat med kärlek.</p>
 
-              <p className="lede mt-5 max-w-lg mx-auto">
-                Generations of recipes — Swedish, Hungarian, Swiss, and everywhere we&apos;ve eaten
-                well — gathered into one cookbook.
-              </p>
-
-              <div className="flex flex-wrap gap-4 mt-8 justify-center">
+              <div className="flex flex-wrap gap-3 md:gap-4 mt-5 md:mt-7 justify-center">
                 <Link href="/recipes" className="btn">
                   Open the recipes
                 </Link>
@@ -77,7 +74,11 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-6 pt-10">
-          <SprigDivider variant="berry" className="max-w-md mx-auto" />
+          <p className="lede max-w-2xl mx-auto text-center">
+            Generations of recipes — Swedish, Hungarian, Swiss, and everywhere we&apos;ve eaten well —
+            gathered into one cookbook.
+          </p>
+          <SprigDivider variant="berry" className="max-w-md mx-auto !mt-8" />
         </div>
       </section>
 
