@@ -49,14 +49,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setUser(session?.user ?? null)
 
+        // We only listen for SIGNED_OUT here. SIGNED_IN navigation is handled
+        // by signIn() itself with a hard browser navigation so the cookies the
+        // browser client just wrote are guaranteed to be sent on the next
+        // request — router.push() can race ahead of the cookie commit.
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           setUser(session?.user ?? null)
-
-          if (event === 'SIGNED_IN') {
-            const target = safeRedirect(searchParams.get("redirectTo"))
-            router.push(target)
-            router.refresh()
-          }
 
           if (event === 'SIGNED_OUT') {
             router.push('/login')
@@ -75,10 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     initializeAuth()
-  }, [router, searchParams])
+  }, [router])
 
-  // Navigation is intentionally NOT done here — onAuthStateChange('SIGNED_IN')
-  // owns the redirect so we don't fire two router.push calls in a row.
   const signIn = async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -86,6 +82,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.user) {
         setUser(data.user)
         toast({ title: "Welcome back!", description: "Successfully signed in." })
+        // Hard navigation, not router.push. Forces a full page reload so the
+        // session cookies just written by @supabase/ssr are sent on the next
+        // request and middleware reads them. router.push doesn't wait for
+        // document.cookie writes to commit and can race.
+        const target = safeRedirect(searchParams.get("redirectTo"))
+        window.location.href = target
       }
     } catch (error) {
       console.error("Signin error:", error)
@@ -102,7 +104,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
-      router.push('/login')
+      // Hard navigation so the cleared cookies stick on the next page load.
+      window.location.href = '/login'
     } catch (error) {
       console.error("Signout error:", error)
       toast({
