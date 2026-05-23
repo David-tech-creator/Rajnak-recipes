@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { serializeRecipe, slugify, validateDraft, type RecipeDraft } from "@/lib/recipe-mdx"
 import { commitFile } from "@/lib/github"
+import { isAllowedAdmin } from "@/lib/admin-allowlist"
 
 export const runtime = "nodejs"
 
@@ -33,6 +34,9 @@ export async function POST(req: Request) {
   const user = await getUser()
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+  }
+  if (!isAllowedAdmin(user.email)) {
+    return NextResponse.json({ error: "Not authorised" }, { status: 403 })
   }
 
   let payload: Partial<RecipeDraft> & { mode?: "create" | "update" }

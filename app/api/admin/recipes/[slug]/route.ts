@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { deleteFile } from "@/lib/github"
+import { isAllowedAdmin } from "@/lib/admin-allowlist"
 
 export const runtime = "nodejs"
 
@@ -32,6 +33,9 @@ export async function DELETE(req: Request, ctx: { params: Promise<{ slug: string
   const user = await getUser()
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+  }
+  if (!isAllowedAdmin(user.email)) {
+    return NextResponse.json({ error: "Not authorised" }, { status: 403 })
   }
 
   const { slug } = await ctx.params
