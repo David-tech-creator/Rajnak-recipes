@@ -9,6 +9,7 @@
  */
 export const ADMIN_EMAILS = new Set<string>([
   "antal.rajnak@bluewin.ch",
+  "antal.rajnak@gmail.com",
   "viktoria.rajnak@gmail.com",
   "julia.rajnak@gmail.com",
   "susanna.rajnak@gmail.com",
