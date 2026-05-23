@@ -67,6 +67,11 @@ export async function POST(req: Request) {
   if (!slug) {
     return NextResponse.json({ error: "Could not derive a slug from the title" }, { status: 400 })
   }
+  // Reject anything that could break out of content/recipes/ — slugify
+  // already normalises but a client-supplied slug bypasses it.
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return NextResponse.json({ error: "Invalid slug" }, { status: 400 })
+  }
 
   const committer = {
     name: user.email ?? "Family admin",

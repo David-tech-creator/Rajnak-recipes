@@ -48,10 +48,19 @@ export async function middleware(req: NextRequest) {
   }
 
   // 2. Already logged in and visiting /login → send to home (or the
-  //    redirectTo target).
+  //    redirectTo target, sanitized to same-origin paths only).
   if (user && pathname === "/login") {
-    const redirectTo = req.nextUrl.searchParams.get("redirectTo")
-    return NextResponse.redirect(new URL(redirectTo ? decodeURIComponent(redirectTo) : "/", req.url))
+    const raw = req.nextUrl.searchParams.get("redirectTo")
+    let target = "/"
+    if (raw) {
+      try {
+        const decoded = decodeURIComponent(raw)
+        if (decoded.startsWith("/") && !decoded.startsWith("//")) target = decoded
+      } catch {
+        /* fall through to "/" */
+      }
+    }
+    return NextResponse.redirect(new URL(target, req.url))
   }
 
   // 3. Public auth pages always pass through.

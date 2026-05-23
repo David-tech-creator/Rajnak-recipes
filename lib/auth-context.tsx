@@ -10,11 +10,25 @@ interface AuthContextType {
   user: User | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+// Only allow same-origin relative paths so ?redirectTo=https://evil.com can't
+// turn the login page into a phishing redirector. `//evil.com` is rejected too
+// because browsers treat it as protocol-relative.
+function safeRedirect(raw: string | null | undefined): string {
+  if (!raw) return "/account"
+  let candidate = raw
+  try {
+    candidate = decodeURIComponent(raw)
+  } catch {
+    return "/account"
+  }
+  if (!candidate.startsWith("/") || candidate.startsWith("//")) return "/account"
+  return candidate
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -27,24 +41,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initializeAuth = async () => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
+
         if (sessionError) {
           console.error("Session error:", sessionError)
           return
         }
-        
+
         setUser(session?.user ?? null)
-        
+
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           setUser(session?.user ?? null)
-          
+
           if (event === 'SIGNED_IN') {
-            const redirectTo = searchParams.get("redirectTo")
-            if (redirectTo) {
-              router.push(decodeURIComponent(redirectTo))
-            } else {
-              router.push("/account")
-            }
+            const target = safeRedirect(searchParams.get("redirectTo"))
+            router.push(target)
             router.refresh()
           }
 
@@ -67,63 +77,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initializeAuth()
   }, [router, searchParams])
 
+  // Navigation is intentionally NOT done here — onAuthStateChange('SIGNED_IN')
+  // owns the redirect so we don't fire two router.push calls in a row.
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-
       if (data.user) {
         setUser(data.user)
-        toast({
-          title: "Welcome back!",
-          description: "Successfully signed in.",
-        })
-        const redirectTo = searchParams.get("redirectTo")
-        if (redirectTo) {
-          router.push(decodeURIComponent(redirectTo))
-        } else {
-          router.push("/account")
-        }
-        router.refresh()
+        toast({ title: "Welcome back!", description: "Successfully signed in." })
       }
     } catch (error) {
       console.error("Signin error:", error)
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Invalid credentials",
-        variant: "destructive",
-      })
-      throw error
-    }
-  }
-
-  const signUp = async (email: string, password: string) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) throw error
-
-      if (data.user) {
-        toast({
-          title: "Success!",
-          description: "Please check your email to verify your account.",
-        })
-      }
-    } catch (error) {
-      console.error("Signup error:", error)
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create account",
         variant: "destructive",
       })
       throw error
@@ -149,7 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     loading,
     signIn,
-    signUp,
     signOut,
   }
 
