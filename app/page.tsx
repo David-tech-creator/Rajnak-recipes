@@ -52,70 +52,54 @@ export default function Home() {
   return (
     <div>
       {/* ============================================================
-          HERO — capped height, dining-table focal point, centered card
+          HERO — design system layout: text left, image right
           ============================================================ */}
-      <section className="relative w-full">
-        <div className="relative w-full h-[min(78vh,720px)] sm:h-[min(75vh,760px)] overflow-hidden">
-          <Image
-            src="/Hero-image.png"
-            alt="A long, warmly lit family dining table"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-            style={{ filter: "saturate(0.96)", objectPosition: "50% 72%" }}
-          />
-
-          {/* Parchment vignette around the edges so the card reads */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse at 50% 60%, rgba(244,236,220,0.05) 0%, rgba(244,236,220,0.45) 70%, rgba(244,236,220,0.85) 100%)",
-            }}
-          />
-
-          {/* Editorial card centered in the hero so it sits above the fold */}
-          <div className="absolute inset-0 flex items-center justify-center px-4">
-            <div className="relative bg-cream/95 border border-rule-soft shadow-[var(--paper-shadow)] backdrop-blur-sm px-6 py-7 md:px-12 md:py-10 text-center w-full max-w-xl">
-              <div className="caps text-[10px] md:text-[11px] text-ink-muted flex items-center justify-center gap-2 md:gap-3 flex-wrap">
-                <span className="w-1.5 h-1.5 rounded-full bg-lingon inline-block" />
-                <span>The Rajnak Family</span>
-                <span>·</span>
-                <span>{totalCount} recipes</span>
-              </div>
-
-              <h1 className="editorial-h2 md:editorial-h1 mt-3 md:mt-4 font-normal">
-                An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>.
-              </h1>
-
-              <p className="hand text-[22px] md:text-[28px] mt-2 md:mt-3">Hemlagad mat med kärlek.</p>
-
-              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-5 md:mt-7 justify-center items-center">
-                <Link href="/recipes" className="btn w-full sm:w-auto justify-center">
-                  Open the recipes
-                </Link>
-                <Link href="/about" className="btn btn--link">
-                  Read our story
-                </Link>
-              </div>
+      <section className="container mx-auto px-6 pt-10 md:pt-16 pb-8 md:pb-12">
+        <div className="grid md:grid-cols-[1.1fr_0.9fr] gap-10 md:gap-14 items-center">
+          <div>
+            <div className="caps text-[11px] text-ink-muted flex items-center gap-3 flex-wrap">
+              <span className="w-1.5 h-1.5 rounded-full bg-lingon inline-block" />
+              <span>The Rajnak Family</span>
+              <span>·</span>
+              <span>{totalCount} recipes</span>
             </div>
+
+            <h1 className="display-2 md:display-1 mt-5 md:mt-6 font-normal">
+              An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>.
+            </h1>
+
+            <p className="hand text-[28px] md:text-[36px] mt-3 md:mt-4">Hemlagad mat med kärlek.</p>
+
+            <p className="lede max-w-xl mt-5 md:mt-6">
+              Generations of recipes — Swedish, Hungarian, Swiss, and everywhere we&apos;ve eaten
+              well — gathered into one cookbook.
+            </p>
+
+            <div className="flex flex-wrap gap-3 md:gap-4 mt-7 md:mt-8 items-center">
+              <Link href="/recipes" className="btn">
+                Open the recipes
+              </Link>
+              <Link href="/about" className="btn btn--link">
+                Read our story
+              </Link>
+            </div>
+
+            <SprigDivider variant="berry" className="!mt-10 md:!mt-12 max-w-[420px]" />
           </div>
 
-          {/* Scroll hint */}
-          <div className="absolute inset-x-0 bottom-3 md:bottom-5 flex justify-center pointer-events-none">
-            <div className="font-serif-sc uppercase tracking-[0.3em] text-[10px] text-ink-soft/70">
-              scroll
+          <div className="relative bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-3 md:p-5">
+            <div className="relative aspect-square overflow-hidden">
+              <Image
+                src="/hero-table.jpg"
+                alt="A long, warmly lit family dining table"
+                fill
+                priority
+                sizes="(max-width: 768px) 90vw, 45vw"
+                className="object-cover"
+                style={{ filter: "saturate(0.96)" }}
+              />
             </div>
           </div>
-        </div>
-
-        <div className="container mx-auto px-6 pt-10 md:pt-14">
-          <p className="lede max-w-2xl mx-auto text-center">
-            Generations of recipes — Swedish, Hungarian, Swiss, and everywhere we&apos;ve eaten well —
-            gathered into one cookbook.
-          </p>
-          <SprigDivider variant="berry" className="max-w-md mx-auto !mt-8" />
         </div>
       </section>
 

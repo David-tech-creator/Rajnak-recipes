@@ -90,11 +90,16 @@ export function PhotoGallery({ eventId }: PhotoGalleryProps = {}) {
       }
 
       setError(errorMessage)
-      toast({
-        title: "Could not load photos",
-        description: errorMessage,
-        variant: "destructive",
-      })
+      // Only show the destructive toast to logged-in family members.
+      // Public visitors should see no error noise; the empty-state card
+      // below will read "No photographs yet" naturally.
+      if (user) {
+        toast({
+          title: "Could not load photos",
+          description: errorMessage,
+          variant: "destructive",
+        })
+      }
     } finally {
       setIsLoading(false)
     }

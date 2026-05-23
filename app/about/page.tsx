@@ -4,30 +4,36 @@ import { SprigDivider } from "@/components/sprig-divider"
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto px-6 py-16">
-      <div className="max-w-3xl mx-auto text-center mb-12">
-        <div className="eyebrow eyebrow--lingon">Our Story</div>
-        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
-          A family <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>, gathered over generations.
-        </h1>
-        <p className="lede">
-          A collection of the dishes we keep coming back to — gathered into one place.
-        </p>
-        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+    <div className="py-16">
+      <div className="container mx-auto px-6">
+        <div className="max-w-3xl mx-auto text-center mb-12">
+          <div className="eyebrow eyebrow--lingon">Our Story</div>
+          <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+            A family <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>, gathered over generations.
+          </h1>
+          <p className="lede">
+            A collection of the dishes we keep coming back to — gathered into one place.
+          </p>
+          <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+        </div>
       </div>
 
-      <div className="max-w-3xl mx-auto">
-        <div className="relative aspect-[16/9] mb-12 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] overflow-hidden">
-          <Image
-            src="/images/nordic-dining.png"
-            alt="A long, warmly lit family dining table"
-            fill
-            className="object-cover"
-            style={{ filter: "saturate(0.92)" }}
-            sizes="(max-width: 1024px) 100vw, 768px"
-            priority
-          />
-        </div>
+      {/* Full-bleed hero — no container, no cropping */}
+      <div className="relative w-full mb-12 border-y border-rule-soft bg-cream">
+        <Image
+          src="/Hero-image.png"
+          alt="A long, warmly lit family dining table"
+          width={1537}
+          height={1023}
+          priority
+          sizes="100vw"
+          className="w-full h-auto block"
+          style={{ filter: "saturate(0.96)" }}
+        />
+      </div>
+
+      <div className="container mx-auto px-6">
+        <div className="max-w-3xl mx-auto">
 
         <article className="recipe-prose text-[19px]">
           <p className="lede text-center mb-10">
@@ -76,11 +82,12 @@ export default function AboutPage() {
 
         <p className="hand text-[28px] text-right mt-10">&mdash; The Rajnak family</p>
 
-        <SprigDivider variant="arc" className="!mt-16 !mb-4 max-w-sm mx-auto" />
-      </div>
+          <SprigDivider variant="arc" className="!mt-16 !mb-4 max-w-sm mx-auto" />
+        </div>
 
-      <div className="max-w-5xl mx-auto mt-20 pt-16 border-t border-rule-soft">
-        <PhotoGallery />
+        <div className="max-w-5xl mx-auto mt-20 pt-16 border-t border-rule-soft">
+          <PhotoGallery />
+        </div>
       </div>
     </div>
   )
