@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { RecipeInteractive } from "@/components/recipe-interactive"
 import { SprigDivider } from "@/components/sprig-divider"
 
@@ -22,6 +22,7 @@ function hashView(): View {
 export function RecipeBody({ slug, baseServings, ingredients, instructions, story }: Props) {
   const [view, setView] = useState<View>("recipe")
   const hasStory = Boolean(story && story.trim())
+  const firstRender = useRef(true)
 
   useEffect(() => {
     setView(hashView())
@@ -29,6 +30,26 @@ export function RecipeBody({ slug, baseServings, ingredients, instructions, stor
     window.addEventListener("hashchange", onHash)
     return () => window.removeEventListener("hashchange", onHash)
   }, [])
+
+  // After view actually flips, scroll to the now-rendered section.
+  // We skip this on the very first render so an initial visit (no hash)
+  // doesn't auto-scroll past the hero.
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    if (firstRender.current) {
+      firstRender.current = false
+      // Honor an initial hash by scrolling once on first paint.
+      if (window.location.hash === "#story" || window.location.hash === "#recipe") {
+        requestAnimationFrame(() => {
+          const el = document.getElementById(view === "story" ? "story" : "recipe")
+          el?.scrollIntoView({ behavior: "smooth", block: "start" })
+        })
+      }
+      return
+    }
+    const el = document.getElementById(view === "story" ? "story" : "recipe")
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
+  }, [view])
 
   const switchTo = (v: View) => {
     setView(v)
