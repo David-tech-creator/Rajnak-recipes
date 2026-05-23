@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { SprigDivider } from "@/components/sprig-divider"
-import { RecipeInteractive } from "@/components/recipe-interactive"
+import { RecipeBody } from "@/components/recipe-body"
 import { PrintButton } from "@/components/print-button"
 import { RecipeCard } from "@/components/recipe-card"
 
@@ -172,7 +172,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
             )}
 
             <div className="flex flex-wrap items-center gap-4 mt-8">
-              <a href="#ingredients" className="btn">Open the recipe</a>
+              <a href="#recipe" className="btn">Open the recipe</a>
               {recipe.story && (
                 <a href="#story" className="btn btn--link">Read the story</a>
               )}
@@ -184,23 +184,6 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto pt-10 pb-4">
           <SprigDivider variant="berry" className="!mt-0 !mb-10" />
-
-          {/* The Story — origin, tradition, context. Authentic only. */}
-          {recipe.story && (
-            <section id="story" className="max-w-2xl mx-auto mb-12 scroll-mt-16">
-              <div className="eyebrow eyebrow--lingon text-center mb-3">The Story</div>
-              <div className="recipe-prose text-[19px]">
-                {recipe.story
-                  .split(/\n\n+/)
-                  .map((p) => p.trim())
-                  .filter(Boolean)
-                  .map((p, i) => (
-                    <p key={i}>{p}</p>
-                  ))}
-              </div>
-              <SprigDivider variant="leaf" className="!mt-8 !mb-2 max-w-xs mx-auto" />
-            </section>
-          )}
 
           {/* Description / prose (anything that isn't a numbered step).
               The first paragraph already ran as the lede inside the hero. */}
@@ -215,16 +198,13 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
             </div>
           )}
 
-          {(ingredientLines.length > 0 || recipe.instructions.length > 0) && (
-            <div id="ingredients" className="scroll-mt-16">
-              <RecipeInteractive
-                slug={slug}
-                baseServings={recipe.servings}
-                ingredients={ingredientLines}
-                instructions={recipe.instructions}
-              />
-            </div>
-          )}
+          <RecipeBody
+            slug={slug}
+            baseServings={recipe.servings}
+            ingredients={ingredientLines}
+            instructions={recipe.instructions}
+            story={recipe.story}
+          />
 
           {recipe.signoff && (
             <p className="hand text-[34px] md:text-[40px] text-center mt-12 mb-2 leading-tight">

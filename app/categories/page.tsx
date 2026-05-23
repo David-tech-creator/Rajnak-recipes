@@ -7,6 +7,13 @@ export const metadata = {
   title: "Categories | Rajnax: Dishes We Love",
 }
 
+const CATEGORY_BYLINES: Record<string, string> = {
+  "Family Recipes": "from Mormor's drawer",
+  "Found Recipes": "brought home from somewhere",
+  "Quick & Easy": "Tuesday-night supper",
+  "Christmas & Easter": "the long-table dishes",
+}
+
 export default function CategoriesPage() {
   const categories = getAllCategories()
   const allRecipes = getAllPosts()
@@ -19,6 +26,7 @@ export default function CategoriesPage() {
       slug: categoryToSlug(category),
       count: recipes.length,
       coverImage,
+      byline: CATEGORY_BYLINES[category] ?? "gathered along the way",
     }
   })
 
@@ -36,27 +44,30 @@ export default function CategoriesPage() {
         <SprigDivider variant="berry" className="!mt-8 !mb-2 max-w-sm mx-auto" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {categoryData.map((category) => (
           <Link
             key={category.name}
             href={`/categories/${category.slug}`}
             className="recipe-card block group"
           >
-            <div className="relative aspect-[4/3] overflow-hidden category-box">
+            <div className="relative aspect-[4/5] overflow-hidden">
               <Image
                 src={category.coverImage || "/images/recipes/placeholder.svg"}
                 alt={category.name}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                style={{ filter: "saturate(0.9)" }}
+                style={{ filter: "saturate(0.92)" }}
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
-              <div className="category-box-label">{category.name}</div>
             </div>
-            <div className="py-4 text-center">
-              <p className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
-                {category.count} recipes
+            <div className="py-5 px-4 text-center">
+              <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
+                {category.count} {category.count === 1 ? "recipe" : "recipes"}
+              </div>
+              <h3 className="recipe-card-title">{category.name}</h3>
+              <p className="hand text-[18px] md:text-[20px] mt-2 leading-tight">
+                &mdash; {category.byline}
               </p>
             </div>
           </Link>
