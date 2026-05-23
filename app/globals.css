@@ -402,3 +402,59 @@ h1, h2, h3, h4, h5, h6 {
 @layer base {
   * { @apply border-border; }
 }
+
+/* —————————————————————————————————————————————————————————————
+   Print stylesheet — clean, ink-only recipe page
+   ————————————————————————————————————————————————————————————— */
+@media print {
+  html, body {
+    background: white !important;
+    color: #000 !important;
+    background-image: none !important;
+  }
+  /* Hide chrome */
+  header, footer, nav, .print\:hidden {
+    display: none !important;
+  }
+  /* Hide the related-recipes section and large hero image — print
+     should show the recipe content only */
+  article > div:first-child .relative.aspect-\[3\/4\] {
+    max-width: 240px;
+    aspect-ratio: 3 / 4;
+  }
+  .editorial-head, .recipe-card, section.editorial-head {
+    display: none !important;
+  }
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+  .btn, .tag {
+    display: none !important;
+  }
+  /* Open up the article width and remove shadows */
+  .container {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  .shadow-\[var\(--paper-shadow\)\] {
+    box-shadow: none !important;
+  }
+  .lede {
+    color: #333 !important;
+  }
+  /* Ingredients + method print better as one column */
+  .recipe-ingredients-block {
+    page-break-inside: avoid;
+  }
+  ol li, ul.ingredients li {
+    page-break-inside: avoid;
+  }
+  /* Force colors to ink */
+  .text-lingon, .text-lingon-deep {
+    color: #000 !important;
+  }
+  .eyebrow, .eyebrow--lingon {
+    color: #555 !important;
+  }
+}

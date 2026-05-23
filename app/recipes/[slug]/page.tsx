@@ -3,6 +3,8 @@ import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { SprigDivider } from "@/components/sprig-divider"
+import { RecipeInteractive } from "@/components/recipe-interactive"
+import { PrintButton } from "@/components/print-button"
 
 export function generateStaticParams() {
   const posts = getAllPostSlugs()
@@ -26,18 +28,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${recipe.title} | Rajnax: Dishes We Love`,
     description: `${recipe.title} — a ${recipe.category} recipe from the Rajnak family collection.`,
   }
-}
-
-function splitIngredient(raw: unknown): { qty: string; item: string } {
-  const trimmed = String(raw ?? "").trim()
-  if (!trimmed) return { qty: "", item: "" }
-  const match = trimmed.match(
-    /^([\d¼½¾⅓⅔⅛⅜⅝⅞.,/]+(?:\s*[-–]\s*[\d¼½¾⅓⅔⅛⅜⅝⅞.,/]+)?(?:\s+(?:g|kg|ml|cl|dl|l|tsp|tbsp|cup|cups|oz|lb|lbs|st|stk|portions?|servings?))?)\s+(.+)$/i,
-  )
-  if (match) {
-    return { qty: match[1].trim(), item: match[2].trim() }
-  }
-  return { qty: "", item: trimmed }
 }
 
 function getRecipeNumber(slug: string, allSlugs: string[]): string {
@@ -77,11 +67,16 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
     .filter((line) => !/^\d{1,3}$/.test(line))
     .filter((line) => !/^Inspired by/i.test(line))
 
-  const ingredients = recipe.ingredients
+  const ingredientLines = recipe.ingredients
     .map((i) => String(i ?? "").trim())
-    .filter((i) => i.length > 0 && i.toLowerCase() !== "to be added" && i.toLowerCase() !== "source??")
-    .map((i) => splitIngredient(i))
-    .filter((i) => i.item.length > 0)
+    .filter(
+      (i) =>
+        i.length > 0 &&
+        i.toLowerCase() !== "to be added" &&
+        i.toLowerCase() !== "source??" &&
+        i !== "????" &&
+        i.toLowerCase() !== "blabla",
+    )
 
   return (
     <article>
@@ -180,42 +175,18 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
             </div>
           )}
 
-          {/* Ingredients + instructions */}
-          {(ingredients.length > 0 || recipe.instructions.length > 0) && (
-            <div className="grid md:grid-cols-[5fr_7fr] gap-12 md:gap-16 mt-8 mb-16">
-              {ingredients.length > 0 && (
-                <aside>
-                  <div className="eyebrow eyebrow--lingon mb-4">No. I · Ingredients</div>
-                  <h2 className="editorial-h3 mb-6 font-normal">Ingredients</h2>
-                  <ul className="ingredients">
-                    {ingredients.map((ing, i) => (
-                      <li key={i}>
-                        <span className="qty num">{ing.qty || "—"}</span>
-                        <span className="item">{ing.item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </aside>
-              )}
-
-              {recipe.instructions.length > 0 && (
-                <section>
-                  <div className="eyebrow eyebrow--lingon mb-4">No. II · Method</div>
-                  <h2 className="editorial-h3 mb-6 font-normal">Instructions</h2>
-                  <ol className="space-y-6">
-                    {recipe.instructions.map((step, i) => (
-                      <li key={i} className="grid grid-cols-[44px_1fr] gap-4">
-                        <span className="font-serif num text-2xl text-lingon leading-none pt-1">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span className="text-[18px] leading-[1.55] text-ink-soft">{step}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-              )}
-            </div>
+          {(ingredientLines.length > 0 || recipe.instructions.length > 0) && (
+            <RecipeInteractive
+              slug={slug}
+              baseServings={recipe.servings}
+              ingredients={ingredientLines}
+              instructions={recipe.instructions}
+            />
           )}
+
+          <div className="print:hidden flex flex-wrap gap-3 justify-center mt-4 mb-2">
+            <PrintButton />
+          </div>
 
           <SprigDivider variant="leaf" className="!mt-12 !mb-6" />
         </div>
