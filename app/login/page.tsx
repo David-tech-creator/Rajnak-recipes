@@ -1,5 +1,9 @@
 import { signIn } from "./actions"
 
+// Never cache the login page at the CDN — it needs to read fresh searchParams
+// (?error=, ?redirectTo=) and Vercel was happily HIT-ing a stale shell.
+export const dynamic = "force-dynamic"
+
 const ERROR_MESSAGES: Record<string, string> = {
   "not-allowed":
     "This site is for the Rajnak family. Sign in with one of the registered family email addresses.",
