@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
@@ -29,6 +28,29 @@ const navLinkClass =
   "font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-soft hover:text-lingon-deep transition-colors"
 const dropdownItemClass =
   "block px-4 py-2 font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-soft hover:text-lingon-deep hover:bg-parchment-deep/40"
+
+function SprigMark() {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      className="w-7 h-7 md:w-8 md:h-8 text-oliveleaf flex-shrink-0"
+      aria-hidden
+    >
+      <path d="M32 8 Q32 32 32 56" />
+      <path d="M32 20 Q22 18 18 24 Q26 26 32 24" fill="currentColor" fillOpacity=".15" />
+      <path d="M32 24 Q42 22 46 28 Q38 30 32 28" fill="currentColor" fillOpacity=".15" />
+      <path d="M32 36 Q22 34 18 40 Q26 42 32 40" fill="currentColor" fillOpacity=".15" />
+      <path d="M32 40 Q42 38 46 44 Q38 46 32 44" fill="currentColor" fillOpacity=".15" />
+      <circle cx="28" cy="50" r="2.4" fill="var(--lingon)" />
+      <circle cx="34" cy="52" r="2.6" fill="var(--lingon)" />
+      <circle cx="30" cy="55" r="2" fill="var(--lingon)" />
+    </svg>
+  )
+}
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -58,22 +80,66 @@ export function Header() {
   }
 
   return (
-    <header className="relative border-b border-rule-soft bg-parchment/0">
-      <div className="container mx-auto px-4 pt-4 pb-2 md:pt-5">
-        <div className="flex flex-col items-center relative">
-          {/* Logo (tagline is baked into the image) */}
-          <Link href="/" className="block mb-3">
-            <Image
-              src="/images/rajnak-family-logo-new.png"
-              alt="The Rajnak family recipe collection"
-              width={160}
-              height={80}
-              priority
-            />
+    <header className="sticky top-0 z-30 border-b border-rule-soft bg-parchment/95 backdrop-blur-sm">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="flex items-center justify-between gap-4 h-14 md:h-16 relative">
+          {/* Wordmark — sprig + name on a single horizontal line */}
+          <Link href="/" className="flex items-center gap-3 group z-10">
+            <SprigMark />
+            <span className="font-serif text-ink text-[18px] md:text-[20px] leading-none group-hover:text-lingon-deep transition-colors whitespace-nowrap">
+              Rajnak<span className="hidden sm:inline italic text-ink-soft"> · recipes</span>
+            </span>
           </Link>
 
-          {/* Search and User Icons */}
-          <div className="absolute right-0 top-0 flex items-center gap-5">
+          {/* Desktop nav — absolutely centered between wordmark and icons */}
+          <nav className="hidden md:flex items-center gap-8 lg:gap-10 absolute left-1/2 -translate-x-1/2">
+            <Link href="/" className={navLinkClass}>Home</Link>
+
+            <div className="relative group">
+              <Link href="/recipes" className={`${navLinkClass} flex items-center gap-1`}>
+                Recipes <ChevronDown className="h-3 w-3" />
+              </Link>
+              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-56 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
+                  <Link href="/recipes" className={dropdownItemClass}>All Recipes</Link>
+                  <Link href="/categories" className={dropdownItemClass}>Categories</Link>
+                  <Link href="/search" className={dropdownItemClass}>Search</Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative group">
+              <Link href="/categories" className={`${navLinkClass} flex items-center gap-1`}>
+                Categories <ChevronDown className="h-3 w-3" />
+              </Link>
+              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-64 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
+                  <Link href="/categories" className={dropdownItemClass}>All Categories</Link>
+                  <div className="my-1 border-t border-rule-soft"></div>
+                  {RECIPE_CATEGORIES.map((cat) => (
+                    <Link key={cat.slug} href={`/categories/${cat.slug}`} className={dropdownItemClass}>
+                      {cat.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="relative group">
+              <Link href="/about" className={`${navLinkClass} flex items-center gap-1`}>
+                About <ChevronDown className="h-3 w-3" />
+              </Link>
+              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-56 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
+                  <Link href="/about" className={dropdownItemClass}>Our Story</Link>
+                  <Link href="/about/family-events" className={dropdownItemClass}>Family Events</Link>
+                </div>
+              </div>
+            </div>
+          </nav>
+
+          {/* Right cluster */}
+          <div className="flex items-center gap-4 md:gap-5 z-10">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               className="text-ink-muted hover:text-lingon-deep transition-colors"
@@ -93,9 +159,7 @@ export function Header() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/account" className={dropdownItemClass}>
-                      Account
-                    </Link>
+                    <Link href="/account" className={dropdownItemClass}>Account</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel className="font-serif-sc uppercase tracking-[0.22em] text-[10px] text-ink-muted">
@@ -103,14 +167,10 @@ export function Header() {
                   </DropdownMenuLabel>
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
-                      <Link href="/admin/recipes" className={dropdownItemClass}>
-                        Manage Recipes
-                      </Link>
+                      <Link href="/admin/recipes" className={dropdownItemClass}>Manage Recipes</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/admin/recipes/new" className={dropdownItemClass}>
-                        Add a Recipe
-                      </Link>
+                      <Link href="/admin/recipes/new" className={dropdownItemClass}>Add a Recipe</Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
@@ -137,136 +197,61 @@ export function Header() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Menu"
             >
-              {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
+        </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex justify-center items-center gap-10 pt-2">
-            <Link href="/" className={navLinkClass}>
-              Home
-            </Link>
-
-            <div className="relative group">
-              <Link href="/recipes" className={`${navLinkClass} flex items-center gap-1`}>
-                Recipes <ChevronDown className="h-3 w-3" />
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-56 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
-                  <Link href="/recipes" className={dropdownItemClass}>
-                    All Recipes
-                  </Link>
-                  <Link href="/categories" className={dropdownItemClass}>
-                    Categories
-                  </Link>
-                  <Link href="/search" className={dropdownItemClass}>
-                    Search
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative group">
-              <Link href="/categories" className={`${navLinkClass} flex items-center gap-1`}>
-                Categories <ChevronDown className="h-3 w-3" />
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-64 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
-                  <Link href="/categories" className={dropdownItemClass}>
-                    All Categories
-                  </Link>
-                  <div className="my-1 border-t border-rule-soft"></div>
-                  {RECIPE_CATEGORIES.map((cat) => (
-                    <Link key={cat.slug} href={`/categories/${cat.slug}`} className={dropdownItemClass}>
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="relative group">
-              <Link href="/about" className={`${navLinkClass} flex items-center gap-1`}>
-                About <ChevronDown className="h-3 w-3" />
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-56 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
-                  <Link href="/about" className={dropdownItemClass}>
-                    Our Story
-                  </Link>
-                  <Link href="/about/family-events" className={dropdownItemClass}>
-                    Family Events
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </nav>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <nav className="md:hidden w-full py-6 space-y-4 text-center border-t border-rule-soft mt-4">
-              <Link href="/" className={navLinkClass} onClick={() => setIsMenuOpen(false)}>
-                Home
-              </Link>
-              <div></div>
-              <Link href="/recipes" className={navLinkClass} onClick={() => setIsMenuOpen(false)}>
-                All Recipes
-              </Link>
-              <div></div>
-              <Link href="/search" className={navLinkClass} onClick={() => setIsMenuOpen(false)}>
-                Search
-              </Link>
-              <div></div>
-              <Link href="/categories" className={navLinkClass} onClick={() => setIsMenuOpen(false)}>
-                Categories
-              </Link>
-              {RECIPE_CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/categories/${cat.slug}`}
-                  className="block font-serif text-ink-soft italic hover:text-lingon-deep text-base"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {cat.name}
-                </Link>
-              ))}
-              <div></div>
-              <Link href="/about" className={navLinkClass} onClick={() => setIsMenuOpen(false)}>
-                About
-              </Link>
+        {/* Mobile drawer */}
+        {isMenuOpen && (
+          <nav className="md:hidden border-t border-rule-soft py-5 space-y-3 text-center">
+            <Link href="/" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
+            <Link href="/recipes" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>All Recipes</Link>
+            <Link href="/search" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Search</Link>
+            <Link href="/categories" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Categories</Link>
+            {RECIPE_CATEGORIES.map((cat) => (
               <Link
-                href="/about/family-events"
-                className="block font-serif text-ink-soft italic hover:text-lingon-deep text-base"
+                key={cat.slug}
+                href={`/categories/${cat.slug}`}
+                className="block font-serif italic text-ink-soft hover:text-lingon-deep text-base"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Family Events
+                {cat.name}
               </Link>
-            </nav>
-          )}
+            ))}
+            <Link href="/about" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>About</Link>
+            <Link
+              href="/about/family-events"
+              className="block font-serif italic text-ink-soft hover:text-lingon-deep text-base"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Family Events
+            </Link>
+          </nav>
+        )}
 
-          {/* Search overlay */}
-          {searchOpen && (
-            <div className="absolute top-14 right-0 w-72 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-30">
-              <form onSubmit={handleSearch} className="flex">
-                <input
-                  type="text"
-                  placeholder="Search recipes…"
-                  className="w-full py-2 px-4 bg-transparent text-ink placeholder:text-ink-muted/60 focus:outline-none font-serif italic text-lg"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  className="px-4 text-ink-muted hover:text-lingon-deep"
-                  aria-label="Submit search"
-                >
-                  <Search size={18} strokeWidth={1.4} />
-                </button>
-              </form>
-            </div>
-          )}
-        </div>
+        {/* Search overlay */}
+        {searchOpen && (
+          <div className="absolute top-full right-4 md:right-6 mt-2 w-80 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-30">
+            <form onSubmit={handleSearch} className="flex">
+              <input
+                type="text"
+                placeholder="Search recipes…"
+                className="w-full py-2 px-4 bg-transparent text-ink placeholder:text-ink-muted/60 focus:outline-none font-serif italic text-lg"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+              />
+              <button
+                type="submit"
+                className="px-4 text-ink-muted hover:text-lingon-deep"
+                aria-label="Submit search"
+              >
+                <Search size={18} strokeWidth={1.4} />
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </header>
   )

@@ -11,11 +11,31 @@ import {
 import { SprigDivider } from "@/components/sprig-divider"
 import { RecipeCard } from "@/components/recipe-card"
 
-const FEATURED_CATEGORIES: Array<{ name: string; image: string }> = [
-  { name: "Family Recipes", image: "/images/recipes/mammas-gulasch-soup.jpg" },
-  { name: "Found Recipes", image: "/images/recipes/sushi-katsu-tempura.jpg" },
-  { name: "Quick & Easy", image: "/images/recipes/chicken-vegetable-wok.jpg" },
-  { name: "Christmas & Easter", image: "/images/recipes/swedish-christmas-ham.jpg" },
+const FEATURED_CATEGORIES: Array<{
+  name: string
+  image: string
+  byline: string
+}> = [
+  {
+    name: "Family Recipes",
+    image: "/images/recipes/mammas-gulasch-soup.jpg",
+    byline: "from Mormor's drawer",
+  },
+  {
+    name: "Found Recipes",
+    image: "/images/recipes/sushi-katsu-tempura.jpg",
+    byline: "brought home from somewhere",
+  },
+  {
+    name: "Quick & Easy",
+    image: "/images/recipes/chicken-vegetable-wok.jpg",
+    byline: "Tuesday-night supper",
+  },
+  {
+    name: "Christmas & Easter",
+    image: "/images/recipes/swedish-christmas-ham.jpg",
+    byline: "the long-table dishes",
+  },
 ]
 
 export default function Home() {
@@ -108,7 +128,7 @@ export default function Home() {
           <h2 className="editorial-h2 mt-3 font-normal">By category</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {FEATURED_CATEGORIES.map((cat) => {
             const count = getPostsByCategory(cat.name).length
             if (count === 0) return null
@@ -116,17 +136,27 @@ export default function Home() {
               <Link
                 key={cat.name}
                 href={`/categories/${categoryToSlug(cat.name)}`}
-                className="category-box aspect-square relative block overflow-hidden bg-cream border border-rule-soft"
+                className="recipe-card block group"
               >
-                <Image
-                  src={cat.image}
-                  alt={cat.name}
-                  fill
-                  className="object-cover transition-transform duration-500 hover:scale-[1.02]"
-                  style={{ filter: "saturate(0.9)" }}
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                />
-                <div className="category-box-label">{cat.name}</div>
+                <div className="aspect-[4/5] relative overflow-hidden">
+                  <Image
+                    src={cat.image}
+                    alt={cat.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    style={{ filter: "saturate(0.92)" }}
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                  />
+                </div>
+                <div className="py-5 px-4 text-center">
+                  <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
+                    {count} {count === 1 ? "recipe" : "recipes"}
+                  </div>
+                  <h3 className="recipe-card-title">{cat.name}</h3>
+                  <p className="hand text-[18px] md:text-[20px] mt-2 leading-tight">
+                    &mdash; {cat.byline}
+                  </p>
+                </div>
               </Link>
             )
           })}
