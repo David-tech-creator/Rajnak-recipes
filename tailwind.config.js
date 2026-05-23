@@ -2,12 +2,9 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "*.{js,ts,jsx,tsx,mdx}",
-    "app/**/*.{ts,tsx}",
-    "components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx,mdx}",
+    "./components/**/*.{ts,tsx}",
+    "./content/**/*.{md,mdx}",
   ],
   theme: {
     extend: {
@@ -86,12 +83,6 @@ module.exports = {
           css: {
             maxWidth: "100%",
             color: "var(--tw-prose-body)",
-            a: {
-              color: "var(--tw-prose-links)",
-              "&:hover": {
-                color: "var(--tw-prose-links-hover)",
-              },
-            },
           },
         },
       },
