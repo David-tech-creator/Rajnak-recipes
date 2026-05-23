@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const matched = findCategoryBySlug(category, allCategories)
 
   return {
-    title: `${matched || category} Recipes | Rajnax: Dishes We Love`,
+    title: `${matched || category} Recipes`,
     description: `Browse our collection of ${matched || category} recipes`,
   }
 }
@@ -52,6 +52,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   }
 
   const recipes = getPostsByCategory(matchedCategory)
+  const all = getAllPosts()
+  const numberFor = (slug: string) =>
+    String(all.findIndex((r) => r.slug === slug) + 1).padStart(2, "0")
 
   return (
     <div className="container mx-auto px-6 py-16">
@@ -69,22 +72,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
       {recipes.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {(() => {
-            const all = getAllPosts()
-            const numberFor = (slug: string) =>
-              String(all.findIndex((r) => r.slug === slug) + 1).padStart(2, "0")
-            return recipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.slug}
-                slug={recipe.slug}
-                title={recipe.title}
-                category={recipe.category}
-                image={recipe.image}
-                number={numberFor(recipe.slug)}
-                byline={recipe.byline ?? defaultBylineFor(recipe.category)}
-              />
-            ))
-          })()}
+          {recipes.map((recipe) => (
+            <RecipeCard
+              key={recipe.slug}
+              slug={recipe.slug}
+              title={recipe.title}
+              category={recipe.category}
+              image={recipe.image}
+              number={numberFor(recipe.slug)}
+              byline={recipe.byline ?? defaultBylineFor(recipe.category)}
+            />
+          ))}
         </div>
       ) : (
         <p className="text-center py-12 font-serif italic text-ink-muted text-lg">

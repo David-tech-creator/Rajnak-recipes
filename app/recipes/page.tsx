@@ -3,7 +3,7 @@ import { RecipesGrid } from "./recipes-grid"
 import { SprigDivider } from "@/components/sprig-divider"
 
 export const metadata = {
-  title: "All Recipes | Rajnax: Dishes We Love",
+  title: "All Recipes",
 }
 
 export default function RecipesPage() {

@@ -32,7 +32,7 @@ export default function EditEventPage() {
 
   useEffect(() => {
     if (user === null) {
-      router.push("/login?redirect=/about/family-events/" + eventId + "/edit")
+      router.push(`/login?redirectTo=${encodeURIComponent(`/about/family-events/${eventId}/edit`)}`)
       return
     }
 

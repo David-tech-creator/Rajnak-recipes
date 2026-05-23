@@ -5,7 +5,7 @@ import { SprigDivider } from "@/components/sprig-divider"
 import { AdminRecipeRow } from "./recipe-row"
 
 export const metadata = {
-  title: "Manage Recipes | Rajnak Family",
+  title: "Manage Recipes",
 }
 
 export default function AdminRecipesPage() {

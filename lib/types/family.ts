@@ -30,8 +30,3 @@ export const EVENT_TYPES = [
   { value: "reunion", label: "Reunion" },
   { value: "other", label: "Other" },
 ]
-
-export function getEventTypeLabel(value: string): string {
-  const eventType = EVENT_TYPES.find((type) => type.value === value)
-  return eventType ? eventType.label : "Other"
-}

@@ -4,7 +4,7 @@ import { SprigDivider } from "@/components/sprig-divider"
 import { RecipeCard } from "@/components/recipe-card"
 
 export const metadata = {
-  title: "Search | Rajnax: Dishes We Love",
+  title: "Search",
 }
 
 export default async function SearchPage({

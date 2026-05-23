@@ -4,7 +4,7 @@ const owner = process.env.GITHUB_REPO_OWNER ?? "David-tech-creator"
 const repo = process.env.GITHUB_REPO_NAME ?? "Rajnak-recipes"
 const branch = process.env.GITHUB_REPO_BRANCH ?? "main"
 
-export function getOctokit(): Octokit {
+function getOctokit(): Octokit {
   const token = process.env.GITHUB_TOKEN
   if (!token) {
     throw new Error(
@@ -14,14 +14,10 @@ export function getOctokit(): Octokit {
   return new Octokit({ auth: token })
 }
 
-export function repoInfo() {
-  return { owner, repo, branch }
-}
-
 /**
  * Read an existing file from the repo. Returns `null` if it doesn't exist.
  */
-export async function getFile(path: string): Promise<{ sha: string; content: string } | null> {
+async function getFile(path: string): Promise<{ sha: string; content: string } | null> {
   const octokit = getOctokit()
   try {
     const res = await octokit.repos.getContent({ owner, repo, path, ref: branch })

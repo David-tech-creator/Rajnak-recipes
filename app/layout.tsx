@@ -50,9 +50,9 @@ export const metadata: Metadata = {
     siteName,
     images: [
       {
-        url: "/Hero-image.png",
-        width: 1537,
-        height: 1023,
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
         alt: "A long, warmly lit family dining table",
       },
     ],
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteName,
     description: siteDescription,
-    images: ["/Hero-image.png"],
+    images: ["/og-image.jpg"],
   },
 }
 

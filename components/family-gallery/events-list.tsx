@@ -85,28 +85,25 @@ export function EventsList() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.map((event) => {
-            const eventType = (event as { event_type?: string }).event_type
-            return (
-              <Link
-                key={event.id}
-                href={`/about/family-events/${event.id}`}
-                className="recipe-card block"
-              >
-                <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep flex items-center justify-center">
-                  <span className="font-serif italic text-ink-muted text-base px-6 text-center">
-                    {event.location || format(new Date(event.date), "MMMM yyyy")}
-                  </span>
+          {events.map((event) => (
+            <Link
+              key={event.id}
+              href={`/about/family-events/${event.id}`}
+              className="recipe-card block"
+            >
+              <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep flex items-center justify-center">
+                <span className="font-serif italic text-ink-muted text-base px-6 text-center">
+                  {event.location || format(new Date(event.date), "MMMM yyyy")}
+                </span>
+              </div>
+              <div className="py-5 text-center px-4">
+                <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
+                  {event.event_type ? event.event_type.replace(/-/g, " ") : format(new Date(event.date), "PPP")}
                 </div>
-                <div className="py-5 text-center px-4">
-                  <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
-                    {eventType ? eventType.replace(/-/g, " ") : format(new Date(event.date), "PPP")}
-                  </div>
-                  <h3 className="recipe-card-title">{event.title}</h3>
-                </div>
-              </Link>
-            )
-          })}
+                <h3 className="recipe-card-title">{event.title}</h3>
+              </div>
+            </Link>
+          ))}
         </div>
       )}
     </div>

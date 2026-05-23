@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
@@ -14,11 +13,7 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const { signIn, signUp } = useAuth()
-  const router = useRouter()
-  const searchParams = useSearchParams()
   const { toast } = useToast()
-
-  const redirectTo = searchParams.get("redirectTo") || "/"
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

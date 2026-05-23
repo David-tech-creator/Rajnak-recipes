@@ -6,7 +6,7 @@ import { SprigDivider } from "@/components/sprig-divider"
 export const dynamic = "force-dynamic"
 
 export const metadata = {
-  title: "Edit recipe | Rajnak Family",
+  title: "Edit recipe",
 }
 
 export default async function EditRecipePage({ params }: { params: Promise<{ slug: string }> }) {

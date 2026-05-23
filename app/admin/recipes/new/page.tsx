@@ -2,7 +2,7 @@ import { AdminRecipeForm } from "@/components/admin-recipe-form"
 import { SprigDivider } from "@/components/sprig-divider"
 
 export const metadata = {
-  title: "Add a recipe | Rajnak Family",
+  title: "Add a recipe",
 }
 
 export default function NewRecipePage() {

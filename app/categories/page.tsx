@@ -4,7 +4,7 @@ import { getAllCategories, getPostsByCategory, getAllPosts, categoryToSlug } fro
 import { SprigDivider } from "@/components/sprig-divider"
 
 export const metadata = {
-  title: "Categories | Rajnax: Dishes We Love",
+  title: "Categories",
 }
 
 const CATEGORY_BYLINES: Record<string, string> = {
