@@ -9,9 +9,11 @@ import { AuthProvider } from "@/lib/auth-context"
 import { Toaster } from "@/components/ui/toaster"
 import { createClient } from "@/lib/supabase/server"
 
+// Font weights are intentionally lean — every weight is a separate woff2
+// download. 4 normal + 1 italic + 1 SC + 1 hand = 7 files instead of 16.
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
   style: ["normal", "italic"],
   variable: "--font-cormorant",
   display: "swap",
@@ -19,14 +21,14 @@ const cormorant = Cormorant_Garamond({
 
 const cormorantSc = Cormorant_SC({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400"],
   variable: "--font-cormorant-sc",
   display: "swap",
 })
 
 const caveat = Caveat({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400"],
   variable: "--font-caveat",
   display: "swap",
 })
@@ -87,6 +89,12 @@ export default async function RootLayout({
         <link rel="icon" href="/images/rajnak-family-logo.png" type="image/png" />
       </head>
       <body>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-cream focus:border focus:border-ink focus:px-4 focus:py-2 focus:font-serif-sc focus:uppercase focus:tracking-[0.22em] focus:text-[12px]"
+        >
+          Skip to content
+        </a>
         <Suspense
           fallback={
             <div className="flex min-h-screen items-center justify-center text-gray-400 text-sm tracking-wider">
@@ -96,7 +104,7 @@ export default async function RootLayout({
         >
           <AuthProvider initialUser={initialUser}>
             <Header />
-            <main>{children}</main>
+            <main id="main">{children}</main>
             <Footer />
             <Toaster />
           </AuthProvider>

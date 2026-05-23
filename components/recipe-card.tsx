@@ -22,7 +22,7 @@ export function RecipeCard({ slug, title, category, image, number, byline }: Rec
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
           style={{ filter: "saturate(0.92)" }}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
         {number && (
           <div className="absolute top-3 left-3 bg-cream/95 backdrop-blur-sm border border-ink px-3 py-1 font-serif-sc uppercase tracking-[0.22em] text-[10px] text-ink">

@@ -6,7 +6,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    // Vercel optimizes images automatically (AVIF/WebP + responsive sizes).
     remotePatterns: [
       { protocol: "https", hostname: "*.supabase.co" },
     ],
