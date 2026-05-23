@@ -1,73 +1,60 @@
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient } from "@supabase/ssr"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-const protectedPaths = [
-  '/dashboard',
-  '/account',
-  '/recipes/create-new',
-  '/my-recipes',
-  '/admin',
-  '/admin/dashboard',
-  '/admin/recipes',
-]
+const protectedPaths = ["/account"]
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
-  
-  const supabase = createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        getAll() {
-          return req.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            res.cookies.set(name, value, options)
-          })
-        },
+
+  // If Supabase env vars are missing, skip auth checks rather than crashing
+  // every request. The protected pages will surface their own missing-env
+  // error in dev.
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return res
+  }
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return req.cookies.getAll()
       },
-    }
-  )
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          res.cookies.set(name, value, options)
+        })
+      },
+    },
+  })
 
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
-  // If accessing protected route without auth, redirect to login
-  const isProtectedPath = protectedPaths.some(path => 
-    req.nextUrl.pathname.startsWith(path)
-  )
+  const isProtectedPath = protectedPaths.some((path) => req.nextUrl.pathname.startsWith(path))
 
   if (isProtectedPath && !session) {
-    const redirectUrl = new URL('/login', req.url)
-    redirectUrl.searchParams.set('redirectTo', req.nextUrl.pathname)
+    const redirectUrl = new URL("/login", req.url)
+    redirectUrl.searchParams.set("redirectTo", req.nextUrl.pathname)
     return NextResponse.redirect(redirectUrl)
   }
 
-  // If already logged in and trying to access login/signup pages, redirect to dashboard
-  if ((req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/signup') && session) {
-    const redirectTo = req.nextUrl.searchParams.get('redirectTo')
+  // If already logged in and visiting /login, send back to where they came from
+  // (or the home page).
+  if (req.nextUrl.pathname === "/login" && session) {
+    const redirectTo = req.nextUrl.searchParams.get("redirectTo")
     if (redirectTo) {
       return NextResponse.redirect(new URL(decodeURIComponent(redirectTo), req.url))
     }
-    return NextResponse.redirect(new URL('/dashboard', req.url))
+    return NextResponse.redirect(new URL("/", req.url))
   }
 
   return res
 }
 
 export const config = {
-  matcher: [
-    '/login',
-    '/signup',
-    '/dashboard/:path*',
-    '/account/:path*',
-    '/recipes/create-new',
-    '/my-recipes',
-    '/admin/:path*',
-  ]
+  matcher: ["/login", "/account/:path*"],
 }

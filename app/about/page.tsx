@@ -6,12 +6,13 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-6 py-16">
       <div className="max-w-3xl mx-auto text-center mb-12">
-        <div className="eyebrow eyebrow--lingon">No. IV · Our Story</div>
+        <div className="eyebrow eyebrow--lingon">Our Story</div>
         <h1 className="editorial-h1 mt-3 mb-4 font-normal">
-          An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>kitchen</em>, four generations deep.
+          A family <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>, gathered over four generations.
         </h1>
         <p className="lede">
-          Recipes carried from northern Sweden to the wider world, then back to the family table.
+          Hungarian and Swedish recipes, written down on the backs of envelopes and in the
+          margins of older cookbooks, now collected into one place.
         </p>
         <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
       </div>
@@ -20,7 +21,7 @@ export default function AboutPage() {
         <div className="relative aspect-[16/9] mb-12 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] overflow-hidden">
           <Image
             src="/images/nordic-dining.png"
-            alt="A warm dining room with a woman setting the table"
+            alt="A long, warmly lit family dining table"
             fill
             className="object-cover"
             style={{ filter: "saturate(0.92)" }}
@@ -30,94 +31,62 @@ export default function AboutPage() {
         </div>
 
         <article className="recipe-prose text-[19px]">
-          <h2>Our Family Story</h2>
-
-          <p>
-            Welcome to Our Family Recipe Collection, a diverse treasury of beloved recipes from around the world that
-            spans four generations of our family. What began as handwritten notes in the margins of cookbooks and on the
-            backs of envelopes has evolved into this digital collection of our culinary heritage, featuring dishes from
-            across the globe that have become part of our family&apos;s story.
+          <p className="lede text-center mb-10">
+            What began as scraps of paper passed between kitchens has become this book — a working
+            archive of the dishes that have fed our family across countries and decades.
           </p>
 
+          <h2>The Hungarian side</h2>
           <p>
-            The story begins in the early 1920s with our great-grandmother, who emigrated from northern Sweden to start
-            a new life. Bringing little more than her family recipes and a cast-iron skillet passed down from her own
-            mother, she kept her connection to home alive through the foods she prepared. Her cinnamon buns became
-            legendary in her new community, and her Swedish meatballs were the centerpiece of every holiday gathering.
+            Pörkölt slow-simmered with paprika, töltött káposzta on cold afternoons, körözött spread on
+            black bread, langos torn warm at the table, rakott krumpli baked layer by layer, gulasch
+            soup that improves overnight. These are the recipes that came with us — written in spiral
+            notebooks, sometimes only as ingredient lists with the method left to memory.
           </p>
 
-          <h2>From Generation to Generation</h2>
-
+          <h2>The Swedish side</h2>
           <p>
-            As the family grew, so did our recipe collection. Our daughter married into another family, bringing new
-            flavors and techniques to our table. She was known for her innovative approach to traditional dishes, often
-            incorporating ingredients and methods from her travels and friendships with people from different cultures.
-            Her cured salmon with mustard sauce became a Christmas Eve tradition, while her experiments with curries,
-            stir-fries, and Mediterranean dishes expanded our culinary horizons.
+            Kanelbullar on Sunday mornings, semlor in February, gravadlax at Christmas, ärtsoppa on
+            Thursdays the way the soldiers ate it, glögg with almonds and raisins, fattiga riddare in
+            the cast-iron pan. The Swedish kitchen takes its time, and it rewards the trouble.
           </p>
 
+          <h2>Everything else we&apos;ve picked up</h2>
           <p>
-            By the 1970s, our daughter had taken up the family&apos;s culinary torch. A passionate home cook with an
-            adventurous palate, she significantly expanded our repertoire during her extensive travels across Europe,
-            Asia, Africa, and the Americas. She was the first to document our family recipes systematically, creating a
-            handbound cookbook as a wedding gift for each of her children. Her marginalia&mdash;&ldquo;add more
-            dill,&rdquo; &ldquo;substitute coconut milk for a Thai twist,&rdquo; &ldquo;Papa&apos;s favorite&rdquo;&mdash;
-            provide glimpses into our family history that are as precious as the recipes themselves.
+            A risotto from Sicily. Ramen learned over a long Tokyo lunch. Tacos done the way the
+            family next door taught us. A Tarte Tropézienne brought back from a holiday on the
+            Côte d&apos;Azur. These are the &ldquo;found&rdquo; recipes — dishes we ate somewhere and decided we
+            wanted at home too. They sit alongside the family ones, and at this point they are
+            family too.
           </p>
         </article>
 
         <SprigDivider variant="leaf" className="!my-12 max-w-sm mx-auto" />
 
         <blockquote className="pullquote my-12">
-          Food is our common ground, a universal experience. The dinner table is where we forge our strongest bonds and
-          create our most enduring memories.
-          <cite>&mdash; Someone in our Family</cite>
+          Hemlagad mat med kärlek &mdash; homemade food, with love.
+          <cite>&mdash; The line at the top of the book</cite>
         </blockquote>
 
         <article className="recipe-prose text-[19px]">
-          <h2>The Modern Collection</h2>
-
+          <h2>About this collection</h2>
           <p>
-            Today, the fourth generation of our family continues to honor our culinary heritage while bringing our own
-            contemporary touches to family classics from around the world. What you&apos;ll find in Our Family Recipe
-            Collection is a living document&mdash;recipes that evolve as we do, reflecting changing tastes, global
-            influences, and lifestyles while preserving the essence of what makes them special.
+            Every recipe here has been cooked at our table — usually many times. The photos are the
+            actual finished dishes, not stock photography. Where a recipe came from someone outside
+            the family we&apos;ve noted it; where it&apos;s been edited from the original we&apos;ve made the change
+            and moved on. A cookbook is meant to be marked up.
           </p>
-
           <p>
-            Some recipes remain virtually unchanged from the originals, while others have been adapted for modern
-            ingredients and cooking methods or infused with international flavors. All of them carry stories: the
-            pickled gherkins that accompanied summer crayfish parties by the lake; the cardamom-scented wheat bread that
-            filled the house with its aroma on Sunday mornings; the Thai curry that reminds us of travels in Southeast
-            Asia; the homemade pasta that commemorates summers in Italy; and the spicy Mexican enchiladas that became a
-            Friday night tradition.
+            If you&apos;re reading this and you&apos;re not in the family, welcome anyway. Cook from it.
           </p>
-
-          <h2>Our Table Is Your Table</h2>
-
-          <p>
-            In Swedish homes, there&apos;s a concept called &ldquo;lagom&rdquo;&mdash;not too much, not too little, just
-            right. We believe the best meals embody this principle: thoughtfully prepared, lovingly served, and meant to
-            be shared. Every recipe in this collection has been tested and refined at countless family gatherings, from
-            everyday dinners to milestone celebrations.
-          </p>
-
-          <p>
-            By sharing these recipes, we invite you into our family tradition. We hope they bring as much joy to your
-            table as they have to ours over the generations. Perhaps you&apos;ll add your own notes in the margins,
-            adapt them to your family&apos;s tastes, and create new memories around the dishes that have sustained our
-            family for over a century.
-          </p>
-
-          <p>From our kitchen to yours&mdash;v&auml;lkommen och smaklig m&aring;ltid! (Welcome and enjoy your meal!)</p>
+          <p>From our kitchen to yours &mdash; smaklig måltid, jó étvágyat.</p>
         </article>
 
-        <p className="hand text-[28px] text-right mt-10">&mdash; Our Family</p>
+        <p className="hand text-[28px] text-right mt-10">&mdash; The Rajnak family</p>
 
         <SprigDivider variant="arc" className="!mt-16 !mb-4 max-w-sm mx-auto" />
       </div>
 
-      {/* Family Photo Gallery Section */}
       <div className="max-w-5xl mx-auto mt-20 pt-16 border-t border-rule-soft">
         <PhotoGallery />
       </div>

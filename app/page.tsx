@@ -34,7 +34,7 @@ export default function Home() {
             </div>
 
             <h1 className="display-1 mt-6">
-              An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>, made browsable.
+              An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>.
             </h1>
 
             <p className="hand text-[34px] md:text-[38px] mt-4">Hemlagad mat med kärlek.</p>
@@ -66,9 +66,6 @@ export default function Home() {
                 sizes="(max-width: 768px) 80vw, 400px"
                 priority
               />
-            </div>
-            <div className="stamp absolute -top-4 -right-4">
-              Est.<em>1920s</em>Sweden
             </div>
           </aside>
         </div>
