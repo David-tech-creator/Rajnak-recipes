@@ -120,10 +120,10 @@ export function Header() {
           </nav>
 
           {/* Right cluster */}
-          <div className="flex items-center gap-4 md:gap-5 z-10">
+          <div className="flex items-center gap-1 md:gap-2 z-10 -mr-2 md:-mr-3">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="text-ink-muted hover:text-lingon-deep transition-colors"
+              className="text-ink-muted hover:text-lingon-deep transition-colors h-11 w-11 inline-flex items-center justify-center"
               aria-label="Search"
             >
               <Search size={18} strokeWidth={1.4} />
@@ -131,7 +131,7 @@ export function Header() {
 
             {user ? (
               <DropdownMenu>
-                <DropdownMenuTrigger className="text-ink-muted hover:text-lingon-deep transition-colors">
+                <DropdownMenuTrigger className="text-ink-muted hover:text-lingon-deep transition-colors h-11 w-11 inline-flex items-center justify-center" aria-label="Account">
                   <User size={18} strokeWidth={1.4} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-cream border-rule-soft">
@@ -166,7 +166,7 @@ export function Header() {
             ) : (
               <Link
                 href="/login"
-                className="text-ink-muted hover:text-lingon-deep transition-colors"
+                className="text-ink-muted hover:text-lingon-deep transition-colors h-11 w-11 inline-flex items-center justify-center"
                 aria-label="Sign in"
               >
                 <User size={18} strokeWidth={1.4} />
@@ -174,7 +174,7 @@ export function Header() {
             )}
 
             <button
-              className="md:hidden text-ink-muted hover:text-lingon-deep transition-colors"
+              className="md:hidden text-ink-muted hover:text-lingon-deep transition-colors h-11 w-11 inline-flex items-center justify-center"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Menu"
             >
@@ -185,15 +185,15 @@ export function Header() {
 
         {/* Mobile drawer */}
         {isMenuOpen && (
-          <nav className="md:hidden border-t border-rule-soft py-5 space-y-3 text-center">
-            <Link href="/" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
-            <Link href="/recipes" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>All Recipes</Link>
-            <Link href="/categories" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Categories</Link>
-            <Link href="/search" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Search</Link>
-            <Link href="/about" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>About</Link>
+          <nav className="md:hidden border-t border-rule-soft py-3 text-center">
+            <Link href="/" className={`block py-3 ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
+            <Link href="/recipes" className={`block py-3 ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>All Recipes</Link>
+            <Link href="/categories" className={`block py-3 ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Categories</Link>
+            <Link href="/search" className={`block py-3 ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Search</Link>
+            <Link href="/about" className={`block py-3 ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>About</Link>
             <Link
               href="/about/family-events"
-              className="block font-serif italic text-ink-soft hover:text-lingon-deep text-base"
+              className="block py-3 font-serif italic text-ink-soft hover:text-lingon-deep text-base"
               onClick={() => setIsMenuOpen(false)}
             >
               Family Events
@@ -203,7 +203,7 @@ export function Header() {
 
         {/* Search overlay */}
         {searchOpen && (
-          <div className="absolute top-full right-4 md:right-6 mt-2 w-80 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-30">
+          <div className="absolute top-full left-2 right-2 md:left-auto md:right-6 mt-2 md:w-80 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-30">
             <form onSubmit={handleSearch} className="flex">
               <input
                 type="text"

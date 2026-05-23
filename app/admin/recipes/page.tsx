@@ -28,8 +28,8 @@ export default function AdminRecipesPage() {
         </Link>
       </div>
 
-      <div className="max-w-4xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)]">
-        <table className="w-full">
+      <div className="max-w-4xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] overflow-x-auto">
+        <table className="w-full min-w-[480px]">
           <thead>
             <tr className="border-b border-ink">
               <th className="text-left font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted px-5 py-3">

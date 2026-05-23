@@ -34,7 +34,7 @@ const SIGNOFF_OPTIONS = [
   "Tuck in.",
 ]
 
-const label = "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
+const label = "block font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-muted mb-2"
 const input =
   "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[17px] text-ink placeholder:text-ink-muted/60 focus:outline-none focus:border-ink"
 
@@ -270,7 +270,7 @@ export function AdminRecipeForm({
     "bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-5 md:p-8 space-y-5"
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 md:space-y-6 pb-24 md:pb-0">
+    <form onSubmit={onSubmit} className="space-y-4 md:space-y-6 pb-32 md:pb-0">
       {error && (
         <div className="bg-lingon-soft/30 border border-lingon text-lingon-deep font-serif italic p-4">
           {error}
@@ -299,7 +299,7 @@ export function AdminRecipeForm({
                 type="button"
                 onClick={clearImage}
                 aria-label="Remove photo"
-                className="absolute top-2 right-2 bg-cream/95 border border-rule-soft p-1.5 hover:text-lingon-deep"
+                className="absolute top-2 right-2 bg-cream/95 border border-rule-soft h-11 w-11 inline-flex items-center justify-center hover:text-lingon-deep"
               >
                 <X size={16} strokeWidth={1.5} />
               </button>
@@ -482,7 +482,7 @@ export function AdminRecipeForm({
                   type="button"
                   onClick={() => removeRow("ingredients", i)}
                   aria-label="Remove ingredient"
-                  className="p-2 text-ink-muted hover:text-lingon-deep"
+                  className="h-11 w-11 inline-flex items-center justify-center text-ink-muted hover:text-lingon-deep flex-shrink-0"
                 >
                   <X size={16} strokeWidth={1.5} />
                 </button>
@@ -516,7 +516,7 @@ export function AdminRecipeForm({
 
         <div className="space-y-3">
           {state.instructions.map((step, i) => (
-            <div key={i} className="grid grid-cols-[36px_1fr_36px] items-start gap-2">
+            <div key={i} className="grid grid-cols-[32px_1fr_44px] items-start gap-2">
               <span className="font-serif text-lingon text-xl num pt-3 text-center">
                 {String(i + 1).padStart(2, "0")}
               </span>
@@ -538,7 +538,7 @@ export function AdminRecipeForm({
                   type="button"
                   onClick={() => removeRow("instructions", i)}
                   aria-label="Remove step"
-                  className="p-2 text-ink-muted hover:text-lingon-deep mt-1"
+                  className="h-11 w-11 inline-flex items-center justify-center text-ink-muted hover:text-lingon-deep -mt-1"
                 >
                   <X size={16} strokeWidth={1.5} />
                 </button>
@@ -609,7 +609,10 @@ export function AdminRecipeForm({
       </section>
 
       {/* ===== Sticky save bar on mobile ===== */}
-      <div className="fixed inset-x-0 bottom-0 z-30 bg-parchment/95 backdrop-blur-sm border-t border-rule-soft px-4 py-3 md:hidden">
+      <div
+        className="fixed inset-x-0 bottom-0 z-30 bg-parchment/95 backdrop-blur-sm border-t border-rule-soft px-4 pt-3 md:hidden"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
         <div className="flex items-center gap-3 max-w-3xl mx-auto">
           <Link
             href="/admin/recipes"
