@@ -113,11 +113,13 @@ export function RecipeInteractive({
   baseServings,
   ingredients,
   instructions,
+  kitchenNote,
 }: {
   slug: string
   baseServings?: number
   ingredients: string[]
   instructions: string[]
+  kitchenNote?: string
 }) {
   const [scaleIndex, setScaleIndex] = useState(1) // 1× by default
   const [doneIngredients, setDoneIngredients] = useState<Set<number>>(new Set())
@@ -273,6 +275,11 @@ export function RecipeInteractive({
         <section>
           <div className="eyebrow eyebrow--lingon mb-4">No. II · Method</div>
           <h2 className="editorial-h3 mb-6 font-normal">Instructions</h2>
+          {kitchenNote && (
+            <p className="hand text-[26px] md:text-[28px] text-lingon-deep mb-8 leading-tight">
+              &ldquo;{kitchenNote}&rdquo;
+            </p>
+          )}
           <ol className="space-y-6">
             {instructions.map((step, i) => {
               const done = doneSteps.has(i)

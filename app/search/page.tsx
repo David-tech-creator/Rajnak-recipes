@@ -40,7 +40,10 @@ export default async function SearchPage({
         ) : (
           <p className="lede">Type a recipe name, an ingredient, or a category.</p>
         )}
-        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+        <p className="hand text-[26px] md:text-[30px] mt-6">
+          What are you in the mood for?
+        </p>
+        <SprigDivider variant="berry" className="!mt-8 !mb-2 max-w-sm mx-auto" />
       </div>
 
       <form action="/search" method="get" className="max-w-md mx-auto mb-16 flex items-center bg-cream border border-rule-soft">

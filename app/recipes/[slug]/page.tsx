@@ -148,6 +148,15 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
                     </div>
                   </div>
                 )}
+                {recipe.difficulty && (
+                  <div>
+                    <svg viewBox="0 0 24 24"><path d="M4 12h16M4 7h16M4 17h10" /></svg>
+                    <div className="leading-none">
+                      <div className="k">Difficulty</div>
+                      <div className="v">{recipe.difficulty}</div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -161,6 +170,23 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto pt-10 pb-4">
           <SprigDivider variant="berry" className="!mt-0 !mb-10" />
+
+          {/* The Story — origin, tradition, context. Authentic only. */}
+          {recipe.story && (
+            <section className="max-w-2xl mx-auto mb-12">
+              <div className="eyebrow eyebrow--lingon text-center mb-3">The Story</div>
+              <div className="recipe-prose text-[19px]">
+                {recipe.story
+                  .split(/\n\n+/)
+                  .map((p) => p.trim())
+                  .filter(Boolean)
+                  .map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+              </div>
+              <SprigDivider variant="leaf" className="!mt-8 !mb-2 max-w-xs mx-auto" />
+            </section>
+          )}
 
           {/* Description / prose (anything that isn't a numbered step).
               The first paragraph already ran as the lede inside the hero. */}
@@ -181,10 +207,17 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
               baseServings={recipe.servings}
               ingredients={ingredientLines}
               instructions={recipe.instructions}
+              kitchenNote={recipe.kitchenNote}
             />
           )}
 
-          <div className="print:hidden flex flex-wrap gap-3 justify-center mt-4 mb-2">
+          {recipe.signoff && (
+            <p className="hand text-[34px] md:text-[40px] text-center mt-12 mb-2 leading-tight">
+              {recipe.signoff}
+            </p>
+          )}
+
+          <div className="print:hidden flex flex-wrap gap-3 justify-center mt-6 mb-2">
             <PrintButton />
           </div>
 

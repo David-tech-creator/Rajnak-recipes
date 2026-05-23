@@ -8,6 +8,21 @@ function findCategoryBySlug(slug: string, categories: string[]): string | undefi
   return categories.find((c) => categoryToSlug(c) === slug)
 }
 
+function categoryHandNote(name: string): string {
+  switch (name) {
+    case "Family Recipes":
+      return "From Mormor's drawer."
+    case "Found Recipes":
+      return "Brought home from somewhere."
+    case "Quick & Easy":
+      return "Tuesday-night supper."
+    case "Christmas & Easter":
+      return "The long-table dishes."
+    default:
+      return "Smaklig måltid."
+  }
+}
+
 export function generateStaticParams() {
   const categories = getAllCategories()
   return categories.map((category) => ({
@@ -46,7 +61,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         <p className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
           {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
         </p>
-        <SprigDivider variant="berry" className="!mt-8 !mb-2 max-w-sm mx-auto" />
+        <p className="hand text-[24px] md:text-[28px] mt-5">
+          {categoryHandNote(matchedCategory)}
+        </p>
+        <SprigDivider variant="berry" className="!mt-6 !mb-2 max-w-sm mx-auto" />
       </div>
 
       {recipes.length > 0 ? (

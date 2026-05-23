@@ -39,6 +39,14 @@ export type Recipe = {
   servings?: number
   featured?: boolean
   content: string
+  /** Authentic short handwritten tip in the margin (Caveat font). */
+  kitchenNote?: string
+  /** Cuisine-appropriate enjoyment phrase shown at the bottom of the recipe. */
+  signoff?: string
+  /** 1–3 paragraph narrative about origin / tradition / context. */
+  story?: string
+  /** Easy / Medium / Showpiece — appears in the meta row. */
+  difficulty?: string
 }
 
 export function getAllPostSlugs() {
@@ -87,6 +95,10 @@ export function getPostBySlug(slug: string): Recipe | null {
       cookTime: data.cookTime,
       servings: data.servings,
       featured: data.featured || false,
+      kitchenNote: typeof data.kitchenNote === "string" ? data.kitchenNote : undefined,
+      signoff: typeof data.signoff === "string" ? data.signoff : undefined,
+      story: typeof data.story === "string" ? data.story : undefined,
+      difficulty: typeof data.difficulty === "string" ? data.difficulty : undefined,
       content,
     }
   } catch (error) {

@@ -30,7 +30,10 @@ export default function CategoriesPage() {
           Recipe <em className="italic" style={{ color: "var(--lingon-deep)" }}>categories</em>
         </h1>
         <p className="lede">{allRecipes.length} recipes, gathered by occasion and origin.</p>
-        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+        <p className="hand text-[26px] md:text-[30px] mt-6">
+          Open the drawer.
+        </p>
+        <SprigDivider variant="berry" className="!mt-8 !mb-2 max-w-sm mx-auto" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

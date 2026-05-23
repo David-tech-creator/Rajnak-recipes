@@ -28,7 +28,10 @@ export default function RecipesPage() {
         <p className="lede">
           {recipes.length} dishes from the Rajnak family, friends, and recipes found along the way.
         </p>
-        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+        <p className="hand text-[26px] md:text-[30px] mt-6">
+          Pick something to put on the table.
+        </p>
+        <SprigDivider variant="berry" className="!mt-8 !mb-2 max-w-sm mx-auto" />
       </div>
 
       <RecipesGrid
