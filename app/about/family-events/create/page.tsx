@@ -6,12 +6,12 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
-import { supabase } from "@/lib/supabase-browser"
+import { supabase } from "@/lib/supabase"
 import { EVENT_TYPES } from "@/lib/types/family"
 import { SprigDivider } from "@/components/sprig-divider"
 
 const labelClass =
-  "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
+  "block font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-muted mb-2"
 const inputClass =
   "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
 

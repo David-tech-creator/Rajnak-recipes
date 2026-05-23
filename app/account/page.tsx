@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 
 export default function AccountPage() {
@@ -69,7 +68,7 @@ export default function AccountPage() {
         <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-10">
           <dl className="space-y-6">
             <div>
-              <dt className="block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2">
+              <dt className="block font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-muted mb-2">
                 Email
               </dt>
               <dd className="font-serif text-[18px] text-ink break-all">{email}</dd>
@@ -77,7 +76,7 @@ export default function AccountPage() {
 
             {memberSince && (
               <div className="pt-6 border-t border-dotted border-rule-soft">
-                <dt className="block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2">
+                <dt className="block font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-muted mb-2">
                   Member since
                 </dt>
                 <dd className="font-serif text-[18px] text-ink">{memberSince}</dd>
@@ -85,18 +84,18 @@ export default function AccountPage() {
             )}
           </dl>
 
-          <div className="mt-10 pt-8 border-t border-rule-soft flex flex-col sm:flex-row gap-4">
-            <Link href="/reset-password" className="btn btn--ghost flex-1 justify-center">
-              Change password
-            </Link>
+          <div className="mt-10 pt-8 border-t border-rule-soft">
             <button
               type="button"
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className="btn flex-1 justify-center"
+              className="btn w-full justify-center"
             >
               {isSigningOut ? "Signing out…" : "Sign out"}
             </button>
+            <p className="mt-4 text-center font-serif italic text-ink-muted text-[14px]">
+              Forgot your password? Ask David to reset it.
+            </p>
           </div>
         </div>
       </div>
