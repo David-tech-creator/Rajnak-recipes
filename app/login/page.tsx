@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
-import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 
@@ -105,22 +104,13 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="text-right">
-            <Link
-              href="/reset-password"
-              className="font-serif italic text-ink-muted hover:text-lingon-deep underline decoration-1 underline-offset-4"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
           <button type="submit" disabled={isLoading} className="btn w-full justify-center">
             {isLoading ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
         <p className="mt-6 text-center font-serif italic text-ink-muted text-[15px]">
-          New family members are added by an admin — there&apos;s no public sign-up.
+          Forgot your password? Ask David to reset it.
         </p>
       </div>
     </div>

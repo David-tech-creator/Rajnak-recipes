@@ -8,7 +8,7 @@ const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 // Paths that must remain public so users can actually sign in / reset.
-const PUBLIC_PATHS = ["/login", "/reset-password", "/update-password", "/auth/callback"]
+const PUBLIC_PATHS = ["/login", "/auth/callback"]
 
 function isPublic(pathname: string): boolean {
   return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"))
