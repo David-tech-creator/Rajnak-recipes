@@ -89,7 +89,8 @@ export function AdminRecipeForm({
   mode: "create" | "update"
 }) {
   const router = useRouter()
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
+  const galleryInputRef = useRef<HTMLInputElement>(null)
   const titleRef = useRef<HTMLInputElement>(null)
 
   const [state, setState] = useState<FormState>({
@@ -164,8 +165,9 @@ export function AdminRecipeForm({
       setError(err instanceof Error ? err.message : "Could not read the photo")
     } finally {
       setImageBusy(false)
-      // Reset so the same file can be re-picked if needed.
-      if (fileInputRef.current) fileInputRef.current.value = ""
+      // Reset both so the same file can be re-picked if needed.
+      if (cameraInputRef.current) cameraInputRef.current.value = ""
+      if (galleryInputRef.current) galleryInputRef.current.value = ""
     }
   }
 
@@ -301,36 +303,60 @@ export function AdminRecipeForm({
                 aria-label="Remove photo"
                 className="absolute top-2 right-2 bg-cream/95 border border-rule-soft h-11 w-11 inline-flex items-center justify-center hover:text-lingon-deep"
               >
-                <X size={16} strokeWidth={1.5} />
+                <X size={16} strokeWidth={1.5} aria-hidden />
               </button>
               <button
                 type="button"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => galleryInputRef.current?.click()}
                 className="absolute bottom-2 right-2 bg-cream/95 border border-rule-soft px-3 py-1.5 font-serif-sc uppercase tracking-[0.18em] text-[10px] text-ink hover:text-lingon-deep"
               >
                 Replace
               </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full aspect-[4/5] max-w-sm mx-auto flex flex-col items-center justify-center gap-3 border-2 border-dotted border-rule bg-parchment-deep/40 hover:bg-parchment-deep/70 transition-colors p-6 text-center"
-            >
-              <Camera size={36} strokeWidth={1.2} className="text-ink-muted" />
-              <span className="font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink">
-                Take or upload a photo
-              </span>
-              <span className="font-serif italic text-[14px] text-ink-muted">
-                On a phone, this opens the camera.
-              </span>
-            </button>
+            <div className="w-full max-w-sm mx-auto">
+              {/* Empty-state card with two explicit choices on mobile. */}
+              <div className="aspect-[4/5] flex flex-col items-center justify-center gap-3 border-2 border-dotted border-rule bg-parchment-deep/40 p-6 text-center">
+                <Camera size={36} strokeWidth={1.2} className="text-ink-muted" aria-hidden />
+                <span className="font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink">
+                  Add a photo
+                </span>
+                <span className="font-serif italic text-[14px] text-ink-muted">
+                  Take one now or pick from your gallery.
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="btn btn--ghost justify-center"
+                >
+                  Take photo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => galleryInputRef.current?.click()}
+                  className="btn btn--ghost justify-center"
+                >
+                  Choose photo
+                </button>
+              </div>
+            </div>
           )}
+          {/* Hidden file inputs — one forces the camera, the other lets the
+              OS show its native picker (camera / library / files). */}
           <input
-            ref={fileInputRef}
+            ref={cameraInputRef}
             type="file"
             accept="image/*"
             capture="environment"
+            onChange={onPickImage}
+            className="sr-only"
+          />
+          <input
+            ref={galleryInputRef}
+            type="file"
+            accept="image/*"
             onChange={onPickImage}
             className="sr-only"
           />

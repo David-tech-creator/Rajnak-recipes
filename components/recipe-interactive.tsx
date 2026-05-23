@@ -256,8 +256,18 @@ export function RecipeInteractive({
               return (
                 <li
                   key={i}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={done}
+                  aria-label={`${done ? "Uncheck" : "Check"} ingredient: ${ing.qty ? ing.qty + " " : ""}${ing.item}`}
                   className={`cursor-pointer select-none transition-opacity ${done ? "opacity-40" : ""}`}
                   onClick={() => toggleIngredient(i)}
+                  onKeyDown={(e) => {
+                    if (e.key === " " || e.key === "Enter") {
+                      e.preventDefault()
+                      toggleIngredient(i)
+                    }
+                  }}
                 >
                   <span className={`qty num ${done ? "line-through" : ""}`}>{ing.qty || "—"}</span>
                   <span className={`item ${done ? "line-through" : ""}`}>{ing.item}</span>
@@ -279,10 +289,20 @@ export function RecipeInteractive({
               return (
                 <li
                   key={i}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={done}
+                  aria-label={`${done ? "Uncheck" : "Check"} step ${i + 1}`}
                   className={`grid grid-cols-[44px_1fr] gap-4 cursor-pointer select-none transition-opacity ${
                     done ? "opacity-40" : ""
                   }`}
                   onClick={() => toggleStep(i)}
+                  onKeyDown={(e) => {
+                    if (e.key === " " || e.key === "Enter") {
+                      e.preventDefault()
+                      toggleStep(i)
+                    }
+                  }}
                 >
                   <span
                     className={`font-serif num text-2xl leading-none pt-1 ${
