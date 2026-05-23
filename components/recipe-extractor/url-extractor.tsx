@@ -3,8 +3,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
 import { RecipePreview } from "./recipe-preview"
 import type { ExtractedRecipe } from "@/lib/recipe-extractor"
@@ -56,31 +54,51 @@ export function UrlExtractor({ onRecipeExtracted }: UrlExtractorProps) {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex gap-2">
-          <Input
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2">
+            Recipe URL
+          </label>
+          <input
             type="url"
-            placeholder="Enter recipe URL"
+            placeholder="https://…"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required
-            className="flex-1"
+            className="w-full bg-parchment-deep/40 border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
           />
-          <Button type="submit" variant="outline" disabled={isLoading || !url}>
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Extract
-          </Button>
+          <p className="mt-2 text-[15px] italic text-ink-muted">
+            Paste a link to a recipe page and we&apos;ll lift the ingredients and method.
+          </p>
         </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        <div className="text-center">
+          <button type="submit" className="btn" disabled={isLoading || !url}>
+            {isLoading ? (
+              <span className="inline-flex items-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Extracting…
+              </span>
+            ) : (
+              "Extract recipe"
+            )}
+          </button>
+        </div>
+
+        {error && (
+          <div className="bg-lingon-soft/30 border border-lingon text-lingon-deep font-serif italic text-[16px] p-4">
+            {error}
+          </div>
+        )}
       </form>
 
       {recipe && (
-        <div className="space-y-4">
+        <div className="space-y-6 pt-4">
           <RecipePreview recipe={recipe} />
-          <div className="flex justify-center mt-6">
-            <Button onClick={handleUseRecipe} variant="outline">
-              Use This Recipe
-            </Button>
+          <div className="flex justify-center">
+            <button type="button" onClick={handleUseRecipe} className="btn">
+              Use this recipe
+            </button>
           </div>
         </div>
       )}

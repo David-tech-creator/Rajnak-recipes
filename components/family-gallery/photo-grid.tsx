@@ -5,8 +5,6 @@ import Image from "next/image"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Trash2, Download, X } from "lucide-react"
 import type { FamilyPhoto } from "@/lib/types/family"
 
 interface PhotoGridProps {
@@ -35,7 +33,6 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
     setIsDeleting(true)
 
     try {
-      // Extract file path from URL
       const url = photo.url
       const fileName = url.split("/").pop()
       if (!fileName) {
@@ -44,24 +41,26 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
       }
       const filePath = fileName
 
-      // Delete file from storage
-      const { error: storageError } = await supabase.storage.from("family-photos").remove([filePath])
+      const { error: storageError } = await supabase.storage
+        .from("family-photos")
+        .remove([filePath])
 
       if (storageError) {
         console.error("Error deleting file from storage:", storageError)
       }
 
-      // Delete record from database
-      const { error: dbError } = await supabase.from("family_photos").delete().eq("id", photo.id)
+      const { error: dbError } = await supabase
+        .from("family_photos")
+        .delete()
+        .eq("id", photo.id)
 
       if (dbError) throw dbError
 
       toast({
         title: "Photo deleted",
-        description: "The photo has been deleted successfully",
+        description: "The photo has been removed from the album.",
       })
 
-      // Close modal and refresh page
       setSelectedPhoto(null)
       window.location.reload()
     } catch (error) {
@@ -87,36 +86,64 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {photos.map((photo) => (
-          <div
+          <button
             key={photo.id}
-            className="relative aspect-square overflow-hidden rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
             onClick={() => handlePhotoClick(photo)}
+            className="recipe-card block text-left w-full"
+            aria-label={photo.caption || "View photo"}
           >
-            <Image
-              src={photo.url || "/placeholder.svg"}
-              alt={photo.caption || "Family photo"}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover"
-            />
-          </div>
+            <div className="aspect-[4/5] relative overflow-hidden">
+              <Image
+                src={photo.url || "/placeholder.svg"}
+                alt={photo.caption || "Family photo"}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                className="object-cover"
+                style={{ filter: "saturate(0.92)" }}
+              />
+            </div>
+            {(photo.caption || photo.date) && (
+              <div className="py-4 px-3 text-center">
+                {photo.caption && (
+                  <h3 className="recipe-card-title text-[18px]">{photo.caption}</h3>
+                )}
+                {photo.date && (
+                  <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mt-1">
+                    {new Date(photo.date).toLocaleDateString()}
+                  </div>
+                )}
+              </div>
+            )}
+          </button>
         ))}
       </div>
 
-      {/* Photo Modal */}
+      {/* Photo modal */}
       {selectedPhoto && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="relative bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-lg font-medium">{selectedPhoto.caption || "Family Photo"}</h3>
-              <button onClick={handleCloseModal} className="text-gray-500 hover:text-gray-700">
-                <X className="h-6 w-6" />
+        <div
+          className="fixed inset-0 bg-ink/80 flex items-center justify-center z-50 p-4"
+          onClick={handleCloseModal}
+        >
+          <div
+            className="relative bg-cream border border-rule-soft shadow-[var(--paper-shadow)] max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center p-5 border-b border-rule-soft">
+              <h3 className="font-serif italic text-[20px] text-ink">
+                {selectedPhoto.caption || "Family photograph"}
+              </h3>
+              <button
+                onClick={handleCloseModal}
+                className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted hover:text-lingon-deep"
+                aria-label="Close"
+              >
+                Close
               </button>
             </div>
 
-            <div className="relative flex-grow overflow-auto">
+            <div className="relative flex-grow overflow-auto bg-parchment-deep">
               <div className="relative h-[60vh]">
                 <Image
                   src={selectedPhoto.url || "/placeholder.svg"}
@@ -128,27 +155,27 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
               </div>
             </div>
 
-            <div className="p-4 border-t flex justify-between items-center">
-              <div>
-                {selectedPhoto.date && (
-                  <p className="text-sm text-gray-500">{new Date(selectedPhoto.date).toLocaleDateString()}</p>
-                )}
+            <div className="p-5 border-t border-rule-soft flex justify-between items-center">
+              <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
+                {selectedPhoto.date
+                  ? new Date(selectedPhoto.date).toLocaleDateString()
+                  : ""}
               </div>
-              <div className="flex space-x-2">
-                <Button variant="outline" size="sm" onClick={() => handleDownloadPhoto(selectedPhoto)}>
-                  <Download className="h-4 w-4 mr-1" />
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleDownloadPhoto(selectedPhoto)}
+                  className="btn btn--ghost"
+                >
                   Download
-                </Button>
+                </button>
                 {user && (
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <button
                     onClick={() => handleDeletePhoto(selectedPhoto)}
                     disabled={isDeleting}
+                    className="btn btn--lingon"
                   >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Delete
-                  </Button>
+                    {isDeleting ? "Deleting…" : "Delete"}
+                  </button>
                 )}
               </div>
             </div>

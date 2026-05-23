@@ -1,19 +1,17 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
+import Link from "next/link"
+import { useParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, ArrowLeft, Calendar, MapPin } from "lucide-react"
 import { format } from "date-fns"
 import { PhotoGallery } from "@/components/family-gallery/photo-gallery"
+import { SprigDivider } from "@/components/sprig-divider"
 import type { FamilyEvent } from "@/lib/types/family"
 
 export default function EventPage() {
   const params = useParams()
-  const router = useRouter()
   const { toast } = useToast()
   const [event, setEvent] = useState<FamilyEvent | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -48,62 +46,71 @@ export default function EventPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      <div className="container mx-auto px-6 py-16">
+        <p className="text-center font-serif italic text-ink-muted text-lg py-12">
+          Loading event&hellip;
+        </p>
       </div>
     )
   }
 
   if (!event) {
     return (
-      <div className="container mx-auto px-4 py-12">
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <p className="text-gray-600 mb-4">Event not found</p>
-            <Button
-              onClick={() => router.push("/about/family-events")}
-              className="bg-black hover:bg-black/90 text-white"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Events
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="container mx-auto px-6 py-24">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="eyebrow eyebrow--lingon">Album not found</div>
+          <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+            We can&apos;t find that event.
+          </h1>
+          <p className="lede">It may have been removed, or the link is from another season.</p>
+          <SprigDivider variant="berry" className="!mt-10 !mb-8 max-w-sm mx-auto" />
+          <Link href="/about/family-events" className="btn">
+            Back to events
+          </Link>
+        </div>
       </div>
     )
   }
 
-  return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="max-w-5xl mx-auto">
-        <Button
-          onClick={() => router.push("/about/family-events")}
-          variant="outline"
-          className="mb-8"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Events
-        </Button>
+  const eventType = (event as { event_type?: string }).event_type
 
-        <div className="mb-12">
-          <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
-          <div className="flex items-center gap-6 text-gray-600 mb-4">
-            <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-2" />
-              {format(new Date(event.date), "PPP")}
-            </div>
-            {event.location && (
-              <div className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2" />
-                {event.location}
-              </div>
-            )}
-          </div>
-          {event.description && (
-            <p className="text-gray-600">{event.description}</p>
+  return (
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">
+          {eventType ? eventType.replace(/-/g, " ") : "Family album"}
+        </div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">{event.title}</h1>
+        {event.description && (
+          <p className="lede">{event.description}</p>
+        )}
+
+        <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 mt-6 font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
+          <span>{format(new Date(event.date), "PPP")}</span>
+          {event.location && (
+            <>
+              <span aria-hidden="true">&middot;</span>
+              <span>{event.location}</span>
+            </>
           )}
         </div>
 
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+      </div>
+
+      <div className="max-w-5xl mx-auto flex items-center justify-between mb-8">
+        <Link href="/about/family-events" className="btn btn--link">
+          &larr; All events
+        </Link>
+        <Link
+          href={`/about/family-events/${event.id}/edit`}
+          className="btn btn--ghost"
+        >
+          Edit event
+        </Link>
+      </div>
+
+      <div className="max-w-5xl mx-auto">
         <PhotoGallery eventId={event.id} />
       </div>
     </div>

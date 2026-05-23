@@ -4,22 +4,28 @@ import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PhotoUploader } from "./photo-uploader"
 import { PhotoGrid } from "./photo-grid"
-import { Loader2, Upload, Calendar, Users, RefreshCcw } from "lucide-react"
 import type { FamilyPhoto } from "@/lib/types/family"
 
 interface PhotoGalleryProps {
   eventId?: string | number
 }
 
+const FILTERS: Array<{ value: string; label: string }> = [
+  { value: "all", label: "All" },
+  { value: "holiday", label: "Holidays" },
+  { value: "birthday", label: "Birthdays" },
+  { value: "dinner", label: "Dinners" },
+  { value: "other", label: "Other" },
+]
+
 export function PhotoGallery({ eventId }: PhotoGalleryProps = {}) {
   const [photos, setPhotos] = useState<FamilyPhoto[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("all")
+  const [showUploader, setShowUploader] = useState(false)
   const { user } = useAuth()
   const { toast } = useToast()
 
@@ -39,71 +45,53 @@ export function PhotoGallery({ eventId }: PhotoGalleryProps = {}) {
       }
 
       return true
-    } catch (error) {
-      console.error("Error initializing database:", error)
-      setError(error instanceof Error ? error.message : "Failed to initialize database")
+    } catch (err) {
+      console.error("Error initializing database:", err)
+      setError(err instanceof Error ? err.message : "Failed to initialize database")
       return false
     }
   }
 
-  // Fetch photos with improved error handling
   const fetchPhotos = async () => {
     setIsLoading(true)
     setError(null)
 
     try {
-      // Ensure database is initialized
       await initializeDatabase()
-
-      // Log the query parameters
-      console.log("Fetching photos with filter:", { activeTab })
 
       let query = supabase
         .from("family_photos")
         .select("*")
         .order("created_at", { ascending: false })
 
-      // If eventId is provided, filter by that specific event
       if (eventId) {
         query = query.eq("event_id", eventId)
       } else if (activeTab !== "all") {
         query = query.eq("event_type", activeTab)
       }
 
-      // Log the query before executing
-      console.log("Executing Supabase query...")
-
       const { data, error: supabaseError } = await query
-
-      // Log the response
-      console.log("Supabase response:", { data, error: supabaseError })
 
       if (supabaseError) {
         throw supabaseError
       }
 
       if (!data) {
-        throw new Error("No data returned from Supabase")
+        throw new Error("No data returned")
       }
 
       setPhotos(data)
-    } catch (error) {
-      // Detailed error logging
-      console.error("Full error object:", error)
-      
+    } catch (err) {
+      console.error("Full error object:", err)
+
       let errorMessage = "Failed to load photos"
-      if (error instanceof Error) {
-        errorMessage = error.message
-        console.error("Error details:", {
-          message: error.message,
-          stack: error.stack,
-          name: error.name
-        })
+      if (err instanceof Error) {
+        errorMessage = err.message
       }
 
       setError(errorMessage)
       toast({
-        title: "Error",
+        title: "Could not load photos",
         description: errorMessage,
         variant: "destructive",
       })
@@ -114,13 +102,15 @@ export function PhotoGallery({ eventId }: PhotoGalleryProps = {}) {
 
   useEffect(() => {
     fetchPhotos()
-  }, [activeTab])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, eventId])
 
   const handlePhotoUploaded = () => {
     fetchPhotos()
+    setShowUploader(false)
     toast({
-      title: "Success",
-      description: "Photo uploaded successfully",
+      title: "Photo added",
+      description: "Your photo has been added to the album.",
     })
   }
 
@@ -131,79 +121,87 @@ export function PhotoGallery({ eventId }: PhotoGalleryProps = {}) {
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-medium text-amber-800 mb-2">Photo gallery unavailable</h3>
-          <p className="text-amber-700 mb-4 text-sm">{error}</p>
-          <Button onClick={fetchPhotos} variant="outline">
-            <RefreshCcw className="mr-2 h-4 w-4" />
-            Retry
-          </Button>
-        </div>
+      <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 text-center">
+        <div className="eyebrow eyebrow--lingon">Photo gallery</div>
+        <p className="mt-4 font-serif italic text-ink-muted text-lg">
+          The gallery is resting just now. {error}
+        </p>
+        <button onClick={fetchPhotos} className="btn btn--ghost mt-6">
+          Try again
+        </button>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h2 className="text-2xl font-bold">Family Photo Gallery</h2>
+        <div>
+          <div className="eyebrow eyebrow--lingon">The photographs</div>
+          <h2 className="editorial-h3 mt-2 font-normal">Family photo gallery</h2>
+        </div>
         {user && (
-          <Button
-            variant="outline"
-            onClick={() => document.getElementById("photo-upload-section")?.scrollIntoView({ behavior: "smooth" })}
+          <button
+            onClick={() => setShowUploader((v) => !v)}
+            className="btn"
           >
-            <Upload className="mr-2 h-4 w-4" />
-            Add Photos
-          </Button>
+            {showUploader ? "Cancel" : "Add photo"}
+          </button>
         )}
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        {!eventId && (
-          <TabsList className="grid grid-cols-5">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="holiday">Holidays</TabsTrigger>
-            <TabsTrigger value="birthday">Birthdays</TabsTrigger>
-            <TabsTrigger value="dinner">Family Dinners</TabsTrigger>
-            <TabsTrigger value="other">Other</TabsTrigger>
-          </TabsList>
-        )}
+      {!eventId && (
+        <div className="flex flex-wrap gap-2 border-b border-rule-soft pb-4">
+          {FILTERS.map((f) => {
+            const active = activeTab === f.value
+            return (
+              <button
+                key={f.value}
+                onClick={() => setActiveTab(f.value)}
+                className={
+                  active
+                    ? "tag tag--solid"
+                    : "tag hover:text-lingon-deep hover:border-lingon"
+                }
+              >
+                {f.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
 
-        <TabsContent value={activeTab} className="mt-6">
-          {isLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : photos.length > 0 ? (
-            <PhotoGrid photos={photos} />
+      {showUploader && user && (
+        <div id="photo-upload-section">
+          <PhotoUploader onPhotoUploaded={handlePhotoUploaded} eventId={eventId ? String(eventId) : undefined} />
+        </div>
+      )}
+
+      {isLoading ? (
+        <p className="text-center font-serif italic text-ink-muted text-lg py-12">
+          Loading photographs&hellip;
+        </p>
+      ) : photos.length > 0 ? (
+        <PhotoGrid photos={photos} />
+      ) : (
+        <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-12 text-center">
+          <p className="font-serif italic text-ink-muted text-lg">
+            {activeTab === "all"
+              ? "No photographs yet. Be the first to share a family memory."
+              : `No ${activeTab} photographs have been shared yet.`}
+          </p>
+          {user ? (
+            <button
+              onClick={() => setShowUploader(true)}
+              className="btn btn--ghost mt-6"
+            >
+              Add the first photo
+            </button>
           ) : (
-            <div className="text-center py-12 bg-muted/50 rounded-lg">
-              <Calendar className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-xl font-medium mb-2">No photos yet</h3>
-              <p className="text-gray-500 mb-4">
-                {activeTab === "all"
-                  ? "Be the first to share a family memory!"
-                  : `No ${activeTab} photos have been shared yet.`}
-              </p>
-              {user ? (
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    document.getElementById("photo-upload-section")?.scrollIntoView({ behavior: "smooth" })
-                  }
-                >
-                  Upload Photos
-                </Button>
-              ) : (
-                <p className="text-sm text-gray-500">Sign in to upload photos</p>
-              )}
-            </div>
+            <p className="mt-4 text-[15px] italic text-ink-muted">Sign in to upload photos.</p>
           )}
-        </TabsContent>
-      </Tabs>
-
-      {user && <PhotoUploader onPhotoUploaded={handlePhotoUploaded} />}
+        </div>
+      )}
     </div>
   )
 }

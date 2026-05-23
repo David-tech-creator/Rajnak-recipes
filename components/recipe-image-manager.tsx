@@ -6,9 +6,6 @@ import { useState } from "react"
 import Image from "next/image"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Loader2, Upload, X, ImagePlus } from "lucide-react"
 
 interface RecipeImageManagerProps {
   recipeId?: number
@@ -137,24 +134,31 @@ export function RecipeImageManager({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Existing images */}
       {existingImages.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium">Current Images</h3>
+        <div className="space-y-4">
+          <h3 className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
+            Current images
+          </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {existingImages.map((url, index) => (
-              <div key={index} className="relative group aspect-square rounded-md overflow-hidden border">
+              <div key={index} className="relative group aspect-square overflow-hidden border border-rule-soft bg-parchment-deep">
                 <Image
                   src={url || "/placeholder.svg"}
                   alt={`Recipe image ${index + 1}`}
                   fill
                   className="object-cover"
+                  style={{ filter: "saturate(0.92)" }}
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => onImageRemove(url)}>
-                    <X className="h-4 w-4" />
-                  </Button>
+                <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <button
+                    type="button"
+                    onClick={() => onImageRemove(url)}
+                    className="bg-cream border border-lingon px-3 py-1 font-serif-sc uppercase tracking-[0.22em] text-[10px] text-lingon-deep hover:bg-lingon-soft/30"
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
             ))}
@@ -164,8 +168,8 @@ export function RecipeImageManager({
 
       {/* Upload area */}
       <div
-        className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
-          isDragging ? "border-primary bg-primary/5" : "border-gray-300"
+        className={`border-2 border-dotted p-12 text-center transition-colors ${
+          isDragging ? "border-ink bg-cream" : "border-rule bg-cream/60"
         }`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -173,22 +177,20 @@ export function RecipeImageManager({
         onDrop={handleDrop}
       >
         <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="p-3 rounded-full bg-primary/10">
-            <ImagePlus className="h-6 w-6 text-primary" />
-          </div>
-          <div className="text-center">
-            <p className="text-sm font-medium">Drag and drop your images here</p>
-            <p className="text-xs text-gray-500 mt-1">or click to browse</p>
-          </div>
-          <Button
+          <p className="font-serif italic text-ink-soft text-[18px]">
+            Drag and drop your images here
+          </p>
+          <p className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
+            — or —
+          </p>
+          <button
             type="button"
-            variant="outline"
-            size="sm"
+            className="btn btn--ghost"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
           >
-            Select Files
-          </Button>
+            Select files
+          </button>
           <input
             ref={fileInputRef}
             type="file"
@@ -204,12 +206,14 @@ export function RecipeImageManager({
       {/* Selected files */}
       {files.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium">Selected Files ({files.length})</h3>
+          <h3 className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
+            Selected files ({files.length})
+          </h3>
           <div className="space-y-2">
             {files.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-2 border rounded-md">
-                <div className="flex items-center space-x-2 overflow-hidden">
-                  <div className="h-10 w-10 relative rounded overflow-hidden bg-gray-100 flex-shrink-0">
+              <div key={index} className="flex items-center justify-between p-3 border border-rule-soft bg-cream">
+                <div className="flex items-center space-x-3 overflow-hidden">
+                  <div className="h-12 w-12 relative overflow-hidden bg-parchment-deep flex-shrink-0 border border-rule-soft">
                     <Image
                       src={URL.createObjectURL(file) || "/placeholder.svg"}
                       alt={file.name}
@@ -217,17 +221,16 @@ export function RecipeImageManager({
                       className="object-cover"
                     />
                   </div>
-                  <span className="text-sm truncate">{file.name}</span>
+                  <span className="font-serif text-ink truncate">{file.name}</span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-gray-500"
+                <button
+                  type="button"
                   onClick={() => removeFile(index)}
                   disabled={uploading}
+                  className="font-serif-sc uppercase tracking-[0.22em] text-[10px] text-lingon hover:text-lingon-deep underline decoration-1 underline-offset-4"
                 >
-                  <X className="h-4 w-4" />
-                </Button>
+                  Remove
+                </button>
               </div>
             ))}
           </div>
@@ -237,29 +240,33 @@ export function RecipeImageManager({
       {/* Upload progress */}
       {uploading && (
         <div className="space-y-2">
-          <div className="flex justify-between text-xs">
-            <span>Uploading...</span>
-            <span>{uploadProgress}%</span>
+          <div className="flex justify-between font-serif-sc uppercase tracking-[0.22em] text-[10px] text-ink-muted">
+            <span>Uploading…</span>
+            <span className="num">{uploadProgress}%</span>
           </div>
-          <Progress value={uploadProgress} className="h-2" />
+          <div className="h-[2px] bg-rule-soft overflow-hidden">
+            <div
+              className="h-full bg-ink transition-all duration-200"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
         </div>
       )}
 
       {/* Upload button */}
       {files.length > 0 && (
-        <Button type="button" className="w-full" onClick={uploadFiles} disabled={uploading}>
-          {uploading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading...
-            </>
-          ) : (
-            <>
-              <Upload className="mr-2 h-4 w-4" />
-              Upload {files.length} {files.length === 1 ? "Image" : "Images"}
-            </>
-          )}
-        </Button>
+        <div className="text-center">
+          <button
+            type="button"
+            className="btn"
+            onClick={uploadFiles}
+            disabled={uploading}
+          >
+            {uploading
+              ? "Uploading…"
+              : `Upload ${files.length} ${files.length === 1 ? "image" : "images"}`}
+          </button>
+        </div>
       )}
     </div>
   )

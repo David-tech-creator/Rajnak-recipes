@@ -1,38 +1,33 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
-import { Calendar } from "@/components/ui/calendar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { format } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2 } from "lucide-react"
 import { supabase } from "@/lib/supabase-browser"
+import { SprigDivider } from "@/components/sprig-divider"
 
 const eventTypes = [
   "birthday",
   "anniversary",
   "holiday",
   "family-gathering",
-  "other"
+  "other",
 ] as const
+
+const labelClass =
+  "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
+const inputClass =
+  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
 
 export default function CreateEventPage() {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [date, setDate] = useState<Date>()
-  const [eventType, setEventType] = useState<(typeof eventTypes)[number]>("other")
+  const [date, setDate] = useState<string>("")
+  const [eventType, setEventType] =
+    useState<(typeof eventTypes)[number]>("other")
   const [location, setLocation] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { user } = useAuth()
@@ -62,26 +57,28 @@ export default function CreateEventPage() {
     setIsLoading(true)
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("family_events")
-        .insert([{
-          title,
-          description,
-          date: format(date, "yyyy-MM-dd"),
-          event_type: eventType,
-          location,
-          created_by: user.id
-        }])
+        .insert([
+          {
+            title,
+            description,
+            date: format(new Date(date), "yyyy-MM-dd"),
+            event_type: eventType,
+            location,
+            created_by: user.id,
+          },
+        ])
         .select()
         .single()
 
       if (error) throw error
 
       toast({
-        title: "Success",
-        description: "Event created successfully",
+        title: "Event created",
+        description: "Your family event has been created.",
       })
-      
+
       router.push("/about/family-events")
     } catch (error) {
       console.error("Error creating event:", error)
@@ -96,93 +93,110 @@ export default function CreateEventPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Create New Family Event</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="title" className="text-sm font-medium">
-                Title
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">A new album</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          Open a fresh{" "}
+          <em className="italic" style={{ color: "var(--lingon-deep)" }}>
+            event
+          </em>
+        </h1>
+        <p className="lede">A date, a place, a title &mdash; the rest is photographs and memories.</p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+      </div>
+
+      <div className="max-w-2xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-12">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div>
+            <label htmlFor="title" className={labelClass}>
+              Title
+            </label>
+            <input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Summer Reunion 2026"
+              className={inputClass}
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="date" className={labelClass}>
+                Date
               </label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+              <input
+                id="date"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className={inputClass}
                 required
               />
             </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Date</label>
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                className="rounded-md border"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="eventType" className="text-sm font-medium">
-                Event Type
+            <div>
+              <label htmlFor="eventType" className={labelClass}>
+                Event type
               </label>
-              <Select value={eventType} onValueChange={(value: any) => setEventType(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select event type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {eventTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                id="eventType"
+                value={eventType}
+                onChange={(e) =>
+                  setEventType(e.target.value as (typeof eventTypes)[number])
+                }
+                className={inputClass}
+              >
+                {eventTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ")}
+                  </option>
+                ))}
+              </select>
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <label htmlFor="location" className="text-sm font-medium">
-                Location
-              </label>
-              <Input
-                id="location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
-            </div>
+          <div>
+            <label htmlFor="location" className={labelClass}>
+              Location
+            </label>
+            <input
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="e.g. Grandma's house, Stockholm"
+              className={inputClass}
+            />
+          </div>
 
-            <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-medium">
-                Description
-              </label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-              />
-            </div>
+          <div>
+            <label htmlFor="description" className={labelClass}>
+              Description
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={5}
+              placeholder="Who was there, what we ate, the story you want to remember&hellip;"
+              className={inputClass}
+            />
+            <p className="mt-2 text-[15px] italic text-ink-muted">
+              Leave it short. Photographs do most of the talking.
+            </p>
+          </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-black hover:bg-black/90"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating Event...
-                </>
-              ) : (
-                "Create Event"
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+            <Link href="/about/family-events" className="btn btn--link">
+              Cancel
+            </Link>
+            <button type="submit" disabled={isLoading} className="btn">
+              {isLoading ? "Creating…" : "Create event"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

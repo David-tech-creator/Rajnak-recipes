@@ -7,12 +7,6 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
 import type { FamilyEvent } from "@/lib/types/family"
 
 interface EventCreatorProps {
@@ -20,9 +14,16 @@ interface EventCreatorProps {
   isEditing?: boolean
 }
 
+const labelClass =
+  "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
+const inputClass =
+  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
+
 export function EventCreator({ event, isEditing = false }: EventCreatorProps) {
   const [title, setTitle] = useState(event?.title || "")
-  const [date, setDate] = useState(event?.date ? new Date(event.date).toISOString().split("T")[0] : "")
+  const [date, setDate] = useState(
+    event?.date ? new Date(event.date).toISOString().split("T")[0] : ""
+  )
   const [location, setLocation] = useState(event?.location || "")
   const [description, setDescription] = useState(event?.description || "")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -56,7 +57,6 @@ export function EventCreator({ event, isEditing = false }: EventCreatorProps) {
 
     try {
       if (isEditing && event) {
-        // Update existing event
         const { error } = await supabase
           .from("family_events")
           .update({
@@ -77,7 +77,6 @@ export function EventCreator({ event, isEditing = false }: EventCreatorProps) {
 
         router.push(`/about/family-events/${event.id}`)
       } else {
-        // Create new event
         const { data, error } = await supabase
           .from("family_events")
           .insert([
@@ -99,7 +98,6 @@ export function EventCreator({ event, isEditing = false }: EventCreatorProps) {
           description: "Your event has been created successfully",
         })
 
-        // Redirect to the new event page
         router.push(`/about/family-events/${data[0].id}`)
       }
     } catch (error) {
@@ -115,66 +113,87 @@ export function EventCreator({ event, isEditing = false }: EventCreatorProps) {
   }
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>{isEditing ? "Edit Event" : "Create New Family Event"}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title">Event Title *</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Summer Reunion 2023"
-              required
-            />
-          </div>
+    <div className="max-w-2xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-12">
+      <div className="text-center mb-8">
+        <div className="eyebrow eyebrow--lingon">
+          {isEditing ? "Edit event" : "New event"}
+        </div>
+        <h2 className="editorial-h3 mt-2 font-normal">
+          {isEditing ? "Update event details" : "Create a new family event"}
+        </h2>
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="date">Event Date *</Label>
-            <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <div>
+          <label htmlFor="title" className={labelClass}>
+            Event title
+          </label>
+          <input
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. Summer Reunion 2023"
+            className={inputClass}
+            required
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
-            <Input
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g. Grandma's House, Stockholm"
-            />
-          </div>
+        <div>
+          <label htmlFor="date" className={labelClass}>
+            Event date
+          </label>
+          <input
+            id="date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className={inputClass}
+            required
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the event, who attended, special memories, etc."
-              className="min-h-[150px]"
-            />
-          </div>
+        <div>
+          <label htmlFor="location" className={labelClass}>
+            Location
+          </label>
+          <input
+            id="location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="e.g. Grandma's house, Stockholm"
+            className={inputClass}
+          />
+        </div>
 
-          <div className="flex justify-between pt-4">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isEditing ? "Updating..." : "Creating..."}
-                </>
-              ) : (
-                <>{isEditing ? "Update Event" : "Create Event"}</>
-              )}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        <div>
+          <label htmlFor="description" className={labelClass}>
+            Description
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={5}
+            placeholder="Describe the event, who attended, special memories&hellip;"
+            className={inputClass}
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+          <button type="button" onClick={() => router.back()} className="btn btn--link">
+            Cancel
+          </button>
+          <button type="submit" disabled={isSubmitting} className="btn">
+            {isSubmitting
+              ? isEditing
+                ? "Updating…"
+                : "Creating…"
+              : isEditing
+              ? "Update event"
+              : "Create event"}
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }

@@ -1,31 +1,42 @@
 import Image from "next/image"
 import { PhotoGallery } from "@/components/family-gallery/photo-gallery"
+import { SprigDivider } from "@/components/sprig-divider"
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">About Us</h1>
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">No. IV · Our Story</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>kitchen</em>, four generations deep.
+        </h1>
+        <p className="lede">
+          Recipes carried from northern Sweden to the wider world, then back to the family table.
+        </p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+      </div>
 
-        <div className="relative aspect-[16/9] mb-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="relative aspect-[16/9] mb-12 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] overflow-hidden">
           <Image
             src="/images/nordic-dining.png"
             alt="A warm dining room with a woman setting the table"
             fill
-            className="object-cover rounded-lg"
+            className="object-cover"
+            style={{ filter: "saturate(0.92)" }}
             sizes="(max-width: 1024px) 100vw, 768px"
             priority
           />
         </div>
 
-        <div className="prose max-w-none">
+        <article className="recipe-prose text-[19px]">
           <h2>Our Family Story</h2>
 
           <p>
             Welcome to Our Family Recipe Collection, a diverse treasury of beloved recipes from around the world that
             spans four generations of our family. What began as handwritten notes in the margins of cookbooks and on the
             backs of envelopes has evolved into this digital collection of our culinary heritage, featuring dishes from
-            across the globe that have become part of our family's story.
+            across the globe that have become part of our family&apos;s story.
           </p>
 
           <p>
@@ -46,26 +57,31 @@ export default function AboutPage() {
           </p>
 
           <p>
-            By the 1970s, our daughter had taken up the family's culinary torch. A passionate home cook with an
+            By the 1970s, our daughter had taken up the family&apos;s culinary torch. A passionate home cook with an
             adventurous palate, she significantly expanded our repertoire during her extensive travels across Europe,
             Asia, Africa, and the Americas. She was the first to document our family recipes systematically, creating a
-            handbound cookbook as a wedding gift for each of her children. Her marginalia—"add more dill," "substitute
-            coconut milk for a Thai twist," "Papa's favorite"—provide glimpses into our family history that are as
-            precious as the recipes themselves.
+            handbound cookbook as a wedding gift for each of her children. Her marginalia&mdash;&ldquo;add more
+            dill,&rdquo; &ldquo;substitute coconut milk for a Thai twist,&rdquo; &ldquo;Papa&apos;s favorite&rdquo;&mdash;
+            provide glimpses into our family history that are as precious as the recipes themselves.
           </p>
+        </article>
 
-          <blockquote className="italic border-l-4 pl-4 my-8">
-            "Food is our common ground, a universal experience. The dinner table is where we forge our strongest bonds
-            and create our most enduring memories." — Someone in our Family
-          </blockquote>
+        <SprigDivider variant="leaf" className="!my-12 max-w-sm mx-auto" />
 
+        <blockquote className="pullquote my-12">
+          Food is our common ground, a universal experience. The dinner table is where we forge our strongest bonds and
+          create our most enduring memories.
+          <cite>&mdash; Someone in our Family</cite>
+        </blockquote>
+
+        <article className="recipe-prose text-[19px]">
           <h2>The Modern Collection</h2>
 
           <p>
             Today, the fourth generation of our family continues to honor our culinary heritage while bringing our own
-            contemporary touches to family classics from around the world. What you'll find in Our Family Recipe
-            Collection is a living document—recipes that evolve as we do, reflecting changing tastes, global influences,
-            and lifestyles while preserving the essence of what makes them special.
+            contemporary touches to family classics from around the world. What you&apos;ll find in Our Family Recipe
+            Collection is a living document&mdash;recipes that evolve as we do, reflecting changing tastes, global
+            influences, and lifestyles while preserving the essence of what makes them special.
           </p>
 
           <p>
@@ -80,27 +96,29 @@ export default function AboutPage() {
           <h2>Our Table Is Your Table</h2>
 
           <p>
-            In Swedish homes, there's a concept called "lagom"—not too much, not too little, just right. We believe the
-            best meals embody this principle: thoughtfully prepared, lovingly served, and meant to be shared. Every
-            recipe in this collection has been tested and refined at countless family gatherings, from everyday dinners
-            to milestone celebrations.
+            In Swedish homes, there&apos;s a concept called &ldquo;lagom&rdquo;&mdash;not too much, not too little, just
+            right. We believe the best meals embody this principle: thoughtfully prepared, lovingly served, and meant to
+            be shared. Every recipe in this collection has been tested and refined at countless family gatherings, from
+            everyday dinners to milestone celebrations.
           </p>
 
           <p>
             By sharing these recipes, we invite you into our family tradition. We hope they bring as much joy to your
-            table as they have to ours over the generations. Perhaps you'll add your own notes in the margins, adapt
-            them to your family's tastes, and create new memories around the dishes that have sustained our family for
-            over a century.
+            table as they have to ours over the generations. Perhaps you&apos;ll add your own notes in the margins,
+            adapt them to your family&apos;s tastes, and create new memories around the dishes that have sustained our
+            family for over a century.
           </p>
 
-          <p>From our kitchen to yours—välkommen och smaklig måltid! (Welcome and enjoy your meal!)</p>
+          <p>From our kitchen to yours&mdash;v&auml;lkommen och smaklig m&aring;ltid! (Welcome and enjoy your meal!)</p>
+        </article>
 
-          <div className="text-right italic mt-8">— Our Family</div>
-        </div>
+        <p className="hand text-[28px] text-right mt-10">&mdash; Our Family</p>
+
+        <SprigDivider variant="arc" className="!mt-16 !mb-4 max-w-sm mx-auto" />
       </div>
 
       {/* Family Photo Gallery Section */}
-      <div className="max-w-5xl mx-auto mt-16 pt-16 border-t">
+      <div className="max-w-5xl mx-auto mt-20 pt-16 border-t border-rule-soft">
         <PhotoGallery />
       </div>
     </div>

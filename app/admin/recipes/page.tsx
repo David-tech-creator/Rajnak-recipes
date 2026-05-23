@@ -1,127 +1,108 @@
-"use client"
+import Link from "next/link"
+import Image from "next/image"
+import { createServerSupabaseClient } from "@/lib/supabase"
+import { redirect } from "next/navigation"
+import { SprigDivider } from "@/components/sprig-divider"
 
-import { useEffect, useState } from "react"
-import { useAuth } from "@/lib/auth-context"
-import { useRouter } from "next/navigation"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Loader2, Trash2, Edit } from "lucide-react"
-import { supabase } from "@/lib/supabase-browser"
-import { useToast } from "@/hooks/use-toast"
+export default async function ManageRecipesPage() {
+  const supabase = createServerSupabaseClient()
 
-interface Recipe {
-  id: string
-  title: string
-  created_at: string
-  user_id: string
-}
+  // Check if user is authenticated
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
-export default function ManageRecipesPage() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
-  const [recipes, setRecipes] = useState<Recipe[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const { toast } = useToast()
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login')
-      return
-    }
-
-    async function fetchRecipes() {
-      try {
-        const { data, error } = await supabase
-          .from('recipes')
-          .select('*')
-          .order('created_at', { ascending: false })
-
-        if (error) throw error
-        setRecipes(data || [])
-      } catch (error) {
-        console.error('Error fetching recipes:', error)
-        toast({
-          title: 'Error',
-          description: 'Failed to load recipes',
-          variant: 'destructive'
-        })
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    if (user) {
-      fetchRecipes()
-    }
-  }, [user, loading, router, toast])
-
-  const handleDelete = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('recipes')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
-
-      setRecipes(recipes.filter(recipe => recipe.id !== id))
-      toast({
-        title: 'Success',
-        description: 'Recipe deleted successfully'
-      })
-    } catch (error) {
-      console.error('Error deleting recipe:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to delete recipe',
-        variant: 'destructive'
-      })
-    }
+  if (!session) {
+    redirect("/login?redirect=/admin/recipes/manage")
   }
 
-  if (loading || isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
-  }
+  // Fetch recipes
+  const { data: recipes, error } = await supabase
+    .from("recipes")
+    .select("id, title, slug, category, images, created_at")
+    .order("created_at", { ascending: false })
 
-  if (!user) return null
+  if (error) {
+    console.error("Error fetching recipes:", error)
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Manage Recipes</h1>
-      <div className="space-y-4">
-        {recipes.map((recipe) => (
-          <Card key={recipe.id}>
-            <CardContent className="flex items-center justify-between p-4">
-              <div>
-                <h3 className="font-medium">{recipe.title}</h3>
-                <p className="text-sm text-gray-500">
-                  {new Date(recipe.created_at).toLocaleDateString()}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => router.push(`/recipes/${recipe.id}/edit`)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => handleDelete(recipe.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">Administration</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          Manage the <em className="italic" style={{ color: "var(--lingon-deep)" }}>recipes</em>
+        </h1>
+        <p className="lede">Edit, photograph, and tend to every dish in the book.</p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+
+        <div className="mt-8">
+          <Link href="/recipes/new" className="btn">
+            Add a new recipe
+          </Link>
+        </div>
       </div>
+
+      {recipes && recipes.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {recipes.map((recipe) => (
+            <div key={recipe.id} className="flex flex-col">
+              <Link href={`/recipes/${recipe.slug}`} className="recipe-card block">
+                <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep">
+                  {recipe.images && recipe.images.length > 0 ? (
+                    <Image
+                      src={recipe.images[0]}
+                      alt={recipe.title}
+                      fill
+                      className="object-cover"
+                      style={{ filter: "saturate(0.92)" }}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="font-serif italic text-ink-muted">No image yet</span>
+                    </div>
+                  )}
+                </div>
+                <div className="py-5 text-center">
+                  <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
+                    {recipe.category}
+                  </div>
+                  <h3 className="recipe-card-title">{recipe.title}</h3>
+                  <p className="mt-2 font-serif italic text-ink-muted text-[15px]">
+                    {recipe.images?.length || 0} image{recipe.images?.length !== 1 ? "s" : ""}
+                  </p>
+                </div>
+              </Link>
+
+              <div className="flex justify-center gap-6 pt-3 border-t border-dotted border-rule">
+                <Link
+                  href={`/recipes/edit/${recipe.id}`}
+                  className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink hover:text-lingon-deep underline decoration-1 underline-offset-4"
+                >
+                  Edit
+                </Link>
+                <Link
+                  href={`/recipes/${recipe.slug}`}
+                  target="_blank"
+                  className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-soft hover:text-lingon-deep underline decoration-1 underline-offset-4"
+                >
+                  View
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="max-w-2xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-12 text-center">
+          <p className="font-serif italic text-ink-soft text-lg mb-6">
+            No recipes yet. The book is waiting for its first entry.
+          </p>
+          <Link href="/recipes/new" className="btn">
+            Create your first recipe
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

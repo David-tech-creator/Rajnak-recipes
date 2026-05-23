@@ -6,10 +6,9 @@ import { supabase } from "@/lib/supabase"
 import type { Recipe } from "@/lib/supabase"
 import Link from "next/link"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Pencil, Trash2, Plus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
+import { SprigDivider } from "@/components/sprig-divider"
 
 export default function MyRecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -78,84 +77,80 @@ export default function MyRecipesPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-center mb-12">
-          <h1 className="text-3xl">My Recipes</h1>
-          <Button asChild>
-            <Link href="/recipes/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add New Recipe
-            </Link>
-          </Button>
-        </div>
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">Your kitchen</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          My <em className="italic" style={{ color: "var(--lingon-deep)" }}>recipes</em>
+        </h1>
+        <p className="lede">The dishes you&rsquo;ve contributed to the family cookbook.</p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
 
-        {isLoading ? (
-          <div className="text-center py-12">Loading your recipes...</div>
-        ) : recipes.length === 0 ? (
-          <div className="text-center py-12 bg-[rgb(var(--light-accent))] p-12">
-            <p className="mb-6">You haven't created any recipes yet.</p>
-                      <Button asChild size="lg">
-            <Link href="/recipes/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Your First Recipe
-            </Link>
-          </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {recipes.map((recipe) => (
-              <div key={recipe.id} className="border border-gray-100 group">
-                <div className="relative">
-                  <Link href={`/recipes/${recipe.slug}`}>
-                    <div className="aspect-[4/3] relative overflow-hidden">
-                      <Image
-                        src={
-                          recipe.images && recipe.images.length > 0
-                            ? recipe.images[0]
-                            : `/placeholder.svg?height=400&width=600&text=${encodeURIComponent(recipe.title)}`
-                        }
-                        alt={recipe.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                  </Link>
-                  <div className="absolute top-0 right-0 p-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      asChild
-                      className="bg-white hover:bg-gray-100 text-gray-600"
-                    >
-                      <Link href={`/recipes/edit/${recipe.id}`}>
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      onClick={() => handleDeleteRecipe(recipe.id)}
-                      className="bg-white hover:bg-gray-100 text-gray-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <Link href={`/recipes/${recipe.slug}`}>
-                    <h2 className="text-xl mb-2">{recipe.title}</h2>
-                  </Link>
-                  <p className="text-sm text-gray-500">{recipe.category}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="mt-8">
+          <Link href="/recipes/new" className="btn">
+            Add a new recipe
+          </Link>
+        </div>
       </div>
+
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className="font-serif italic text-ink-muted text-lg">Loading your recipes…</p>
+        </div>
+      ) : recipes.length === 0 ? (
+        <div className="max-w-2xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-12 text-center">
+          <p className="font-serif italic text-ink-soft text-lg mb-6">
+            You haven&rsquo;t added any recipes yet.
+          </p>
+          <Link href="/recipes/new" className="btn">
+            Create your first recipe
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {recipes.map((recipe) => (
+            <div key={recipe.id} className="flex flex-col">
+              <Link href={`/recipes/${recipe.slug}`} className="recipe-card block">
+                <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep">
+                  <Image
+                    src={
+                      recipe.images && recipe.images.length > 0
+                        ? recipe.images[0]
+                        : `/placeholder.svg?height=400&width=600&text=${encodeURIComponent(recipe.title)}`
+                    }
+                    alt={recipe.title}
+                    fill
+                    className="object-cover"
+                    style={{ filter: "saturate(0.92)" }}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </div>
+                <div className="py-5 text-center">
+                  <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
+                    {recipe.category}
+                  </div>
+                  <h3 className="recipe-card-title">{recipe.title}</h3>
+                </div>
+              </Link>
+
+              <div className="flex justify-center gap-6 pt-3 border-t border-dotted border-rule">
+                <Link
+                  href={`/recipes/edit/${recipe.id}`}
+                  className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink hover:text-lingon-deep underline decoration-1 underline-offset-4"
+                >
+                  Edit
+                </Link>
+                <button
+                  onClick={() => handleDeleteRecipe(recipe.id)}
+                  className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-lingon hover:text-lingon-deep underline decoration-1 underline-offset-4"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { RecipeEditor } from "@/components/recipe-editor"
+import { SprigDivider } from "@/components/sprig-divider"
 import { supabase } from "@/lib/supabase"
 import type { Recipe } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
@@ -59,15 +60,24 @@ export default function EditRecipePage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-16 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2">Loading recipe...</span>
+      <div className="container mx-auto px-6 py-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="eyebrow eyebrow--lingon">Edit recipe</div>
+          <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+            Fetching the <em className="italic" style={{ color: "var(--lingon-deep)" }}>page</em>…
+          </h1>
+          <SprigDivider variant="berry" className="!mt-10 !mb-8 max-w-sm mx-auto" />
+          <div className="flex items-center justify-center gap-3 font-serif italic text-ink-muted text-lg">
+            <Loader2 className="h-5 w-5 animate-spin" />
+            <span>Loading recipe…</span>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (!recipe) {
-    return null // Will redirect in useEffect
+    return null
   }
 
   return <RecipeEditor recipe={recipe} isEditing />

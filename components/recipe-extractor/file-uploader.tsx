@@ -2,9 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Loader2, Upload } from "lucide-react"
+import { useRef, useState } from "react"
+import { Loader2 } from "lucide-react"
 import { RecipePreview } from "./recipe-preview"
 import type { ExtractedRecipe } from "@/lib/recipe-extractor"
 
@@ -17,6 +16,7 @@ export function FileUploader({ onRecipeExtracted }: FileUploaderProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [recipe, setRecipe] = useState<ExtractedRecipe | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -69,39 +69,60 @@ export function FileUploader({ onRecipeExtracted }: FileUploaderProps) {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="border-2 border-dotted border-rule p-12 text-center bg-cream">
           <input
             type="file"
             id="file-upload"
+            ref={inputRef}
             onChange={handleFileChange}
             accept=".pdf,.txt,.doc,.docx"
             className="hidden"
           />
-          <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center justify-center">
-            <Upload className="h-10 w-10 text-gray-400 mb-2" />
-            <p className="text-sm text-gray-600 mb-1">{file ? file.name : "Click to upload or drag and drop"}</p>
-            <p className="text-xs text-gray-500">PDF, TXT, DOC, DOCX</p>
-          </label>
+          <p className="font-serif italic text-ink-muted text-lg">
+            {file ? file.name : "Drop a PDF, text, or document file here"}
+          </p>
+          <p className="font-serif-sc uppercase tracking-[0.22em] text-[10px] text-ink-muted mt-3">
+            PDF · TXT · DOC · DOCX
+          </p>
+          <button
+            type="button"
+            className="btn btn--ghost mt-4"
+            onClick={() => inputRef.current?.click()}
+          >
+            Choose file
+          </button>
         </div>
 
         {file && (
-          <Button type="submit" variant="outline" className="w-full" disabled={isLoading}>
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Extract Recipe
-          </Button>
+          <div className="text-center">
+            <button type="submit" className="btn" disabled={isLoading}>
+              {isLoading ? (
+                <span className="inline-flex items-center">
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Extracting…
+                </span>
+              ) : (
+                "Extract recipe"
+              )}
+            </button>
+          </div>
         )}
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && (
+          <div className="bg-lingon-soft/30 border border-lingon text-lingon-deep font-serif italic text-[16px] p-4">
+            {error}
+          </div>
+        )}
       </form>
 
       {recipe && (
-        <div className="space-y-4">
+        <div className="space-y-6 pt-4">
           <RecipePreview recipe={recipe} />
-          <div className="flex justify-center mt-6">
-            <Button onClick={handleUseRecipe} variant="outline">
-              Use This Recipe
-            </Button>
+          <div className="flex justify-center">
+            <button type="button" onClick={handleUseRecipe} className="btn">
+              Use this recipe
+            </button>
           </div>
         </div>
       )}

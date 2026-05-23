@@ -3,36 +3,32 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DragDropImageUploader } from "@/components/drag-drop-image-uploader"
-import { Loader2, Plus, Trash2, Save } from "lucide-react"
+import { SprigDivider } from "@/components/sprig-divider"
+import { Loader2 } from "lucide-react"
 import slugify from "slugify"
 import type { Recipe } from "@/lib/supabase"
 import type { ExtractedRecipe } from "@/lib/recipe-extractor"
 import { CATEGORY_GROUPS } from "@/lib/categories"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 interface RecipeEditorProps {
   recipe?: Recipe
   initialRecipe?: ExtractedRecipe | null
   isEditing?: boolean
 }
+
+type Section = "basic" | "ingredients" | "instructions" | "images"
+
+const SECTIONS: Array<{ id: Section; label: string; eyebrow: string }> = [
+  { id: "basic", label: "Basics", eyebrow: "No. I" },
+  { id: "ingredients", label: "Ingredients", eyebrow: "No. II" },
+  { id: "instructions", label: "Method", eyebrow: "No. III" },
+  { id: "images", label: "Images", eyebrow: "No. IV" },
+]
 
 export function RecipeEditor({ recipe, initialRecipe, isEditing = false }: RecipeEditorProps) {
   const [title, setTitle] = useState(recipe?.title || initialRecipe?.title || "")
@@ -48,13 +44,12 @@ export function RecipeEditor({ recipe, initialRecipe, isEditing = false }: Recip
   )
   const [images, setImages] = useState<string[]>(recipe?.images || initialRecipe?.images || [])
   const [isLoading, setIsLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState("basic")
+  const [activeSection, setActiveSection] = useState<Section>("basic")
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const router = useRouter()
   const { toast } = useToast()
 
-  // Generate slug from title
   useEffect(() => {
     if (title) {
       setSlug(
@@ -67,83 +62,33 @@ export function RecipeEditor({ recipe, initialRecipe, isEditing = false }: Recip
     }
   }, [title])
 
-  // Ingredient management
-  const addIngredient = () => {
-    setIngredients([...ingredients, ""])
-  }
-
+  const addIngredient = () => setIngredients([...ingredients, ""])
   const removeIngredient = (index: number) => {
-    const newIngredients = [...ingredients]
-    newIngredients.splice(index, 1)
-    setIngredients(newIngredients)
+    const next = [...ingredients]
+    next.splice(index, 1)
+    setIngredients(next)
   }
-
   const updateIngredient = (index: number, value: string) => {
-    const newIngredients = [...ingredients]
-    newIngredients[index] = value
-    setIngredients(newIngredients)
+    const next = [...ingredients]
+    next[index] = value
+    setIngredients(next)
   }
 
-  // Instruction management
-  const addInstruction = () => {
-    setInstructions([...instructions, ""])
-  }
-
+  const addInstruction = () => setInstructions([...instructions, ""])
   const removeInstruction = (index: number) => {
-    const newInstructions = [...instructions]
-    newInstructions.splice(index, 1)
-    setInstructions(newInstructions)
+    const next = [...instructions]
+    next.splice(index, 1)
+    setInstructions(next)
   }
-
   const updateInstruction = (index: number, value: string) => {
-    const newInstructions = [...instructions]
-    newInstructions[index] = value
-    setInstructions(newInstructions)
-  }
-
-  // Image management
-  const handleImagesUploaded = (newImageUrls: string[]) => {
-    setImages([...images, ...newImageUrls])
-  }
-
-  const handleImageRemove = async (urlToRemove: string) => {
-    // Remove from state
-    setImages(images.filter((url) => url !== urlToRemove))
-
-    // Optional: Remove from storage
-    // This would require extracting the file path from the URL
-    // and using supabase.storage.from('recipes').remove([filePath])
-  }
-
-  const updateRecipe = (key: string, value: string) => {
-    switch (key) {
-      case "title":
-        setTitle(value)
-        break
-      case "description":
-        setDescription(value)
-        break
-      case "category":
-        setCategory(value)
-        break
-      case "prep_time":
-        setPrepTime(value)
-        break
-      case "cook_time":
-        setCookTime(value)
-        break
-      case "servings":
-        setServings(value)
-        break
-      default:
-        break
-    }
+    const next = [...instructions]
+    next[index] = value
+    setInstructions(next)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate form
     if (!title || !category) {
       toast({
         title: "Missing information",
@@ -170,7 +115,6 @@ export function RecipeEditor({ recipe, initialRecipe, isEditing = false }: Recip
       }
 
       if (isEditing && recipe) {
-        // Update existing recipe
         const { error } = await supabase
           .from("recipes")
           .update({
@@ -186,8 +130,7 @@ export function RecipeEditor({ recipe, initialRecipe, isEditing = false }: Recip
           description: "Your recipe has been updated successfully.",
         })
       } else {
-        // Create new recipe
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("recipes")
           .insert([
             {
@@ -204,10 +147,8 @@ export function RecipeEditor({ recipe, initialRecipe, isEditing = false }: Recip
           description: "Your recipe has been created successfully.",
         })
 
-        // Set submitted state to show success message
         setIsSubmitted(true)
 
-        // Redirect to the new recipe page after a short delay
         setTimeout(() => {
           router.push(`/recipes/${slug}`)
         }, 2000)
@@ -223,243 +164,297 @@ export function RecipeEditor({ recipe, initialRecipe, isEditing = false }: Recip
     }
   }
 
+  const fieldClass =
+    "w-full bg-parchment-deep/40 border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
+  const labelClass =
+    "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
+
   if (isSubmitted) {
     return (
-      <Card className="max-w-2xl mx-auto">
-        <CardContent className="pt-6">
-          <div className="text-center py-8">
-            <div className="mb-4 flex justify-center">
-              <div className="rounded-full bg-green-100 p-3">
-                <svg
-                  className="h-8 w-8 text-green-600"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold mb-2">Recipe Submitted Successfully!</h2>
-            <p className="text-gray-600 mb-6">
-              Your recipe has been saved. You will be redirected to view it momentarily.
-            </p>
-            <Button onClick={() => router.push(`/recipes/${slug}`)}>View Recipe Now</Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="container mx-auto px-6 py-16">
+        <div className="max-w-2xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-12 text-center">
+          <div className="eyebrow eyebrow--lingon">Saved</div>
+          <h2 className="editorial-h2 mt-3 mb-4 font-normal">
+            A new <em className="italic" style={{ color: "var(--lingon-deep)" }}>page</em> in the book.
+          </h2>
+          <p className="lede mb-8">
+            Your recipe has been saved. You&apos;ll be taken to it in a moment.
+          </p>
+          <SprigDivider variant="berry" className="!mt-6 !mb-8 max-w-sm mx-auto" />
+          <button
+            type="button"
+            onClick={() => router.push(`/recipes/${slug}`)}
+            className="btn"
+          >
+            View recipe now
+          </button>
+        </div>
+      </div>
     )
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <form onSubmit={handleSubmit}>
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">{isEditing ? "Edit Recipe" : "Create New Recipe"}</h1>
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="outline" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isEditing ? "Updating..." : "Saving Recipe..."}
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  {isEditing ? "Update Recipe" : "Save Recipe"}
-                </>
-              )}
-            </Button>
-          </div>
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">{isEditing ? "Edit a recipe" : "Add a recipe"}</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          {isEditing ? (
+            <>
+              Revise this <em className="italic" style={{ color: "var(--lingon-deep)" }}>page</em>.
+            </>
+          ) : (
+            <>
+              A new <em className="italic" style={{ color: "var(--lingon-deep)" }}>page</em> in the book.
+            </>
+          )}
+        </h1>
+        <p className="lede">
+          Fill in the details below; the family book will remember.
+        </p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-3xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-12"
+      >
+        {/* Section tabs */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-b border-rule-soft mb-10">
+          {SECTIONS.map((section) => {
+            const isActive = activeSection === section.id
+            return (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => setActiveSection(section.id)}
+                className={`text-center pb-4 font-serif-sc uppercase tracking-[0.22em] text-[11px] transition-colors ${
+                  isActive
+                    ? "text-lingon-deep border-b-2 border-lingon -mb-px"
+                    : "text-ink-muted hover:text-ink"
+                }`}
+              >
+                <div className="text-[10px] opacity-70 mb-1">{section.eyebrow}</div>
+                {section.label}
+              </button>
+            )
+          })}
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-4 w-full max-w-md">
-            <TabsTrigger value="basic">Basic Info</TabsTrigger>
-            <TabsTrigger value="ingredients">Ingredients</TabsTrigger>
-            <TabsTrigger value="instructions">Instructions</TabsTrigger>
-            <TabsTrigger value="images">Images</TabsTrigger>
-          </TabsList>
+        {activeSection === "basic" && (
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="title" className={labelClass}>
+                Recipe title *
+              </label>
+              <input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                placeholder="e.g. Mormor's gulasch soup"
+                className={fieldClass}
+              />
+            </div>
 
-          {/* Basic Info Tab */}
-          <TabsContent value="basic" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Recipe Title *</Label>
-                  <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-                </div>
+            <div>
+              <label htmlFor="description" className={labelClass}>
+                Background &amp; history
+              </label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Share the story — where it came from, who made it, why it matters."
+                className={`${fieldClass} min-h-32`}
+              />
+              <p className="mt-2 text-[15px] italic text-ink-muted">
+                A paragraph or two. The voice of the book.
+              </p>
+            </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">Recipe Background & History</Label>
-                  <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Share the story behind this recipe, its history, family connections, or any special memories associated with it."
-                    className="min-h-[120px]"
-                  />
-                </div>
+            <div>
+              <label htmlFor="category" className={labelClass}>
+                Category *
+              </label>
+              <div className="relative">
+                <select
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  required
+                  className={`${fieldClass} appearance-none pr-10`}
+                >
+                  <option value="" disabled>
+                    Select a category
+                  </option>
+                  {CATEGORY_GROUPS.map((group) => {
+                    const filteredSubcategories = group.subcategories?.filter(
+                      (subcat) => !CATEGORY_GROUPS.some((g) => g.name === subcat),
+                    )
+                    return (
+                      <optgroup key={group.name} label={group.name}>
+                        <option value={group.name}>{group.name}</option>
+                        {filteredSubcategories?.map((subcat) => (
+                          <option key={subcat} value={subcat}>
+                            {subcat}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )
+                  })}
+                </select>
+                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted font-serif text-lg">
+                  ▾
+                </span>
+              </div>
+            </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category *</Label>
-                  <Select value={category} onValueChange={(value) => updateRecipe("category", value)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CATEGORY_GROUPS.map((group) => {
-                        // Only show subcategories that aren't already main categories
-                        const filteredSubcategories = group.subcategories?.filter(
-                          (subcat) => !CATEGORY_GROUPS.some((g) => g.name === subcat),
-                        )
-
-                        return (
-                          <SelectGroup key={group.name}>
-                            <SelectLabel>{group.name}</SelectLabel>
-                            <SelectItem value={group.name}>{group.name}</SelectItem>
-                            {filteredSubcategories?.map((subcat) => (
-                              <SelectItem key={subcat} value={subcat} className="pl-6">
-                                {subcat}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        )
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="prepTime">Prep Time</Label>
-                    <Input
-                      id="prepTime"
-                      value={prepTime}
-                      onChange={(e) => setPrepTime(e.target.value)}
-                      placeholder="e.g. 30 mins"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="cookTime">Cook Time</Label>
-                    <Input
-                      id="cookTime"
-                      value={cookTime}
-                      onChange={(e) => setCookTime(e.target.value)}
-                      placeholder="e.g. 45 mins"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="servings">Servings</Label>
-                    <Input
-                      id="servings"
-                      type="number"
-                      value={servings}
-                      onChange={(e) => setServings(e.target.value)}
-                      min="0"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Ingredients Tab */}
-          <TabsContent value="ingredients">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Ingredients</CardTitle>
-                <Button type="button" onClick={addIngredient} size="sm" variant="outline">
-                  <Plus className="h-4 w-4 mr-1" /> Add Ingredient
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {ingredients.map((ingredient, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Input
-                        value={ingredient}
-                        onChange={(e) => updateIngredient(index, e.target.value)}
-                        placeholder={`Ingredient ${index + 1}`}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeIngredient(index)}
-                        disabled={ingredients.length === 1}
-                        className="text-gray-400 hover:text-gray-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Instructions Tab */}
-          <TabsContent value="instructions">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Instructions</CardTitle>
-                <Button type="button" onClick={addInstruction} size="sm" variant="outline">
-                  <Plus className="h-4 w-4 mr-1" /> Add Step
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {instructions.map((instruction, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="flex-none pt-3 font-serif text-xl text-gray-400">{index + 1}.</div>
-                      <Textarea
-                        value={instruction}
-                        onChange={(e) => updateInstruction(index, e.target.value)}
-                        placeholder={`Step ${index + 1}`}
-                        className="flex-grow min-h-[100px]"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeInstruction(index)}
-                        disabled={instructions.length === 1}
-                        className="flex-none mt-2 text-gray-400 hover:text-gray-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Images Tab */}
-          <TabsContent value="images">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recipe Images</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <DragDropImageUploader
-                  images={images}
-                  onImagesChange={setImages}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label htmlFor="prepTime" className={labelClass}>
+                  Prep time
+                </label>
+                <input
+                  id="prepTime"
+                  value={prepTime}
+                  onChange={(e) => setPrepTime(e.target.value)}
+                  placeholder="30 mins"
+                  className={fieldClass}
                 />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              </div>
+
+              <div>
+                <label htmlFor="cookTime" className={labelClass}>
+                  Cook time
+                </label>
+                <input
+                  id="cookTime"
+                  value={cookTime}
+                  onChange={(e) => setCookTime(e.target.value)}
+                  placeholder="45 mins"
+                  className={fieldClass}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="servings" className={labelClass}>
+                  Servings
+                </label>
+                <input
+                  id="servings"
+                  type="number"
+                  value={servings}
+                  onChange={(e) => setServings(e.target.value)}
+                  min="0"
+                  placeholder="4"
+                  className={fieldClass}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === "ingredients" && (
+          <div>
+            <div className="flex items-baseline justify-between mb-6">
+              <h2 className="editorial-h3 font-normal">Ingredients</h2>
+              <span className="font-serif italic text-ink-muted text-sm">
+                {ingredients.filter((i) => i.trim()).length} listed
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {ingredients.map((ingredient, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <span className="font-serif num text-lg text-ink-muted w-8 text-right">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <input
+                    value={ingredient}
+                    onChange={(e) => updateIngredient(index, e.target.value)}
+                    placeholder={`Ingredient ${index + 1}`}
+                    className={fieldClass}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeIngredient(index)}
+                    disabled={ingredients.length === 1}
+                    className="text-lingon hover:text-lingon-deep text-sm font-serif italic disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <button type="button" onClick={addIngredient} className="btn btn--ghost mt-6">
+              + Add another
+            </button>
+          </div>
+        )}
+
+        {activeSection === "instructions" && (
+          <div>
+            <div className="flex items-baseline justify-between mb-6">
+              <h2 className="editorial-h3 font-normal">Method</h2>
+              <span className="font-serif italic text-ink-muted text-sm">
+                {instructions.filter((i) => i.trim()).length} steps
+              </span>
+            </div>
+
+            <div className="space-y-6">
+              {instructions.map((instruction, index) => (
+                <div key={index} className="grid grid-cols-[44px_1fr_auto] gap-3 items-start">
+                  <span className="font-serif num text-2xl text-lingon leading-none pt-3">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <textarea
+                    value={instruction}
+                    onChange={(e) => updateInstruction(index, e.target.value)}
+                    placeholder={`Step ${index + 1}`}
+                    className={`${fieldClass} min-h-32`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeInstruction(index)}
+                    disabled={instructions.length === 1}
+                    className="text-lingon hover:text-lingon-deep text-sm font-serif italic disabled:opacity-40 disabled:cursor-not-allowed pt-3"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <button type="button" onClick={addInstruction} className="btn btn--ghost mt-6">
+              + Add another step
+            </button>
+          </div>
+        )}
+
+        {activeSection === "images" && (
+          <div>
+            <h2 className="editorial-h3 font-normal mb-6">Photographs</h2>
+            <DragDropImageUploader images={images} onImagesChange={setImages} />
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="border-t border-rule-soft pt-8 mt-10 flex flex-wrap items-center justify-between gap-4">
+          <Link href="/recipes" className="btn btn--ghost">
+            Cancel
+          </Link>
+          <button type="submit" disabled={isLoading} className="btn">
+            {isLoading ? (
+              <span className="inline-flex items-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                {isEditing ? "Updating…" : "Saving…"}
+              </span>
+            ) : (
+              <>{isEditing ? "Update recipe" : "Save recipe"}</>
+            )}
+          </button>
+        </div>
       </form>
     </div>
   )

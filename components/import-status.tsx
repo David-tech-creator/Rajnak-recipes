@@ -1,9 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export function ImportStatus() {
@@ -56,39 +53,45 @@ export function ImportStatus() {
     }
   }
 
-  return (
-    <Card className="max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Recipe Import</CardTitle>
-        <CardDescription>Import recipes from the CSV file</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4">
-          Current recipe count: <strong>{recipeCount}</strong>
-        </p>
+  let statusBadge: React.ReactNode = null
+  if (importComplete) {
+    statusBadge = (
+      <span className="bg-sage/10 border border-sage text-forest font-serif-sc uppercase tracking-[0.22em] text-[10px] px-2 py-1">
+        Complete
+      </span>
+    )
+  } else if (isImporting) {
+    statusBadge = (
+      <span className="bg-cream border border-rule-soft text-ink-muted font-serif-sc uppercase tracking-[0.22em] text-[10px] px-2 py-1">
+        Working…
+      </span>
+    )
+  }
 
-        {importComplete ? (
-          <div className="bg-green-50 p-4 rounded-md text-green-800">
-            <p>Recipe import completed successfully!</p>
-          </div>
-        ) : (
-          <p>Click the button below to import recipes from the CSV file.</p>
-        )}
-      </CardContent>
-      <CardFooter>
-        <Button onClick={handleImportClick} disabled={isImporting || importComplete} className="w-full">
-          {isImporting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Importing...
-            </>
-          ) : importComplete ? (
-            "Import Complete"
-          ) : (
-            "Import Recipes"
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
+  return (
+    <div className="space-y-4">
+      <p className="font-serif text-ink">
+        Current recipe count:{" "}
+        <span className="num font-serif-sc uppercase tracking-[0.1em]">{recipeCount}</span>
+      </p>
+
+      {statusBadge && <div>{statusBadge}</div>}
+
+      {importComplete && (
+        <div className="bg-sage/10 border border-sage text-forest p-4">
+          <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] mb-1">Done</div>
+          <p className="font-serif italic">Recipe import completed successfully.</p>
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={handleImportClick}
+        disabled={isImporting || importComplete}
+        className="btn w-full disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isImporting ? "Importing…" : importComplete ? "Import complete" : "Import recipes"}
+      </button>
+    </div>
   )
 }

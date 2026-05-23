@@ -3,8 +3,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { Loader2 } from "lucide-react"
 import { RecipePreview } from "./recipe-preview"
 import type { ExtractedRecipe } from "@/lib/recipe-extractor"
@@ -56,28 +54,50 @@ export function TextExtractor({ onRecipeExtracted }: TextExtractorProps) {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Textarea
-          placeholder="Paste recipe text here..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          required
-          className="min-h-[200px]"
-        />
-        <Button type="submit" variant="outline" className="w-full" disabled={isLoading || !text.trim()}>
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-          Extract Recipe
-        </Button>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2">
+            Paste recipe text
+          </label>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            required
+            placeholder="Paste a recipe from anywhere — an email, a webpage, an old PDF…"
+            className="w-full bg-parchment-deep/40 border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink min-h-[220px]"
+          />
+          <p className="mt-2 text-[15px] italic text-ink-muted">
+            The extractor will sort the title, ingredients, and steps for you.
+          </p>
+        </div>
+
+        <div className="text-center">
+          <button type="submit" className="btn" disabled={isLoading || !text.trim()}>
+            {isLoading ? (
+              <span className="inline-flex items-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Extracting…
+              </span>
+            ) : (
+              "Extract recipe"
+            )}
+          </button>
+        </div>
+
+        {error && (
+          <div className="bg-lingon-soft/30 border border-lingon text-lingon-deep font-serif italic text-[16px] p-4">
+            {error}
+          </div>
+        )}
       </form>
 
       {recipe && (
-        <div className="space-y-4">
+        <div className="space-y-6 pt-4">
           <RecipePreview recipe={recipe} />
-          <div className="flex justify-center mt-6">
-            <Button onClick={handleUseRecipe} variant="outline">
-              Use This Recipe
-            </Button>
+          <div className="flex justify-center">
+            <button type="button" onClick={handleUseRecipe} className="btn">
+              Use this recipe
+            </button>
           </div>
         </div>
       )}

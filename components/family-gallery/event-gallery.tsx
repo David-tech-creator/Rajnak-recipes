@@ -6,12 +6,11 @@ import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PhotoUploader } from "./photo-uploader"
 import { PhotoGrid } from "./photo-grid"
-import { Loader2, Calendar, MapPin, Edit, Trash2, Plus } from "lucide-react"
-import type { FamilyEvent } from "@/lib/types/family"
+import { SprigDivider } from "@/components/sprig-divider"
+import { format } from "date-fns"
+import type { FamilyEvent, FamilyPhoto } from "@/lib/types/family"
 
 interface EventGalleryProps {
   eventId: string
@@ -19,7 +18,7 @@ interface EventGalleryProps {
 
 export function EventGallery({ eventId }: EventGalleryProps) {
   const [event, setEvent] = useState<FamilyEvent | null>(null)
-  const [photos, setPhotos] = useState<any[]>([])
+  const [photos, setPhotos] = useState<FamilyPhoto[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showUploader, setShowUploader] = useState(false)
@@ -31,7 +30,6 @@ export function EventGallery({ eventId }: EventGalleryProps) {
     async function fetchEventAndPhotos() {
       setIsLoading(true)
       try {
-        // Fetch event details
         const { data: eventData, error: eventError } = await supabase
           .from("family_events")
           .select("*")
@@ -42,7 +40,6 @@ export function EventGallery({ eventId }: EventGalleryProps) {
 
         setEvent(eventData)
 
-        // Fetch photos for this event
         const { data: photoData, error: photoError } = await supabase
           .from("family_photos")
           .select("*")
@@ -68,7 +65,6 @@ export function EventGallery({ eventId }: EventGalleryProps) {
   }, [eventId, toast])
 
   const handlePhotoUploaded = async () => {
-    // Refresh photos after upload
     const { data, error } = await supabase
       .from("family_photos")
       .select("*")
@@ -85,37 +81,46 @@ export function EventGallery({ eventId }: EventGalleryProps) {
   }
 
   const handleDeleteEvent = async () => {
-    if (!confirm("Are you sure you want to delete this event? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this event? This action cannot be undone."
+      )
+    ) {
       return
     }
 
     setIsDeleting(true)
 
     try {
-      // Delete all photos associated with this event
       if (photos.length > 0) {
-        // First, get the file paths from the URLs
-        const filePaths = photos.map((photo) => {
-          const url = photo.url
-          const fileName = url.split("/").pop()
-          return fileName
-        }).filter(Boolean)
+        const filePaths = photos
+          .map((photo) => {
+            const url = photo.url
+            const fileName = url.split("/").pop()
+            return fileName
+          })
+          .filter((p): p is string => Boolean(p))
 
-        // Delete files from storage
-        const { error: storageError } = await supabase.storage.from("family-photos").remove(filePaths)
+        const { error: storageError } = await supabase.storage
+          .from("family-photos")
+          .remove(filePaths)
 
         if (storageError) {
           console.error("Error deleting photo files:", storageError)
         }
 
-        // Delete photo records from database
-        const { error: photoDeleteError } = await supabase.from("family_photos").delete().eq("event_id", eventId)
+        const { error: photoDeleteError } = await supabase
+          .from("family_photos")
+          .delete()
+          .eq("event_id", eventId)
 
         if (photoDeleteError) throw photoDeleteError
       }
 
-      // Delete the event
-      const { error: eventDeleteError } = await supabase.from("family_events").delete().eq("id", eventId)
+      const { error: eventDeleteError } = await supabase
+        .from("family_events")
+        .delete()
+        .eq("id", eventId)
 
       if (eventDeleteError) throw eventDeleteError
 
@@ -139,93 +144,99 @@ export function EventGallery({ eventId }: EventGalleryProps) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-      </div>
+      <p className="text-center font-serif italic text-ink-muted text-lg py-12">
+        Loading event&hellip;
+      </p>
     )
   }
 
   if (!event) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-bold mb-4">Event Not Found</h2>
-        <p className="mb-6">The event you're looking for doesn't exist or has been removed.</p>
-        <Button asChild>
-          <Link href="/about/family-events">Back to Events</Link>
-        </Button>
+      <div className="max-w-2xl mx-auto text-center py-12">
+        <div className="eyebrow eyebrow--lingon">Album not found</div>
+        <h2 className="editorial-h2 mt-3 mb-4 font-normal">
+          We can&apos;t find that event.
+        </h2>
+        <p className="lede mb-8">
+          It may have been removed, or the link is from another season.
+        </p>
+        <Link href="/about/family-events" className="btn">
+          Back to events
+        </Link>
       </div>
     )
   }
 
-  const formattedDate = new Date(event.date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
+  const formattedDate = format(new Date(event.date), "PPP")
 
   return (
-    <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-2xl">{event.title}</CardTitle>
-            {user && (
-              <div className="flex space-x-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link href={`/about/family-events/${eventId}/edit`}>
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
-                  </Link>
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleDeleteEvent} disabled={isDeleting}>
-                  {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4 mr-1" />}
-                  Delete
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center text-gray-600">
-            <Calendar className="h-4 w-4 mr-2" />
-            {formattedDate}
-          </div>
+    <div className="space-y-12">
+      <div className="text-center">
+        <div className="eyebrow eyebrow--lingon">Family album</div>
+        <h1 className="editorial-h1 mt-3 mb-3 font-normal">{event.title}</h1>
+        <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted flex flex-wrap justify-center gap-x-6 gap-y-2">
+          <span>{formattedDate}</span>
           {event.location && (
-            <div className="flex items-center text-gray-600">
-              <MapPin className="h-4 w-4 mr-2" />
-              {event.location}
-            </div>
+            <>
+              <span aria-hidden="true">&middot;</span>
+              <span>{event.location}</span>
+            </>
           )}
-          {event.description && <p className="mt-4 text-gray-700">{event.description}</p>}
-        </CardContent>
-      </Card>
+        </div>
+        {event.description && (
+          <p className="lede mt-6 max-w-2xl mx-auto">{event.description}</p>
+        )}
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+      </div>
+
+      {user && (
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          <Link
+            href={`/about/family-events/${eventId}/edit`}
+            className="btn btn--ghost"
+          >
+            Edit event
+          </Link>
+          <button
+            onClick={handleDeleteEvent}
+            disabled={isDeleting}
+            className="btn btn--lingon"
+          >
+            {isDeleting ? "Deleting…" : "Delete event"}
+          </button>
+        </div>
+      )}
 
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Photos</h2>
+        <div>
+          <div className="eyebrow eyebrow--lingon">The photographs</div>
+          <h2 className="editorial-h3 mt-2 font-normal">Photos</h2>
+        </div>
         {user && (
-          <Button variant="outline" onClick={() => setShowUploader(!showUploader)}>
-            {showUploader ? (
-              "Cancel"
-            ) : (
-              <>
-                <Plus className="h-4 w-4 mr-1" /> Add Photos
-              </>
-            )}
-          </Button>
+          <button onClick={() => setShowUploader(!showUploader)} className="btn">
+            {showUploader ? "Cancel" : "Add photos"}
+          </button>
         )}
       </div>
 
-      {showUploader && <PhotoUploader onPhotoUploaded={handlePhotoUploaded} eventId={eventId} />}
+      {showUploader && (
+        <PhotoUploader onPhotoUploaded={handlePhotoUploaded} eventId={eventId} />
+      )}
 
       {photos.length > 0 ? (
         <PhotoGrid photos={photos} />
       ) : (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500">No photos have been added to this event yet.</p>
+        <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-12 text-center">
+          <p className="font-serif italic text-ink-muted text-lg">
+            No photographs have been added to this event yet.
+          </p>
           {user && !showUploader && (
-            <Button variant="outline" className="mt-4" onClick={() => setShowUploader(true)}>
-              <Plus className="h-4 w-4 mr-1" /> Add the First Photo
-            </Button>
+            <button
+              onClick={() => setShowUploader(true)}
+              className="btn btn--ghost mt-6"
+            >
+              Add the first photo
+            </button>
           )}
         </div>
       )}

@@ -2,51 +2,64 @@ import { ImportStatus } from "@/components/import-status"
 import { InitStorage } from "@/components/init-storage"
 import { JsonRecipeImporter } from "@/components/json-recipe-importer"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ImageIcon } from "lucide-react"
+import { SprigDivider } from "@/components/sprig-divider"
 
 export default function ImportPage() {
   return (
-    <div className="container mx-auto px-4 py-16">
-      <h1 className="text-3xl text-center mb-12">Recipe Administration</h1>
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">Administration</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          Recipe <em className="italic" style={{ color: "var(--lingon-deep)" }}>administration</em>
+        </h1>
+        <p className="lede">Bring new dishes into the book — set up storage, import the archive, then attach photographs.</p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+      </div>
 
-      <div className="grid gap-8 max-w-3xl mx-auto">
-        <div className="bg-white p-6 border rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">1. Initialize Storage</h2>
-          <p className="mb-4 text-gray-600">
-            Before uploading images, you need to initialize the storage bucket. This only needs to be done once.
+      <div className="grid gap-10 max-w-3xl mx-auto">
+        <section className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-10">
+          <div className="eyebrow eyebrow--lingon mb-3">Step one</div>
+          <h2 className="editorial-h3 font-normal mb-3">Initialize storage</h2>
+          <p className="font-serif italic text-ink-soft mb-6">
+            Before uploading photographs, the storage bucket needs to be created. This is a one-time setup.
           </p>
           <InitStorage />
-        </div>
+        </section>
 
-        <div className="bg-white p-6 border rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">2. Import Recipes</h2>
-          <div className="grid md:grid-cols-2 gap-6">
+        <section className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-10">
+          <div className="eyebrow eyebrow--lingon mb-3">Step two</div>
+          <h2 className="editorial-h3 font-normal mb-6">Import recipes</h2>
+
+          <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-medium mb-3">From CSV</h3>
-              <p className="mb-4 text-gray-600">Import recipes from the CSV file into your database.</p>
+              <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-3">From CSV</div>
+              <p className="font-serif italic text-ink-soft mb-5">
+                Pull recipes from the provided CSV into the database.
+              </p>
               <ImportStatus />
             </div>
             <div>
-              <h3 className="text-lg font-medium mb-3">From JSON</h3>
-              <p className="mb-4 text-gray-600">Import recipes from a JSON file into your database.</p>
+              <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-3">From JSON</div>
+              <p className="font-serif italic text-ink-soft mb-5">
+                Or import recipes from a JSON file instead.
+              </p>
               <JsonRecipeImporter />
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="bg-white p-6 border rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">3. Manage Recipe Images</h2>
-          <p className="mb-4 text-gray-600">Upload and manage images for each recipe.</p>
+        <section className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-10">
+          <div className="eyebrow eyebrow--lingon mb-3">Step three</div>
+          <h2 className="editorial-h3 font-normal mb-3">Manage recipe images</h2>
+          <p className="font-serif italic text-ink-soft mb-6">
+            Pair each recipe with the photographs that belong to it.
+          </p>
           <div className="text-center">
-            <Button asChild>
-              <Link href="/admin/recipes">
-                <ImageIcon className="mr-2 h-4 w-4" />
-                Manage Recipe Images
-              </Link>
-            </Button>
+            <Link href="/admin/recipes" className="btn">
+              Open the image manager
+            </Link>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   )

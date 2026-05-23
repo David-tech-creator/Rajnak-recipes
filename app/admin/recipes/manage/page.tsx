@@ -1,100 +1,154 @@
-import Link from "next/link"
-import Image from "next/image"
-import { createServerSupabaseClient } from "@/lib/supabase"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Edit, ImageIcon } from "lucide-react"
-import { redirect } from "next/navigation"
+"use client"
 
-export default async function ManageRecipesPage() {
-  const supabase = createServerSupabaseClient()
+import { useEffect, useState } from "react"
+import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabase-browser"
+import { useToast } from "@/hooks/use-toast"
+import { SprigDivider } from "@/components/sprig-divider"
 
-  // Check if user is authenticated
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+interface Recipe {
+  id: string
+  title: string
+  created_at: string
+  user_id: string
+}
 
-  if (!session) {
-    redirect("/login?redirect=/admin/recipes/manage")
+export default function ManageRecipesPage() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const { toast } = useToast()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login')
+      return
+    }
+
+    async function fetchRecipes() {
+      try {
+        const { data, error } = await supabase
+          .from('recipes')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        if (error) throw error
+        setRecipes(data || [])
+      } catch (error) {
+        console.error('Error fetching recipes:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to load recipes',
+          variant: 'destructive'
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (user) {
+      fetchRecipes()
+    }
+  }, [user, loading, router, toast])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this recipe?")) return
+
+    try {
+      const { error } = await supabase
+        .from('recipes')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+
+      setRecipes(recipes.filter(recipe => recipe.id !== id))
+      toast({
+        title: 'Success',
+        description: 'Recipe deleted successfully'
+      })
+    } catch (error) {
+      console.error('Error deleting recipe:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to delete recipe',
+        variant: 'destructive'
+      })
+    }
   }
 
-  // Fetch recipes
-  const { data: recipes, error } = await supabase
-    .from("recipes")
-    .select("id, title, slug, category, images, created_at")
-    .order("created_at", { ascending: false })
-
-  if (error) {
-    console.error("Error fetching recipes:", error)
+  if (loading || isLoading) {
+    return (
+      <div className="container mx-auto px-6 py-24 text-center">
+        <p className="font-serif italic text-ink-muted text-lg">Loading…</p>
+      </div>
+    )
   }
+
+  if (!user) return null
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Manage Recipes</h1>
-        <Button asChild>
-          <Link href="/recipes/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Create New Recipe
-          </Link>
-        </Button>
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">Administration</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          Recipe <em className="italic" style={{ color: "var(--lingon-deep)" }}>ledger</em>
+        </h1>
+        <p className="lede">Every recipe in the book, in the order they were added.</p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {recipes && recipes.length > 0 ? (
-          recipes.map((recipe) => (
-            <Card key={recipe.id} className="overflow-hidden flex flex-col">
-              <div className="relative aspect-video w-full overflow-hidden">
-                {recipe.images && recipe.images.length > 0 ? (
-                  <Image
-                    src={recipe.images[0] || "/placeholder.svg"}
-                    alt={recipe.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                    <ImageIcon className="h-12 w-12 text-gray-400" />
-                  </div>
-                )}
-              </div>
-              <CardHeader>
-                <CardTitle className="line-clamp-1">{recipe.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">{recipe.category}</p>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <p className="text-sm text-muted-foreground">
-                  {recipe.images?.length || 0} image{recipe.images?.length !== 1 ? "s" : ""}
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" asChild>
-                  <Link href={`/recipes/edit/${recipe.id}`}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link href={`/recipes/${recipe.slug}`} target="_blank">
-                    View
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-12 bg-gray-50 rounded-lg">
-            <p className="text-gray-500 mb-4">No recipes found. Create your first recipe to get started.</p>
-            <Button asChild>
-              <Link href="/recipes/new">
-                <Plus className="mr-2 h-4 w-4" />
-                Create New Recipe
-              </Link>
-            </Button>
-          </div>
-        )}
-      </div>
+      {recipes.length === 0 ? (
+        <div className="max-w-2xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-12 text-center">
+          <p className="font-serif italic text-ink-soft text-lg">No recipes yet.</p>
+        </div>
+      ) : (
+        <div className="max-w-4xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-10">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-ink">
+                <th className="text-left py-3 font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted font-normal">
+                  Title
+                </th>
+                <th className="text-left py-3 font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted font-normal hidden sm:table-cell">
+                  Added
+                </th>
+                <th className="text-right py-3 font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted font-normal">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {recipes.map((recipe) => (
+                <tr key={recipe.id} className="border-b border-dotted border-rule text-ink-soft">
+                  <td className="py-4 font-serif text-ink text-[18px]">{recipe.title}</td>
+                  <td className="py-4 font-serif italic text-ink-muted text-[15px] hidden sm:table-cell num">
+                    {new Date(recipe.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="py-4 text-right">
+                    <div className="flex justify-end gap-5">
+                      <button
+                        onClick={() => router.push(`/recipes/${recipe.id}/edit`)}
+                        className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink hover:text-lingon-deep underline decoration-1 underline-offset-4"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(recipe.id)}
+                        className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-lingon hover:text-lingon-deep underline decoration-1 underline-offset-4"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }

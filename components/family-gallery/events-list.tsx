@@ -6,15 +6,13 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, Calendar, MapPin, Plus } from "lucide-react"
 import { format } from "date-fns"
 import type { FamilyEvent } from "@/lib/types/family"
 
 export function EventsList() {
   const [events, setEvents] = useState<FamilyEvent[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const { user } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
@@ -30,20 +28,16 @@ export function EventsList() {
         if (error) throw error
 
         setEvents(data || [])
-      } catch (error) {
-        console.error("Error fetching events:", error)
-        toast({
-          title: "Error",
-          description: "Failed to load events. Please try again.",
-          variant: "destructive",
-        })
+      } catch (err) {
+        console.error("Error fetching events:", err)
+        setError(err instanceof Error ? err.message : "Failed to load events")
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchEvents()
-  }, [toast])
+  }, [])
 
   const handleCreateEvent = () => {
     if (!user) {
@@ -59,70 +53,62 @@ export function EventsList() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-      </div>
+      <p className="text-center font-serif italic text-ink-muted text-lg py-12">
+        Gathering the events&hellip;
+      </p>
     )
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Events</h2>
-        <Button
-          onClick={handleCreateEvent}
-          className="bg-black hover:bg-black/90 text-white"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Create Event
-        </Button>
+        <div className="eyebrow eyebrow--lingon">The Albums</div>
+        <button onClick={handleCreateEvent} className="btn">
+          Create event
+        </button>
       </div>
 
-      {events.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Calendar className="h-12 w-12 text-gray-400 mb-4" />
-            <p className="text-gray-600 text-center mb-6">
-              No events have been created yet.
-            </p>
-            <Button
-              onClick={handleCreateEvent}
-              className="bg-black hover:bg-black/90 text-white"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Your First Event
-            </Button>
-          </CardContent>
-        </Card>
+      {error ? (
+        <p className="text-center font-serif italic text-ink-muted text-lg py-12">
+          The albums are resting. Check back shortly.
+        </p>
+      ) : events.length === 0 ? (
+        <div className="text-center py-16 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] px-6">
+          <p className="font-serif italic text-ink-muted text-lg">
+            No events yet. The family is still gathering.
+          </p>
+          {user && (
+            <button onClick={handleCreateEvent} className="btn btn--ghost mt-8">
+              Start the first album
+            </button>
+          )}
+        </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => (
-            <Link
-              key={event.id}
-              href={`/about/family-events/${event.id}`}
-              className="block"
-            >
-              <Card className="h-full hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle>{event.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    {format(new Date(event.date), "PPP")}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {events.map((event) => {
+            const eventType = (event as { event_type?: string }).event_type
+            return (
+              <Link
+                key={event.id}
+                href={`/about/family-events/${event.id}`}
+                className="recipe-card block"
+              >
+                <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep flex items-center justify-center">
+                  <span className="font-serif italic text-ink-muted text-base px-6 text-center">
+                    {event.location || format(new Date(event.date), "MMMM yyyy")}
+                  </span>
+                </div>
+                <div className="py-5 text-center px-4">
+                  <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
+                    {eventType ? eventType.replace(/-/g, " ") : format(new Date(event.date), "PPP")}
                   </div>
-                  {event.location && (
-                    <div className="flex items-center text-gray-600">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {event.location}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+                  <h3 className="recipe-card-title">{event.title}</h3>
+                </div>
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>
   )
-} 
+}

@@ -1,11 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, FileSpreadsheet, CheckCircle, AlertCircle } from "lucide-react"
 
 export function CSVRecipeImporter() {
   const [isImporting, setIsImporting] = useState(false)
@@ -42,79 +37,76 @@ export function CSVRecipeImporter() {
   }
 
   return (
-    <Card className="w-full max-w-3xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileSpreadsheet className="h-5 w-5" />
-          Import Recipes from CSV
-        </CardTitle>
-      </CardHeader>
+    <div className="w-full max-w-3xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-10">
+      <div className="eyebrow eyebrow--lingon mb-3">From spreadsheet</div>
+      <h2 className="editorial-h3 font-normal mb-4">Import recipes from CSV</h2>
 
-      <CardContent className="space-y-4">
-        <div className="text-sm text-muted-foreground">
-          This will import recipes from the provided CSV file into your database. The file contains{" "}
-          {importResult?.totalRecipes || "many"} recipes with titles, categories, ingredients, and instructions.
-        </div>
+      <p className="font-serif italic text-ink-soft mb-6">
+        This will import recipes from the provided CSV file into your database. The file contains{" "}
+        <span className="num">{importResult?.totalRecipes || "many"}</span> recipes with titles, categories,
+        ingredients, and instructions.
+      </p>
 
-        {isImporting && (
-          <div className="space-y-2">
-            <Progress value={undefined} className="h-2" />
-            <p className="text-sm text-center animate-pulse">Importing recipes, please wait...</p>
+      {isImporting && (
+        <div className="mb-6 space-y-2">
+          <div className="h-[2px] bg-rule-soft overflow-hidden">
+            <div className="h-full bg-ink animate-pulse w-1/2" />
           </div>
-        )}
+          <p className="font-serif italic text-ink-muted text-center">Importing recipes, please wait…</p>
+        </div>
+      )}
 
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+      {error && (
+        <div className="mb-6 bg-lingon-soft/30 border border-lingon text-lingon-deep p-4">
+          <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] mb-1">Error</div>
+          <p className="font-serif italic">{error}</p>
+        </div>
+      )}
 
-        {importResult && (
-          <Alert variant={importResult.errorCount > 0 ? "destructive" : "default"}>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
-                <span className="font-medium">Import completed</span>
-              </div>
+      {importResult && (
+        <div
+          className={`mb-6 p-5 border ${
+            importResult.errorCount > 0
+              ? "bg-lingon-soft/30 border-lingon text-lingon-deep"
+              : "bg-sage/10 border-sage text-forest"
+          }`}
+        >
+          <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] mb-3">Import completed</div>
+          <ul className="space-y-1 font-serif text-[16px]">
+            <li>
+              Total recipes: <span className="num">{importResult.totalRecipes}</span>
+            </li>
+            <li>
+              Successfully imported: <span className="num">{importResult.successCount}</span>
+            </li>
+            <li>
+              Failed: <span className="num">{importResult.errorCount}</span>
+            </li>
+          </ul>
 
-              <div className="text-sm space-y-1">
-                <p>Total recipes: {importResult.totalRecipes}</p>
-                <p>Successfully imported: {importResult.successCount}</p>
-                <p>Failed: {importResult.errorCount}</p>
-              </div>
-
-              {importResult.errors && importResult.errors.length > 0 && (
-                <div className="mt-2">
-                  <p className="text-sm font-medium">First few errors:</p>
-                  <ul className="text-xs list-disc list-inside mt-1">
-                    {importResult.errors.map((err, i) => (
-                      <li key={i}>{err}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+          {importResult.errors && importResult.errors.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-dotted border-rule">
+              <p className="font-serif-sc uppercase tracking-[0.22em] text-[10px] mb-2">First few errors</p>
+              <ul className="list-disc list-inside font-serif italic text-[15px] space-y-1">
+                {importResult.errors.map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
             </div>
-          </Alert>
-        )}
-      </CardContent>
-
-      <CardFooter>
-        <Button onClick={handleImport} disabled={isImporting} className="w-full">
-          {isImporting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Importing...
-            </>
-          ) : (
-            <>
-              <FileSpreadsheet className="mr-2 h-4 w-4" />
-              Import Recipes from CSV
-            </>
           )}
-        </Button>
-      </CardFooter>
-    </Card>
+        </div>
+      )}
+
+      <div className="text-center">
+        <button
+          type="button"
+          onClick={handleImport}
+          disabled={isImporting}
+          className="btn disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isImporting ? "Importing…" : "Import recipes from CSV"}
+        </button>
+      </div>
+    </div>
   )
 }

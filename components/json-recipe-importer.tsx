@@ -5,10 +5,6 @@ import type React from "react"
 import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Loader2, Upload } from "lucide-react"
 import slugify from "slugify"
 
 interface RecipeData {
@@ -394,57 +390,60 @@ export function JsonRecipeImporter() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Import Recipes from JSON</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <label htmlFor="json-file" className="block text-sm font-medium">
-            Select JSON File
-          </label>
+    <div className="space-y-5">
+      <div>
+        <label
+          htmlFor="json-file"
+          className="block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
+        >
+          Select JSON file
+        </label>
+        <div className="border-2 border-dotted border-rule p-6 text-center bg-cream/60">
           <input
             id="json-file"
             type="file"
             accept=".json"
             onChange={handleFileChange}
             disabled={isImporting}
-            className="w-full border rounded p-2"
+            className="block w-full font-serif text-[15px] text-ink-soft file:mr-4 file:border file:border-ink file:bg-cream file:px-4 file:py-2 file:font-serif-sc file:uppercase file:tracking-[0.22em] file:text-[10px] file:text-ink hover:file:bg-ink hover:file:text-cream file:cursor-pointer"
           />
         </div>
+      </div>
 
-        {jsonData && (
-          <div className="bg-gray-50 p-4 rounded-md">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium">{jsonData.length} recipes found in file</span>
-            </div>
-
-            {isImporting && (
-              <div className="space-y-2">
-                <Progress value={progress} className="h-2" />
-                <div className="text-xs text-gray-500 text-right">
-                  {importedCount} of {totalCount} imported ({progress}%)
-                </div>
-              </div>
-            )}
+      {jsonData && (
+        <div className="bg-cream border border-rule-soft p-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
+              <span className="num">{jsonData.length}</span> recipes found
+            </span>
           </div>
-        )}
-      </CardContent>
-      <CardFooter>
-        <Button onClick={handleImport} disabled={isImporting || !jsonData} className="w-full">
-          {isImporting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Importing...
-            </>
-          ) : (
-            <>
-              <Upload className="mr-2 h-4 w-4" />
-              Import Recipes
-            </>
+
+          {isImporting && (
+            <div className="space-y-2 mt-3">
+              <div className="h-[2px] bg-rule-soft overflow-hidden">
+                <div
+                  className="h-full bg-ink transition-all duration-200"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <div className="text-right font-serif italic text-ink-muted text-[14px]">
+                <span className="num">{importedCount}</span> of{" "}
+                <span className="num">{totalCount}</span> imported (
+                <span className="num">{progress}%</span>)
+              </div>
+            </div>
           )}
-        </Button>
-      </CardFooter>
-    </Card>
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={handleImport}
+        disabled={isImporting || !jsonData}
+        className="btn w-full disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isImporting ? "Importing…" : "Import recipes"}
+      </button>
+    </div>
   )
 }

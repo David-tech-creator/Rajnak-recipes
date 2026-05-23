@@ -8,14 +8,13 @@ import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Loader2, CalendarIcon, MapPin, ArrowLeft } from "lucide-react"
 import { EVENT_TYPES } from "@/lib/types/family"
+import { SprigDivider } from "@/components/sprig-divider"
+
+const labelClass =
+  "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
+const inputClass =
+  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
 
 export default function EditEventPage() {
   const [title, setTitle] = useState("")
@@ -32,50 +31,52 @@ export default function EditEventPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Redirect if not logged in
     if (user === null) {
       router.push("/login?redirect=/about/family-events/" + eventId + "/edit")
       return
     }
 
-    fetchEventDetails()
-  }, [eventId, user, router])
+    const fetchEventDetails = async () => {
+      setIsLoading(true)
+      try {
+        const { data, error } = await supabase
+          .from("family_events")
+          .select("*")
+          .eq("id", eventId)
+          .single()
 
-  const fetchEventDetails = async () => {
-    setIsLoading(true)
-    try {
-      const { data, error } = await supabase.from("family_events").select("*").eq("id", eventId).single()
+        if (error) throw error
 
-      if (error) throw error
+        if (user && data.created_by !== user.id) {
+          toast({
+            title: "Permission denied",
+            description: "You can only edit events you created",
+            variant: "destructive",
+          })
+          router.push(`/about/family-events/${eventId}`)
+          return
+        }
 
-      // Check if user is the creator
-      if (user && data.created_by !== user.id) {
+        setTitle(data.title)
+        setDescription(data.description || "")
+        setDate(data.date)
+        setEventType(data.event_type)
+        setLocation(data.location || "")
+      } catch (error) {
+        console.error("Error fetching event:", error)
         toast({
-          title: "Permission denied",
-          description: "You can only edit events you created",
+          title: "Error",
+          description: "Failed to load event details",
           variant: "destructive",
         })
-        router.push(`/about/family-events/${eventId}`)
-        return
+        router.push("/about/family-events")
+      } finally {
+        setIsLoading(false)
       }
-
-      setTitle(data.title)
-      setDescription(data.description || "")
-      setDate(data.date)
-      setEventType(data.event_type)
-      setLocation(data.location || "")
-    } catch (error) {
-      console.error("Error fetching event:", error)
-      toast({
-        title: "Error",
-        description: "Failed to load event details",
-        variant: "destructive",
-      })
-      router.push("/about/family-events")
-    } finally {
-      setIsLoading(false)
     }
-  }
+
+    fetchEventDetails()
+  }, [eventId, user, router, toast])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -135,118 +136,114 @@ export default function EditEventPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-12 flex justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="container mx-auto px-6 py-16">
+        <p className="text-center font-serif italic text-ink-muted text-lg py-12">
+          Loading event&hellip;
+        </p>
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <Link
-        href={`/about/family-events/${eventId}`}
-        className="text-gray-500 hover:text-gray-700 flex items-center mb-6"
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Event
-      </Link>
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">Edit album</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          Update the{" "}
+          <em className="italic" style={{ color: "var(--lingon-deep)" }}>
+            event
+          </em>
+        </h1>
+        <p className="lede">Fix a date, refine a title, add the story you remembered later.</p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+      </div>
 
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center">Edit Event</h1>
+      <div className="max-w-2xl mx-auto bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-12">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div>
+            <label htmlFor="title" className={labelClass}>
+              Event title
+            </label>
+            <input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Christmas Dinner 2023"
+              className={inputClass}
+              required
+            />
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Update Event Details</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title">Event Title*</Label>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Christmas Dinner 2023"
-                  required
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="date" className={labelClass}>
+                Event date
+              </label>
+              <input
+                id="date"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className={inputClass}
+                required
+              />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="date">Event Date*</Label>
-                  <div className="relative">
-                    <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="date"
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
+            <div>
+              <label htmlFor="event-type" className={labelClass}>
+                Event type
+              </label>
+              <select
+                id="event-type"
+                value={eventType}
+                onChange={(e) => setEventType(e.target.value)}
+                className={inputClass}
+              >
+                {EVENT_TYPES.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="event-type">Event Type</Label>
-                  <Select value={eventType} onValueChange={setEventType}>
-                    <SelectTrigger id="event-type">
-                      <SelectValue placeholder="Select event type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {EVENT_TYPES.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+          <div>
+            <label htmlFor="location" className={labelClass}>
+              Location
+            </label>
+            <input
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="e.g. Grandma's house, Stockholm"
+              className={inputClass}
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="location">Location (Optional)</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    id="location"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="e.g. Grandma's House, Stockholm"
-                    className="pl-10"
-                  />
-                </div>
-              </div>
+          <div>
+            <label htmlFor="description" className={labelClass}>
+              Description
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={5}
+              placeholder="Describe the event, who was there, and any special memories…"
+              className={inputClass}
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Event Description</Label>
-                <Textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the event, who was there, and any special memories..."
-                  className="min-h-[120px]"
-                />
-              </div>
-
-              <div className="flex justify-between">
-                <Button type="button" variant="outline" onClick={() => router.push(`/about/family-events/${eventId}`)}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isSaving}>
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+            <Link href={`/about/family-events/${eventId}`} className="btn btn--link">
+              Cancel
+            </Link>
+            <button type="submit" disabled={isSaving} className="btn">
+              {isSaving ? "Saving…" : "Save changes"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )

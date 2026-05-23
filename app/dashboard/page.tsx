@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
+import { SprigDivider } from '@/components/sprig-divider'
 
 interface UserStats {
   recipeCount: number
@@ -55,46 +53,47 @@ export default function DashboardPage() {
   if (!user) return null
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-      
+    <div className="container mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="eyebrow eyebrow--lingon">Your kitchen</div>
+        <h1 className="editorial-h1 mt-3 mb-4 font-normal">
+          Welcome <em className="italic" style={{ color: "var(--lingon-deep)" }}>back</em>
+        </h1>
+        <p className="lede">A small ledger of what you&rsquo;ve cooked up and gathered around.</p>
+        <SprigDivider variant="berry" className="!mt-10 !mb-2 max-w-sm mx-auto" />
+      </div>
+
       {isLoading ? (
-        <div className="flex justify-center">
-          <Loader2 className="h-8 w-8 animate-spin" />
+        <div className="text-center py-12">
+          <p className="font-serif italic text-ink-muted text-lg">Loading…</p>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Recipes</CardTitle>
-              <CardDescription>
-                Manage your contributed recipes
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold mb-4">{stats?.recipeCount}</p>
-              <Button onClick={() => router.push('/recipes/create-new')}>
-                Add New Recipe
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+          <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8">
+            <div className="eyebrow eyebrow--lingon mb-3">Your recipes</div>
+            <p className="display-2 num">{stats?.recipeCount ?? 0}</p>
+            <p className="text-ink-muted italic mt-2">Recipes you&rsquo;ve contributed</p>
+            <button
+              onClick={() => router.push('/recipes/create-new')}
+              className="btn mt-6"
+            >
+              Add a new recipe
+            </button>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Family Events</CardTitle>
-              <CardDescription>
-                Events you've organized
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold mb-4">{stats?.eventCount}</p>
-              <Button onClick={() => router.push('/about/family-events/create')}>
-                Create New Event
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8">
+            <div className="eyebrow eyebrow--lingon mb-3">Family events</div>
+            <p className="display-2 num">{stats?.eventCount ?? 0}</p>
+            <p className="text-ink-muted italic mt-2">Gatherings you&rsquo;ve organized</p>
+            <button
+              onClick={() => router.push('/about/family-events/create')}
+              className="btn mt-6"
+            >
+              Create a new event
+            </button>
+          </div>
         </div>
       )}
     </div>
   )
-} 
+}
