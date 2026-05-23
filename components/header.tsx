@@ -150,11 +150,11 @@ export function Header() {
             </Link>
 
             <div className="relative group">
-              <button className={`${navLinkClass} flex items-center gap-1`}>
+              <Link href="/recipes" className={`${navLinkClass} flex items-center gap-1`}>
                 Recipes <ChevronDown className="h-3 w-3" />
-              </button>
-              <div className="absolute left-1/2 -translate-x-1/2 mt-3 w-56 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                <div className="py-2">
+              </Link>
+              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-56 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
                   <Link href="/recipes" className={dropdownItemClass}>
                     All Recipes
                   </Link>
@@ -169,11 +169,11 @@ export function Header() {
             </div>
 
             <div className="relative group">
-              <button className={`${navLinkClass} flex items-center gap-1`}>
+              <Link href="/categories" className={`${navLinkClass} flex items-center gap-1`}>
                 Categories <ChevronDown className="h-3 w-3" />
-              </button>
-              <div className="absolute left-1/2 -translate-x-1/2 mt-3 w-64 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                <div className="py-2">
+              </Link>
+              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-64 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
                   <Link href="/categories" className={dropdownItemClass}>
                     All Categories
                   </Link>
@@ -188,11 +188,11 @@ export function Header() {
             </div>
 
             <div className="relative group">
-              <button className={`${navLinkClass} flex items-center gap-1`}>
+              <Link href="/about" className={`${navLinkClass} flex items-center gap-1`}>
                 About <ChevronDown className="h-3 w-3" />
-              </button>
-              <div className="absolute left-1/2 -translate-x-1/2 mt-3 w-56 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                <div className="py-2">
+              </Link>
+              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-56 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
                   <Link href="/about" className={dropdownItemClass}>
                     Our Story
                   </Link>
