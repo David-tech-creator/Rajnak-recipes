@@ -59,25 +59,18 @@ export function Header() {
 
   return (
     <header className="relative border-b border-rule-soft bg-parchment/0">
-      <div className="container mx-auto px-4 pt-6 pb-3">
+      <div className="container mx-auto px-4 pt-4 pb-2 md:pt-5">
         <div className="flex flex-col items-center relative">
-          {/* Logo */}
+          {/* Logo (tagline is baked into the image) */}
           <Link href="/" className="block mb-3">
             <Image
               src="/images/rajnak-family-logo-new.png"
               alt="The Rajnak family recipe collection"
-              width={180}
-              height={90}
+              width={160}
+              height={80}
               priority
             />
           </Link>
-
-          <div
-            className="font-serif-sc uppercase tracking-[0.3em] text-[10px] text-ink-muted mb-4"
-            aria-hidden
-          >
-            Hemlagad mat med kärlek
-          </div>
 
           {/* Search and User Icons */}
           <div className="absolute right-0 top-0 flex items-center gap-5">

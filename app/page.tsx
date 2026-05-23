@@ -21,34 +21,33 @@ export default function Home() {
   return (
     <div>
       {/* ============================================================
-          HERO — full image, no cropping
+          HERO — capped height, dining-table focal point, centered card
           ============================================================ */}
       <section className="relative w-full">
-        <div className="relative w-full">
+        <div className="relative w-full h-[min(78vh,720px)] sm:h-[min(75vh,760px)] overflow-hidden">
           <Image
             src="/Hero-image.png"
             alt="A long, warmly lit family dining table"
-            width={1537}
-            height={1023}
+            fill
             priority
             sizes="100vw"
-            className="w-full h-auto block"
-            style={{ filter: "saturate(0.96)" }}
+            className="object-cover"
+            style={{ filter: "saturate(0.96)", objectPosition: "50% 72%" }}
           />
 
-          {/* Subtle gradient at the bottom so the editorial card stays legible */}
+          {/* Parchment vignette around the edges so the card reads */}
           <div
-            className="absolute inset-x-0 bottom-0 h-2/5 pointer-events-none"
+            className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                "linear-gradient(180deg, rgba(244,236,220,0) 0%, rgba(244,236,220,0.55) 60%, rgba(244,236,220,0.9) 100%)",
+                "radial-gradient(ellipse at 50% 60%, rgba(244,236,220,0.05) 0%, rgba(244,236,220,0.45) 70%, rgba(244,236,220,0.85) 100%)",
             }}
           />
 
-          {/* Editorial card pinned to the bottom of the photo */}
-          <div className="absolute inset-x-0 bottom-4 md:bottom-10 lg:bottom-16 flex justify-center px-4">
-            <div className="relative bg-cream/95 border border-rule-soft shadow-[var(--paper-shadow)] backdrop-blur-sm px-6 py-6 md:px-12 md:py-10 text-center w-full max-w-xl">
-              <div className="caps text-[10px] md:text-[11px] text-ink-muted flex items-center justify-center gap-3">
+          {/* Editorial card centered in the hero so it sits above the fold */}
+          <div className="absolute inset-0 flex items-center justify-center px-4">
+            <div className="relative bg-cream/95 border border-rule-soft shadow-[var(--paper-shadow)] backdrop-blur-sm px-6 py-7 md:px-12 md:py-10 text-center w-full max-w-xl">
+              <div className="caps text-[10px] md:text-[11px] text-ink-muted flex items-center justify-center gap-2 md:gap-3 flex-wrap">
                 <span className="w-1.5 h-1.5 rounded-full bg-lingon inline-block" />
                 <span>The Rajnak Family</span>
                 <span>·</span>
@@ -59,10 +58,10 @@ export default function Home() {
                 An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>.
               </h1>
 
-              <p className="hand text-[24px] md:text-[30px] mt-2 md:mt-3">Hemlagad mat med kärlek.</p>
+              <p className="hand text-[22px] md:text-[28px] mt-2 md:mt-3">Hemlagad mat med kärlek.</p>
 
-              <div className="flex flex-wrap gap-3 md:gap-4 mt-5 md:mt-7 justify-center">
-                <Link href="/recipes" className="btn">
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-5 md:mt-7 justify-center items-center">
+                <Link href="/recipes" className="btn w-full sm:w-auto justify-center">
                   Open the recipes
                 </Link>
                 <Link href="/about" className="btn btn--link">
@@ -71,9 +70,16 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Scroll hint */}
+          <div className="absolute inset-x-0 bottom-3 md:bottom-5 flex justify-center pointer-events-none">
+            <div className="font-serif-sc uppercase tracking-[0.3em] text-[10px] text-ink-soft/70">
+              scroll
+            </div>
+          </div>
         </div>
 
-        <div className="container mx-auto px-6 pt-10">
+        <div className="container mx-auto px-6 pt-10 md:pt-14">
           <p className="lede max-w-2xl mx-auto text-center">
             Generations of recipes — Swedish, Hungarian, Swiss, and everywhere we&apos;ve eaten well —
             gathered into one cookbook.
