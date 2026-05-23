@@ -30,9 +30,39 @@ const caveat = Caveat({
   display: "swap",
 })
 
+const siteUrl = "https://www.rajnak.com"
+const siteName = "The Rajnak Family Recipe Collection"
+const siteDescription = "Hemlagad mat med kärlek • Homemade food with love"
+
 export const metadata: Metadata = {
-  title: "The Rajnak Family Recipe Collection",
-  description: "Hemlagad mat med kärlek • Homemade food with love",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteName,
+    template: "%s | Rajnak",
+  },
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    title: siteName,
+    description: siteDescription,
+    siteName,
+    images: [
+      {
+        url: "/Hero-image.png",
+        width: 1537,
+        height: 1023,
+        alt: "A long, warmly lit family dining table",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteName,
+    description: siteDescription,
+    images: ["/Hero-image.png"],
+  },
 }
 
 export default function RootLayout({

@@ -1,7 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import {
-  getFeaturedPosts,
   getLatestPosts,
   getAllPosts,
   categoryToSlug,
@@ -38,15 +37,47 @@ const FEATURED_CATEGORIES: Array<{
   },
 ]
 
+// Regenerate the home page once a day so the weekly rotation can advance.
+export const revalidate = 86400
+
+function weekOfYear(d: Date): number {
+  const start = new Date(d.getFullYear(), 0, 1)
+  const diff = (d.getTime() - start.getTime()) / 86_400_000
+  return Math.floor((diff + start.getDay()) / 7)
+}
+
+function rotatedPick<T>(items: T[], count: number, seed: number): T[] {
+  if (items.length <= count) return items
+  const out: T[] = []
+  const used = new Set<number>()
+  let h = seed | 0
+  while (out.length < count) {
+    h = (h * 1664525 + 1013904223) | 0
+    const idx = Math.abs(h) % items.length
+    if (used.has(idx)) continue
+    used.add(idx)
+    out.push(items[idx])
+  }
+  return out
+}
+
 export default function Home() {
-  const featuredRecipes = getFeaturedPosts(3)
-  const latestRecipes = getLatestPosts(6)
   const allRecipes = getAllPosts()
   const totalCount = allRecipes.length
+
+  // Featured rotation: prefer recipes flagged `featured: true` in frontmatter,
+  // but if there are more than 3 we rotate through them weekly. If fewer than
+  // 3 are flagged, fall back to a weekly rotation across the whole collection.
+  const flagged = allRecipes.filter((r) => r.featured)
+  const pool = flagged.length >= 3 ? flagged : allRecipes
+  const week = weekOfYear(new Date())
+  const featuredRecipes = rotatedPick(pool, 3, week * 9176 + 31)
+
+  const latestRecipes = getLatestPosts(6)
   const numberFor = (slug: string) =>
     String(allRecipes.findIndex((r) => r.slug === slug) + 1).padStart(2, "0")
 
-  // Pick the first featured recipe as the editorial composition hero.
+  // First featured powers the editorial composition band.
   const composition = featuredRecipes[0]
 
   return (

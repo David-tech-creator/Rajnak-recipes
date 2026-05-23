@@ -25,9 +25,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
   }
 
+  const description = `${recipe.title} — a ${recipe.category} recipe from the Rajnak family collection.`
+  const image = recipe.image ?? "/Hero-image.png"
+
   return {
-    title: `${recipe.title} | Rajnax: Dishes We Love`,
-    description: `${recipe.title} — a ${recipe.category} recipe from the Rajnak family collection.`,
+    title: recipe.title,
+    description,
+    openGraph: {
+      title: recipe.title,
+      description,
+      type: "article",
+      images: [{ url: image, alt: recipe.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: recipe.title,
+      description,
+      images: [image],
+    },
   }
 }
 
