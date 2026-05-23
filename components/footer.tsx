@@ -46,7 +46,9 @@ export function Footer() {
           <div className="text-center md:text-right">
             <div className={heading}>Closing Note</div>
             <p className="font-hand text-[26px] text-lingon-deep leading-tight">
-              From our kitchen to yours — smaklig måltid.
+              From our kitchen to yours
+              <br />
+              — smaklig måltid.
             </p>
           </div>
         </div>

@@ -60,8 +60,8 @@ export default function Home() {
               <p className="hand text-[30px] md:text-[36px] mt-3">Hemlagad mat med kärlek.</p>
 
               <p className="lede mt-5 max-w-lg mx-auto">
-                Four generations of recipes — Swedish, Hungarian, and everywhere we&apos;ve eaten well —
-                gathered into one cookbook.
+                Generations of recipes — Swedish, Hungarian, Swiss, and everywhere we&apos;ve eaten
+                well — gathered into one cookbook.
               </p>
 
               <div className="flex flex-wrap gap-4 mt-8 justify-center">
