@@ -23,51 +23,61 @@ export default function Home() {
       {/* ============================================================
           HERO
           ============================================================ */}
-      <section className="container mx-auto px-6 pt-12 md:pt-16 pb-8">
-        <div className="grid md:grid-cols-[1.1fr_0.9fr] gap-10 md:gap-16 items-end">
-          <div>
-            <div className="caps text-[12px] text-ink-muted flex items-center gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-lingon inline-block" />
-              <span>Rajnak Family</span>
-              <span>·</span>
-              <span>{totalCount} recipes</span>
+      <section className="relative w-full overflow-hidden">
+        <div className="relative h-[78vh] min-h-[520px] max-h-[820px] w-full">
+          <Image
+            src="/Hero-image.png"
+            alt="A long, warmly lit family dining table"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+            style={{ filter: "saturate(0.94)" }}
+          />
+          {/* Warm parchment vignette so the cream text card stays legible */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(244,236,220,0.05) 0%, rgba(244,236,220,0.55) 70%, rgba(244,236,220,0.85) 100%)",
+            }}
+          />
+
+          {/* Centered editorial card */}
+          <div className="absolute inset-0 flex items-center justify-center px-6">
+            <div className="relative bg-cream/95 border border-rule-soft shadow-[var(--paper-shadow)] backdrop-blur-sm px-8 py-10 md:px-16 md:py-14 text-center max-w-2xl">
+              <div className="caps text-[11px] text-ink-muted flex items-center justify-center gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-lingon inline-block" />
+                <span>The Rajnak Family</span>
+                <span>·</span>
+                <span>{totalCount} recipes</span>
+              </div>
+
+              <h1 className="editorial-h1 md:display-2 mt-5 font-normal">
+                An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>.
+              </h1>
+
+              <p className="hand text-[30px] md:text-[36px] mt-3">Hemlagad mat med kärlek.</p>
+
+              <p className="lede mt-5 max-w-lg mx-auto">
+                Four generations of recipes — Swedish, Hungarian, and everywhere we&apos;ve eaten well —
+                gathered into one cookbook.
+              </p>
+
+              <div className="flex flex-wrap gap-4 mt-8 justify-center">
+                <Link href="/recipes" className="btn">
+                  Open the recipes
+                </Link>
+                <Link href="/about" className="btn btn--link">
+                  Read our story
+                </Link>
+              </div>
             </div>
-
-            <h1 className="display-1 mt-6">
-              An heirloom <em className="italic" style={{ color: "var(--lingon-deep)" }}>cookbook</em>.
-            </h1>
-
-            <p className="hand text-[34px] md:text-[38px] mt-4">Hemlagad mat med kärlek.</p>
-
-            <p className="lede max-w-xl mt-6">
-              Four generations of recipes — Swedish, Hungarian, and everywhere we&apos;ve eaten well — gathered into one
-              cookbook. Family classics, found discoveries, and the dishes that became traditions.
-            </p>
-
-            <div className="flex flex-wrap gap-4 mt-8">
-              <Link href="/recipes" className="btn">
-                Open the recipes
-              </Link>
-              <Link href="/about" className="btn btn--link">
-                Read our story
-              </Link>
-            </div>
-
-            <SprigDivider variant="berry" className="mt-12 max-w-[420px]" />
           </div>
+        </div>
 
-          <aside className="relative bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-6 md:p-10">
-            <div className="relative aspect-square">
-              <Image
-                src="/images/rajnak-family-logo-new.png"
-                alt="The Rajnak family recipe collection"
-                fill
-                className="object-contain"
-                sizes="(max-width: 768px) 80vw, 400px"
-                priority
-              />
-            </div>
-          </aside>
+        <div className="container mx-auto px-6 pt-10">
+          <SprigDivider variant="berry" className="max-w-md mx-auto" />
         </div>
       </section>
 

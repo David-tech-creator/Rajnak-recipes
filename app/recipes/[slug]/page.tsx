@@ -85,44 +85,47 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
 
   return (
     <article>
-      {/* Hero photo */}
-      {recipe.image && (
-        <div className="relative h-[58vh] min-h-[400px] max-h-[640px] overflow-hidden">
-          <Image
-            src={recipe.image}
-            alt={recipe.title}
-            fill
-            className="object-cover"
-            sizes="100vw"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-parchment/80 pointer-events-none" />
-        </div>
-      )}
-
-      <div className="container mx-auto px-6">
-        <div className="max-w-3xl mx-auto -mt-20 relative bg-parchment pt-12 pb-4 px-2 md:px-0">
-          {/* Recipe number eyebrow */}
-          {recipeNumber && (
-            <div className="text-center mb-4">
-              <span className="eyebrow eyebrow--lingon num">Recipe № {recipeNumber}</span>
+      <div className="container mx-auto px-6 pt-12 md:pt-16 pb-4">
+        {/* Editorial composition: photo at its native ~3:4 next to the title block */}
+        <div className="grid md:grid-cols-[5fr_6fr] gap-10 md:gap-14 items-center max-w-6xl mx-auto">
+          {recipe.image && (
+            <div className="relative aspect-[3/4] bg-cream border border-rule-soft shadow-[var(--paper-shadow)] overflow-hidden">
+              <Image
+                src={recipe.image}
+                alt={recipe.title}
+                fill
+                className="object-cover"
+                style={{ filter: "saturate(0.94)" }}
+                sizes="(max-width: 768px) 100vw, 45vw"
+                priority
+              />
+              {recipeNumber && (
+                <div className="absolute bottom-0 right-0 bg-cream px-4 py-2 font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink border-t border-l border-rule">
+                  № {recipeNumber}
+                </div>
+              )}
             </div>
           )}
 
-          {/* Title */}
-          <h1 className="editorial-h1 text-center mb-4 px-2">{recipe.title}</h1>
+          <div>
+            {recipeNumber && (
+              <div className="eyebrow eyebrow--lingon num mb-3">Recipe № {recipeNumber}</div>
+            )}
 
-          {/* Category + meta band */}
-          <div className="flex flex-wrap justify-center items-center gap-4 mb-8 text-ink-muted">
-            <Link
-              href={`/categories/${categoryToSlug(recipe.category)}`}
-              className="tag hover:text-lingon-deep hover:border-lingon"
-            >
-              <span className="tag-dot" />
-              {recipe.category}
-            </Link>
-            {(recipe.prepTime || recipe.cookTime) && (
-              <div className="meta-row">
+            <h1 className="editorial-h1 font-normal mb-5">{recipe.title}</h1>
+
+            <div className="flex flex-wrap items-center gap-4 mb-6 text-ink-muted">
+              <Link
+                href={`/categories/${categoryToSlug(recipe.category)}`}
+                className="tag hover:text-lingon-deep hover:border-lingon"
+              >
+                <span className="tag-dot" />
+                {recipe.category}
+              </Link>
+            </div>
+
+            {(recipe.prepTime || recipe.cookTime || recipe.servings) && (
+              <div className="meta-row mb-4">
                 {recipe.prepTime && (
                   <div>
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
@@ -152,23 +155,25 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
                 )}
               </div>
             )}
+
+            {contentParagraphs[0] && !contentParagraphs[0].startsWith("## ") && (
+              <p className="lede mt-4">{contentParagraphs[0]}</p>
+            )}
           </div>
+        </div>
+      </div>
 
-          <SprigDivider variant="berry" className="!mt-4 !mb-10" />
+      <div className="container mx-auto px-6">
+        <div className="max-w-3xl mx-auto pt-10 pb-4">
+          <SprigDivider variant="berry" className="!mt-0 !mb-10" />
 
-          {/* Description / prose (anything that isn't a numbered step) */}
-          {contentParagraphs.length > 0 && (
+          {/* Description / prose (anything that isn't a numbered step).
+              The first paragraph already ran as the lede inside the hero. */}
+          {contentParagraphs.slice(1).length > 0 && (
             <div className="recipe-prose max-w-2xl mx-auto mb-12 text-[19px]">
-              {contentParagraphs.map((line, i) => {
+              {contentParagraphs.slice(1).map((line, i) => {
                 if (line.startsWith("## ")) {
                   return <h2 key={i}>{line.replace("## ", "")}</h2>
-                }
-                if (i === 0 && !line.startsWith("## ")) {
-                  return (
-                    <p key={i} className="lede text-center mb-8">
-                      {line}
-                    </p>
-                  )
                 }
                 return <p key={i}>{line}</p>
               })}
