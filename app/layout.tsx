@@ -41,11 +41,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${cormorant.variable} ${cormorantSc.variable} ${caveat.variable}`}
+    >
       <head>
         <link rel="icon" href="/images/rajnak-family-logo.png" type="image/png" />
       </head>
-      <body className={`${cormorant.variable} ${cormorantSc.variable} ${caveat.variable}`}>
+      <body>
         <Suspense
           fallback={
             <div className="flex min-h-screen items-center justify-center text-gray-400 text-sm tracking-wider">
