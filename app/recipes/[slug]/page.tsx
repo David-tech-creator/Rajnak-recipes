@@ -55,9 +55,27 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
   const allSlugs = allPosts.map((p) => p.slug)
   const recipeNumber = getRecipeNumber(slug, allSlugs)
 
-  const relatedRecipes = getPostsByCategory(recipe.category)
-    .filter((post) => post.slug !== slug)
-    .slice(0, 3)
+  // Pick 3 related recipes that vary per-recipe. Seed the shuffle on the
+  // current slug so server + client agree (no hydration mismatch) and so
+  // every recipe shows a different selection instead of always the same 3.
+  const seedShuffle = <T,>(arr: T[], seed: string): T[] => {
+    let h = 2166136261
+    for (let i = 0; i < seed.length; i++) {
+      h ^= seed.charCodeAt(i)
+      h = Math.imul(h, 16777619)
+    }
+    const a = [...arr]
+    for (let i = a.length - 1; i > 0; i--) {
+      h = (h * 1664525 + 1013904223) | 0
+      const j = Math.abs(h) % (i + 1)
+      ;[a[i], a[j]] = [a[j], a[i]]
+    }
+    return a
+  }
+  const relatedRecipes = seedShuffle(
+    getPostsByCategory(recipe.category).filter((post) => post.slug !== slug),
+    slug,
+  ).slice(0, 3)
 
   const hasNumberedSteps = /^\s*\d+\.\s+/m.test(recipe.content)
   const contentParagraphs = recipe.content
