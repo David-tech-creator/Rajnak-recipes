@@ -35,27 +35,6 @@ export default function AboutPage() {
             legendary in her new community, and her Swedish meatballs were the centerpiece of every holiday gathering.
           </p>
 
-          <div className="grid grid-cols-2 gap-6 my-8">
-            <div className="relative aspect-square">
-              <Image
-                src="/placeholder.svg?height=400&width=400&text=Vintage+Recipe+Cards"
-                alt="Vintage handwritten recipe cards"
-                fill
-                className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 100vw, 400px"
-              />
-            </div>
-            <div className="relative aspect-square">
-              <Image
-                src="/placeholder.svg?height=400&width=400&text=Family+Cookbook"
-                alt="Old family cookbook with handwritten notes"
-                fill
-                className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 100vw, 400px"
-              />
-            </div>
-          </div>
-
           <h2>From Generation to Generation</h2>
 
           <p>
@@ -97,16 +76,6 @@ export default function AboutPage() {
             Asia; the homemade pasta that commemorates summers in Italy; and the spicy Mexican enchiladas that became a
             Friday night tradition.
           </p>
-
-          <div className="relative aspect-[16/9] my-8">
-            <Image
-              src="/placeholder.svg?height=600&width=1200&text=Modern+Family+Cooking+Together"
-              alt="Modern family members cooking together"
-              fill
-              className="object-cover rounded-lg"
-              sizes="(max-width: 1024px) 100vw, 768px"
-            />
-          </div>
 
           <h2>Our Table Is Your Table</h2>
 

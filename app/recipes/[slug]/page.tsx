@@ -1,4 +1,4 @@
-import { getPostBySlug, getAllPostSlugs, getPostsByCategory } from "@/lib/posts"
+import { getPostBySlug, getAllPostSlugs, getPostsByCategory, categoryToSlug } from "@/lib/posts"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -47,10 +47,15 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
     .filter((post) => post.slug !== slug)
     .slice(0, 3)
 
-  // Split content into paragraphs for rendering
+  // Split content into paragraphs for rendering.
+  // When the Instructions list was auto-derived from numbered lines in the
+  // body, hide those numbered lines so they don't appear twice.
+  const hasNumberedSteps = /^\s*\d+\.\s+/m.test(recipe.content)
   const contentParagraphs = recipe.content
     .split("\n")
     .filter((line) => line.trim().length > 0)
+    .filter((line) => !(hasNumberedSteps && /^\s*\d+\.\s+/.test(line)))
+    .filter((line) => !/^\s*\d{1,3}\s*$/.test(line.trim()))
 
   return (
     <div>
@@ -75,7 +80,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
           {/* Category badge */}
           <div className="text-center mb-4">
             <Link
-              href={`/categories/${encodeURIComponent(recipe.category.toLowerCase())}`}
+              href={`/categories/${categoryToSlug(recipe.category)}`}
               className="inline-block text-sm text-gray-500 border border-gray-300 px-3 py-1 hover:bg-gray-50"
             >
               {recipe.category}

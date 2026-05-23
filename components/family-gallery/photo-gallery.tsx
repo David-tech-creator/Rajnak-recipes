@@ -124,12 +124,17 @@ export function PhotoGallery({ eventId }: PhotoGalleryProps = {}) {
     })
   }
 
+  if (error && !user) {
+    // Hide the gallery entirely from public visitors when the backend isn't reachable.
+    return null
+  }
+
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Photos</h3>
-          <p className="text-red-700 mb-4">{error}</p>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
+          <h3 className="text-lg font-medium text-amber-800 mb-2">Photo gallery unavailable</h3>
+          <p className="text-amber-700 mb-4 text-sm">{error}</p>
           <Button onClick={fetchPhotos} variant="outline">
             <RefreshCcw className="mr-2 h-4 w-4" />
             Retry

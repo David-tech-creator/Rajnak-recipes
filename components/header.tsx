@@ -96,31 +96,16 @@ export function Header() {
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/recipes/create-new" className="cursor-pointer">
-                      Add New Recipe
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/my-recipes" className="cursor-pointer">
-                      My Recipes
+                    <Link href="/account" className="cursor-pointer">
+                      Account Settings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel>Administration</DropdownMenuLabel>
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
-                      <Link href="/admin" className="cursor-pointer">
+                      <Link href="/admin/dashboard" className="cursor-pointer">
                         Admin Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/test-connection" className="cursor-pointer">
-                        Test Connection
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin/recipes" className="cursor-pointer">
-                        Manage Recipes
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
@@ -167,10 +152,10 @@ export function Header() {
                     Categories
                   </Link>
                   <Link
-                    href="/recipes/create-new"
+                    href="/search"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-medium"
                   >
-                    Add Recipe
+                    Search
                   </Link>
                 </div>
               </div>
@@ -238,19 +223,22 @@ export function Header() {
                 Recipes
               </Link>
               <Link
-                href="/recipes/create-new"
-                className="block text-gray-800 hover:text-gray-600 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Add Recipe
-              </Link>
-              <Link
                 href="/categories"
                 className="block text-gray-800 hover:text-gray-600 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Categories
               </Link>
+              {RECIPE_CATEGORIES.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/categories/${cat.slug}`}
+                  className="block text-gray-700 hover:text-gray-900 transition-colors pl-4 text-sm"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {cat.name}
+                </Link>
+              ))}
               <Link
                 href="/about"
                 className="block text-gray-800 hover:text-gray-600 transition-colors"

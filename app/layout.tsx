@@ -23,7 +23,6 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "The Rajnak Family Recipe Collection",
   description: "Hemlagad mat med kärlek • Homemade food with love",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -37,7 +36,13 @@ export default function RootLayout({
         <link rel="icon" href="/images/rajnak-family-logo.png" type="image/png" />
       </head>
       <body className={`${cormorant.variable} ${montserrat.variable}`}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense
+          fallback={
+            <div className="flex min-h-screen items-center justify-center text-gray-400 text-sm tracking-wider">
+              Loading…
+            </div>
+          }
+        >
           <AuthProvider>
             <Header />
             <main>{children}</main>

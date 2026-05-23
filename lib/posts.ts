@@ -4,6 +4,28 @@ import matter from "gray-matter"
 
 const postsDirectory = path.join(process.cwd(), "content/recipes")
 
+export function categoryToSlug(name: string): string {
+  return name.toLowerCase().replace(/&/g, "and").replace(/\s+/g, "-")
+}
+
+function parseInstructionsFromContent(content: string): string[] {
+  const lines = content.split("\n").map((l) => l.trim()).filter(Boolean)
+  const steps: string[] = []
+  let current = ""
+  for (const line of lines) {
+    if (line.startsWith("## ")) continue
+    const match = line.match(/^(\d+)\.\s*(.*)/)
+    if (match) {
+      if (current) steps.push(current.trim())
+      current = match[2]
+    } else if (current) {
+      current += " " + line
+    }
+  }
+  if (current) steps.push(current.trim())
+  return steps.filter((s) => s.length > 2)
+}
+
 export type Recipe = {
   slug: string
   title: string
@@ -46,6 +68,11 @@ export function getPostBySlug(slug: string): Recipe | null {
     const fileContents = fs.readFileSync(fullPath, "utf8")
     const { data, content } = matter(fileContents)
 
+    let instructions: string[] = Array.isArray(data.instructions) ? data.instructions : []
+    if (instructions.length === 0) {
+      instructions = parseInstructionsFromContent(content)
+    }
+
     return {
       slug,
       title: data.title || "Untitled Recipe",
@@ -53,7 +80,7 @@ export function getPostBySlug(slug: string): Recipe | null {
       category: data.category || "Uncategorized",
       image: data.image || undefined,
       ingredients: data.ingredients || [],
-      instructions: data.instructions || [],
+      instructions,
       prepTime: data.prepTime,
       cookTime: data.cookTime,
       servings: data.servings,
