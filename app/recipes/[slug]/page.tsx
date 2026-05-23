@@ -134,7 +134,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
                 fill
                 className="object-cover"
                 style={{ filter: "saturate(0.94)" }}
-                sizes="(max-width: 768px) 100vw, 45vw"
+                sizes="(max-width: 1024px) 100vw, 45vw"
                 priority
               />
               {recipeNumber && (
@@ -270,7 +270,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
               <div className="rule"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {relatedRecipes.map((related) => (
                 <RecipeCard
                   key={related.slug}

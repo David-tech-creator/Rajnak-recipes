@@ -29,36 +29,11 @@ export function PhotoGallery({ eventId }: PhotoGalleryProps = {}) {
   const { user } = useAuth()
   const { toast } = useToast()
 
-  // Initialize the database tables and storage
-  const initializeDatabase = async () => {
-    try {
-      const response = await fetch("/api/init-family-photos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to initialize database")
-      }
-
-      return true
-    } catch (err) {
-      console.error("Error initializing database:", err)
-      setError(err instanceof Error ? err.message : "Failed to initialize database")
-      return false
-    }
-  }
-
   const fetchPhotos = async () => {
     setIsLoading(true)
     setError(null)
 
     try {
-      await initializeDatabase()
-
       let query = supabase
         .from("family_photos")
         .select("*")

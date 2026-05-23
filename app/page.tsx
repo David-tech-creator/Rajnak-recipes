@@ -125,7 +125,7 @@ export default function Home() {
                 alt="A long, warmly lit family dining table"
                 fill
                 priority
-                sizes="(max-width: 768px) 90vw, 45vw"
+                sizes="(max-width: 1024px) 90vw, 45vw"
                 className="object-cover"
                 style={{ filter: "saturate(0.96)" }}
               />
@@ -191,7 +191,7 @@ export default function Home() {
                 fill
                 className="object-cover"
                 style={{ filter: "saturate(0.92)" }}
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute bottom-0 right-0 bg-cream px-4 py-2 font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink border-t border-l border-rule">
                 Featured

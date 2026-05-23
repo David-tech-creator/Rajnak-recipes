@@ -25,7 +25,18 @@ function safeRedirect(raw: string | null): string {
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
-  if (!url || !publishableKey) return supabaseResponse
+  // Fail closed: if the deploy is missing Supabase env vars, we can't verify
+  // sessions. The site is allowlist-only, so the safer default is to bounce
+  // every protected request to /login rather than silently let everything in.
+  if (!url || !publishableKey) {
+    const { pathname } = request.nextUrl
+    if (isPublic(pathname)) return supabaseResponse
+    const target = request.nextUrl.clone()
+    target.pathname = "/login"
+    target.search = ""
+    target.searchParams.set("error", "config")
+    return NextResponse.redirect(target)
+  }
 
   const supabase = createServerClient(url, publishableKey, {
     cookies: {
