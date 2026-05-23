@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Camera, X } from "lucide-react"
+import { Camera, Sparkles, X } from "lucide-react"
 
 type FormState = {
   slug: string
@@ -175,6 +175,56 @@ export function AdminRecipeForm({
     setImageFile(null)
   }
 
+  // —— Claude AI assist ——
+  const [aiBusy, setAiBusy] = useState(false)
+
+  const generateWithClaude = async () => {
+    if (!state.title.trim()) {
+      setError("Add a recipe title first — Claude needs something to work from.")
+      return
+    }
+    setError(null)
+    setSuccess(null)
+    setAiBusy(true)
+    try {
+      const form = new FormData()
+      form.append("title", state.title.trim())
+      if (imageFile) form.append("image", imageFile, "photo.jpg")
+      const res = await fetch("/api/admin/recipes/draft", {
+        method: "POST",
+        body: form,
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? "Generation failed")
+      const draft = json.draft as Partial<FormState>
+      // Only overwrite fields the user hasn't already touched, except for the
+      // big text blocks (ingredients/method/story) where Claude's draft is
+      // usually the whole point.
+      setState((s) => ({
+        ...s,
+        category: draft.category ?? s.category,
+        prepTime: draft.prepTime ?? s.prepTime,
+        cookTime: draft.cookTime ?? s.cookTime,
+        servings: typeof draft.servings === "number" ? draft.servings : s.servings,
+        difficulty: draft.difficulty ?? s.difficulty,
+        ingredients: Array.isArray(draft.ingredients) && draft.ingredients.length
+          ? draft.ingredients
+          : s.ingredients,
+        instructions: Array.isArray(draft.instructions) && draft.instructions.length
+          ? draft.instructions
+          : s.instructions,
+        kitchenNote: draft.kitchenNote ?? s.kitchenNote,
+        signoff: draft.signoff ?? s.signoff,
+        story: draft.story ?? s.story,
+      }))
+      setSuccess("Claude filled in a draft. Review and edit before saving.")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Generation failed")
+    } finally {
+      setAiBusy(false)
+    }
+  }
+
   const canSubmit =
     !!state.title.trim() &&
     state.ingredients.some((i) => i.trim()) &&
@@ -307,6 +357,20 @@ export function AdminRecipeForm({
             autoFocus={mode === "create"}
           />
         </div>
+
+        {/* Claude AI assist — quick draft from title + (optional) photo */}
+        <button
+          type="button"
+          onClick={generateWithClaude}
+          disabled={aiBusy || !state.title.trim()}
+          className="w-full inline-flex items-center justify-center gap-2 border border-lingon bg-lingon-soft/15 text-lingon-deep px-4 py-3 font-serif-sc uppercase tracking-[0.18em] text-[11px] hover:bg-lingon-soft/30 transition-colors disabled:opacity-50"
+        >
+          <Sparkles size={14} strokeWidth={1.6} />
+          {aiBusy ? "Claude is drafting…" : "Generate draft with Claude"}
+        </button>
+        <p className="font-serif italic text-[14px] text-ink-muted text-center -mt-2">
+          Fills in ingredients, method, story, and signoff. You can edit anything before saving.
+        </p>
       </section>
 
       {/* ===== Quick details ===== */}
