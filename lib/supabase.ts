@@ -1,13 +1,15 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const publishableKey =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 if (!url) throw new Error("Missing env.NEXT_PUBLIC_SUPABASE_URL")
-if (!anonKey) throw new Error("Missing env.NEXT_PUBLIC_SUPABASE_ANON_KEY")
+if (!publishableKey)
+  throw new Error("Missing env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (or legacy NEXT_PUBLIC_SUPABASE_ANON_KEY)")
 
-// Browser-safe client used by the family photo gallery and auth flows.
-export const supabase: SupabaseClient = createClient(url, anonKey, {
+// Browser-safe client used by auth flows and the family photo gallery.
+export const supabase: SupabaseClient = createClient(url, publishableKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -15,11 +17,13 @@ export const supabase: SupabaseClient = createClient(url, anonKey, {
 })
 
 // Server-side client used only by API routes (e.g. init-family-photos).
-// Uses the service-role key when available and falls back to the anon key
-// so the build doesn't crash when the env var is missing.
+// Falls back to the publishable key when the secret key is absent so the
+// build does not crash; routes that require elevated privileges will fail
+// loudly at request time instead.
 export function createServerSupabaseClient(): SupabaseClient {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? anonKey
-  return createClient(url!, key, {
+  const secretKey =
+    process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? publishableKey
+  return createClient(url!, secretKey!, {
     auth: { persistSession: false },
   })
 }

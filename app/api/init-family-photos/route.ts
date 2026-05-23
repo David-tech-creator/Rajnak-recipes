@@ -3,11 +3,14 @@ import { createClient } from "@supabase/supabase-js"
 
 export async function POST() {
   try {
-    const hasServiceKey = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY)
-    // Use service role key when available; otherwise fall back to anon for no-op checks
+    const secretKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY
+    const publishableKey =
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const hasServiceKey = Boolean(secretKey)
+    // Use the secret key when available; otherwise fall back to publishable for no-op checks
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)!,
+      (secretKey ?? publishableKey)!,
     )
 
     // Check if the table exists by attempting to query it
