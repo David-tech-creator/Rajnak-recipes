@@ -7,15 +7,8 @@ import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/lib/supabase-browser"
+import { EVENT_TYPES } from "@/lib/types/family"
 import { SprigDivider } from "@/components/sprig-divider"
-
-const eventTypes = [
-  "birthday",
-  "anniversary",
-  "holiday",
-  "family-gathering",
-  "other",
-] as const
 
 const labelClass =
   "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
@@ -26,8 +19,7 @@ export default function CreateEventPage() {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [date, setDate] = useState<string>("")
-  const [eventType, setEventType] =
-    useState<(typeof eventTypes)[number]>("other")
+  const [eventType, setEventType] = useState("other")
   const [location, setLocation] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { user } = useAuth()
@@ -69,8 +61,6 @@ export default function CreateEventPage() {
             created_by: user.id,
           },
         ])
-        .select()
-        .single()
 
       if (error) throw error
 
@@ -143,14 +133,12 @@ export default function CreateEventPage() {
               <select
                 id="eventType"
                 value={eventType}
-                onChange={(e) =>
-                  setEventType(e.target.value as (typeof eventTypes)[number])
-                }
+                onChange={(e) => setEventType(e.target.value)}
                 className={inputClass}
               >
-                {eventTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ")}
+                {EVENT_TYPES.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </select>

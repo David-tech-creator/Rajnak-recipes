@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (redirectTo) {
               router.push(decodeURIComponent(redirectTo))
             } else {
-              router.push("/dashboard")
+              router.push("/account")
             }
             router.refresh()
           }
@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (redirectTo) {
           router.push(decodeURIComponent(redirectTo))
         } else {
-          router.push("/dashboard")
+          router.push("/account")
         }
         router.refresh()
       }

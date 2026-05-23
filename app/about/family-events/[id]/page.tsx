@@ -72,13 +72,11 @@ export default function EventPage() {
     )
   }
 
-  const eventType = (event as { event_type?: string }).event_type
-
   return (
     <div className="container mx-auto px-6 py-16">
       <div className="max-w-3xl mx-auto text-center mb-12">
         <div className="eyebrow eyebrow--lingon">
-          {eventType ? eventType.replace(/-/g, " ") : "Family album"}
+          {event.event_type ? event.event_type.replace(/-/g, " ") : "Family album"}
         </div>
         <h1 className="editorial-h1 mt-3 mb-4 font-normal">{event.title}</h1>
         {event.description && (
