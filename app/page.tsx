@@ -19,22 +19,22 @@ const FEATURED_CATEGORIES: Array<{
   {
     name: "Family Recipes",
     image: "/images/recipes/mammas-gulasch-soup.jpg",
-    byline: "from Mormor's drawer",
+    byline: "the dishes we grew up on",
   },
   {
     name: "Found Recipes",
     image: "/images/recipes/sushi-katsu-tempura.jpg",
-    byline: "brought home from somewhere",
+    byline: "picked up along the way",
   },
   {
     name: "Quick & Easy",
     image: "/images/recipes/chicken-vegetable-wok.jpg",
-    byline: "Tuesday-night supper",
+    byline: "for busy weeknights",
   },
   {
     name: "Christmas & Easter",
     image: "/images/recipes/swedish-christmas-ham.jpg",
-    byline: "the long-table dishes",
+    byline: "for the holiday table",
   },
 ]
 

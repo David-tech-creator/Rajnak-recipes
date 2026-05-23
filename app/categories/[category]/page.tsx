@@ -11,13 +11,13 @@ function findCategoryBySlug(slug: string, categories: string[]): string | undefi
 function categoryHandNote(name: string): string {
   switch (name) {
     case "Family Recipes":
-      return "From Mormor's drawer."
+      return "The dishes we grew up on."
     case "Found Recipes":
-      return "Brought home from somewhere."
+      return "Picked up along the way."
     case "Quick & Easy":
-      return "Tuesday-night supper."
+      return "For busy weeknights."
     case "Christmas & Easter":
-      return "The long-table dishes."
+      return "For the holiday table."
     default:
       return "Smaklig måltid."
   }

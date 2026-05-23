@@ -8,10 +8,10 @@ export const metadata = {
 }
 
 const CATEGORY_BYLINES: Record<string, string> = {
-  "Family Recipes": "from Mormor's drawer",
-  "Found Recipes": "brought home from somewhere",
-  "Quick & Easy": "Tuesday-night supper",
-  "Christmas & Easter": "the long-table dishes",
+  "Family Recipes": "the dishes we grew up on",
+  "Found Recipes": "picked up along the way",
+  "Quick & Easy": "for busy weeknights",
+  "Christmas & Easter": "for the holiday table",
 }
 
 export default function CategoriesPage() {

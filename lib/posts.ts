@@ -52,10 +52,10 @@ export type Recipe = {
 }
 
 const DEFAULT_BYLINES: Record<string, string> = {
-  "Family Recipes": "from the family book",
+  "Family Recipes": "the dishes we grew up on",
   "Found Recipes": "picked up along the way",
-  "Quick & Easy": "Tuesday-night supper",
-  "Christmas & Easter": "the long-table dishes",
+  "Quick & Easy": "for busy weeknights",
+  "Christmas & Easter": "for the holiday table",
 }
 
 export function defaultBylineFor(category: string): string {
