@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server"
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
 import Anthropic from "@anthropic-ai/sdk"
 import { isAllowedAdmin } from "@/lib/admin-allowlist"
+import { createClient } from "@/lib/supabase/server"
 
 export const runtime = "nodejs"
 export const maxDuration = 60
@@ -107,20 +106,29 @@ Rules of the voice — non-negotiable:
 If a photo is attached, look at it: confirm portion size, garnishes, plating style, and adjust the recipe to match what the family actually made.`
 
 async function getUser() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return null
-  const cookieStore = await cookies()
-  const supabase = createServerClient(url, key, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll() {},
-    },
-  })
+  const supabase = await createClient()
   const { data } = await supabase.auth.getUser()
   return data.user
+}
+
+// Per-user rate limit: 10 Claude draft calls per rolling hour. Best-effort —
+// Vercel serverless instances are ephemeral so two cold starts could each
+// allow 10. Real protection would need Vercel KV; for a six-person family
+// site this is enough to stop a runaway browser tab from racking up bills.
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000
+const RATE_LIMIT_MAX = 10
+const draftCalls = new Map<string, number[]>()
+
+function checkRateLimit(userId: string): { ok: true } | { ok: false; retryAfter: number } {
+  const now = Date.now()
+  const recent = (draftCalls.get(userId) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS)
+  if (recent.length >= RATE_LIMIT_MAX) {
+    const retryAfter = Math.ceil((RATE_LIMIT_WINDOW_MS - (now - recent[0])) / 1000)
+    return { ok: false, retryAfter }
+  }
+  recent.push(now)
+  draftCalls.set(userId, recent)
+  return { ok: true }
 }
 
 export async function POST(req: Request) {
@@ -128,6 +136,14 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
   if (!isAllowedAdmin(user.email))
     return NextResponse.json({ error: "Not authorised" }, { status: 403 })
+
+  const rate = checkRateLimit(user.id)
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: `Slow down — you've hit the hourly draft limit. Try again in ${Math.ceil(rate.retryAfter / 60)} min.` },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfter) } },
+    )
+  }
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json(

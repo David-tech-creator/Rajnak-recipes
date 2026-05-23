@@ -1,31 +1,15 @@
 import { NextResponse } from "next/server"
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
 import { serializeRecipe, slugify, validateDraft, type RecipeDraft } from "@/lib/recipe-mdx"
 import { commitFile, commitBuffer } from "@/lib/github"
 import { isAllowedAdmin } from "@/lib/admin-allowlist"
+import { createClient } from "@/lib/supabase/server"
 
 export const runtime = "nodejs"
 // Recipe uploads can include a 1–2 MB image; bump body limit.
 export const maxDuration = 30
 
 async function getUser() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const publishableKey =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!supabaseUrl || !publishableKey) return null
-
-  const cookieStore = await cookies()
-  const supabase = createServerClient(supabaseUrl, publishableKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll() {
-        /* no-op for read */
-      },
-    },
-  })
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -40,6 +24,9 @@ export async function POST(req: Request) {
 
   const contentType = req.headers.get("content-type") ?? ""
 
+  const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"])
+  const MAX_IMAGE_BYTES = 10 * 1024 * 1024 // 10 MB
+
   let payload: Partial<RecipeDraft> & { mode?: "create" | "update" }
   let imageFile: File | null = null
 
@@ -52,7 +39,21 @@ export async function POST(req: Request) {
       }
       payload = JSON.parse(json)
       const f = form.get("image")
-      if (f && f instanceof File && f.size > 0) imageFile = f
+      if (f && f instanceof File && f.size > 0) {
+        if (!ALLOWED_IMAGE_TYPES.has(f.type)) {
+          return NextResponse.json(
+            { error: `Unsupported image type: ${f.type || "unknown"} (use JPEG, PNG, or WebP).` },
+            { status: 400 },
+          )
+        }
+        if (f.size > MAX_IMAGE_BYTES) {
+          return NextResponse.json(
+            { error: `Image is too large (${Math.round(f.size / 1024 / 1024)} MB). Cap is 10 MB.` },
+            { status: 413 },
+          )
+        }
+        imageFile = f
+      }
     } else {
       payload = await req.json()
     }

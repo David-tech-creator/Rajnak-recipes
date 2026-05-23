@@ -1,51 +1,17 @@
-"use client"
+import { createClient } from "@/lib/supabase/server"
+import { redirect } from "next/navigation"
+import { signOut } from "@/app/login/actions"
 
-import { useEffect, useState } from "react"
-import { useAuth } from "@/lib/auth-context"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
+export default async function AccountPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-export default function AccountPage() {
-  const { user, loading, signOut } = useAuth()
-  const router = useRouter()
-  const { toast } = useToast()
-  const [email, setEmail] = useState("")
-  const [isSigningOut, setIsSigningOut] = useState(false)
+  // Middleware should keep us out if not signed in, but belt-and-braces.
+  if (!user) redirect("/login")
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login")
-    } else if (user) {
-      setEmail(user.email || "")
-    }
-  }, [user, loading, router])
-
-  const handleSignOut = async () => {
-    setIsSigningOut(true)
-    try {
-      await signOut()
-      router.push("/")
-    } catch (error) {
-      console.error("Sign out error:", error)
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to sign out",
-        variant: "destructive",
-      })
-      setIsSigningOut(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-6 py-32 text-center">
-        <p className="font-serif italic text-ink-muted">Loading…</p>
-      </div>
-    )
-  }
-
-  if (!user) return null
-
+  const email = user.email ?? ""
   const memberSince = user.created_at
     ? new Date(user.created_at).toLocaleDateString("en-US", {
         year: "numeric",
@@ -84,19 +50,14 @@ export default function AccountPage() {
             )}
           </dl>
 
-          <div className="mt-10 pt-8 border-t border-rule-soft">
-            <button
-              type="button"
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              className="btn w-full justify-center"
-            >
-              {isSigningOut ? "Signing out…" : "Sign out"}
+          <form action={signOut} className="mt-10 pt-8 border-t border-rule-soft">
+            <button type="submit" className="btn w-full justify-center">
+              Sign out
             </button>
             <p className="mt-4 text-center font-serif italic text-ink-muted text-[14px]">
               Forgot your password? Ask David to reset it.
             </p>
-          </div>
+          </form>
         </div>
       </div>
     </div>

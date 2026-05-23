@@ -5,7 +5,6 @@ import Link from "next/link"
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
 import { Search, Menu, X, User, ChevronDown } from "lucide-react"
 import {
   DropdownMenu,
@@ -59,15 +58,9 @@ export function Header() {
 
   const { user, signOut } = useAuth()
   const router = useRouter()
-  const { toast } = useToast()
 
   const handleSignOut = async () => {
     await signOut()
-    toast({
-      title: "Signed out",
-      description: "You have been signed out successfully.",
-    })
-    router.refresh()
   }
 
   const handleSearch = (e: React.FormEvent) => {

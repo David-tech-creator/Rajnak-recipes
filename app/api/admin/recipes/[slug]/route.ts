@@ -1,28 +1,12 @@
 import { NextResponse } from "next/server"
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
 import { deleteFile } from "@/lib/github"
 import { isAllowedAdmin } from "@/lib/admin-allowlist"
+import { createClient } from "@/lib/supabase/server"
 
 export const runtime = "nodejs"
 
 async function getUser() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const publishableKey =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!supabaseUrl || !publishableKey) return null
-
-  const cookieStore = await cookies()
-  const supabase = createServerClient(supabaseUrl, publishableKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll() {
-        /* no-op */
-      },
-    },
-  })
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

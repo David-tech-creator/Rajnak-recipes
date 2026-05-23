@@ -1,25 +1,10 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
+import { createClient as createAdminClient } from "@supabase/supabase-js"
 import { isAllowedAdmin } from "@/lib/admin-allowlist"
+import { createClient } from "@/lib/supabase/server"
 
 async function getUser() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return null
-  const cookieStore = await cookies()
-  const sb = createServerClient(url, key, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll() {
-        /* read-only */
-      },
-    },
-  })
+  const sb = await createClient()
   const {
     data: { user },
   } = await sb.auth.getUser()
@@ -38,7 +23,7 @@ export async function POST() {
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     const hasServiceKey = Boolean(secretKey)
     // Use the secret key when available; otherwise fall back to publishable for no-op checks
-    const supabase = createClient(
+    const supabase = createAdminClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       (secretKey ?? publishableKey)!,
     )

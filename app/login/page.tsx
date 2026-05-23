@@ -1,49 +1,20 @@
-"use client"
+import { signIn } from "./actions"
 
-import { useEffect, useState } from "react"
-import { useAuth } from "@/lib/auth-context"
-import { useSearchParams } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
+const ERROR_MESSAGES: Record<string, string> = {
+  "not-allowed":
+    "This site is for the Rajnak family. Sign in with one of the registered family email addresses.",
+  invalid: "That email or password didn't work. Try again.",
+  missing: "Please enter both email and password.",
+}
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const { signIn } = useAuth()
-  const { toast } = useToast()
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    if (searchParams.get("error") === "not-allowed") {
-      setErrorMessage("This site is for the Rajnak family. Sign in with one of the registered family email addresses.")
-    }
-  }, [searchParams])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setErrorMessage(null)
-
-    if (!email || !password) {
-      setErrorMessage("Please enter both email and password.")
-      return
-    }
-
-    setIsLoading(true)
-    try {
-      await signIn(email.trim().toLowerCase(), password)
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Sign-in failed"
-      setErrorMessage(message)
-      toast({
-        title: "Sign-in error",
-        description: message,
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; redirectTo?: string }>
+}) {
+  const sp = await searchParams
+  const errorMessage = sp.error ? ERROR_MESSAGES[sp.error] ?? null : null
+  const redirectTo = sp.redirectTo ?? "/"
 
   return (
     <div className="container mx-auto px-6 py-20">
@@ -51,11 +22,12 @@ export default function LoginPage() {
         <div className="text-center mb-10">
           <div className="eyebrow eyebrow--lingon">The Rajnak Family</div>
           <h1 className="editorial-h1 mt-3 mb-3 font-normal">
-            Welcome <em className="italic" style={{ color: "var(--lingon-deep)" }}>home.</em>
+            Welcome{" "}
+            <em className="italic" style={{ color: "var(--lingon-deep)" }}>
+              home.
+            </em>
           </h1>
-          <p className="lede">
-            A private collection. Sign in with your family email.
-          </p>
+          <p className="lede">A private collection. Sign in with your family email.</p>
         </div>
 
         {errorMessage && (
@@ -65,9 +37,11 @@ export default function LoginPage() {
         )}
 
         <form
-          onSubmit={handleSubmit}
+          action={signIn}
           className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-8 md:p-10 space-y-6"
         >
+          <input type="hidden" name="redirectTo" value={redirectTo} />
+
           <div>
             <label
               htmlFor="email"
@@ -77,11 +51,12 @@ export default function LoginPage() {
             </label>
             <input
               id="email"
+              name="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
+              autoCapitalize="off"
+              spellCheck={false}
               className="w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
             />
           </div>
@@ -95,17 +70,16 @@ export default function LoginPage() {
             </label>
             <input
               id="password"
+              name="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
               className="w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
             />
           </div>
 
-          <button type="submit" disabled={isLoading} className="btn w-full justify-center">
-            {isLoading ? "Signing in…" : "Sign in"}
+          <button type="submit" className="btn w-full justify-center">
+            Sign in
           </button>
         </form>
 
