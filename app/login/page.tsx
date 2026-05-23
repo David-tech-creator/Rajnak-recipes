@@ -61,7 +61,7 @@ export default async function LoginPage({
               autoComplete="email"
               autoCapitalize="off"
               spellCheck={false}
-              className="w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
+              className="w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink"
             />
           </div>
 
@@ -78,7 +78,7 @@ export default async function LoginPage({
               type="password"
               required
               autoComplete="current-password"
-              className="w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
+              className="w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink"
             />
           </div>
 

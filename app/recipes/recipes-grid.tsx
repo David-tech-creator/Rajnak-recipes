@@ -52,7 +52,7 @@ export function RecipesGrid({
             setVisible(PAGE_SIZE)
           }}
           placeholder="Search recipes by name or ingredient…"
-          className="w-full py-3 px-5 bg-transparent text-ink placeholder:text-ink-muted/70 focus:outline-none font-serif italic text-[18px]"
+          className="w-full py-3 px-5 bg-transparent text-ink placeholder:text-ink-muted focus:outline-none font-serif italic text-[18px]"
           aria-label="Search recipes"
         />
         {query && (

@@ -53,7 +53,7 @@ export default async function SearchPage({
           name="q"
           defaultValue={query}
           placeholder="Search recipes…"
-          className="w-full py-3 px-5 bg-transparent text-ink placeholder:text-ink-muted/70 focus:outline-none font-serif italic text-[18px]"
+          className="w-full py-3 px-5 bg-transparent text-ink placeholder:text-ink-muted focus:outline-none font-serif italic text-[18px]"
           autoFocus
         />
         <button type="submit" className="px-5 font-serif-sc uppercase tracking-[0.22em] text-[10px] text-ink-muted hover:text-lingon-deep">

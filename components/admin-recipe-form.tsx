@@ -36,7 +36,7 @@ const SIGNOFF_OPTIONS = [
 
 const label = "block font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-muted mb-2"
 const input =
-  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[17px] text-ink placeholder:text-ink-muted/60 focus:outline-none focus:border-ink"
+  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[17px] text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink"
 
 function slugify(s: string): string {
   return s
@@ -270,7 +270,7 @@ export function AdminRecipeForm({
     "bg-cream border border-rule-soft shadow-[var(--paper-shadow)] p-5 md:p-8 space-y-5"
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 md:space-y-6 pb-32 md:pb-0">
+    <form onSubmit={onSubmit} className="space-y-4 md:space-y-6 pb-32 lg:pb-0">
       {error && (
         <div className="bg-lingon-soft/30 border border-lingon text-lingon-deep font-serif italic p-4">
           {error}
@@ -608,9 +608,9 @@ export function AdminRecipeForm({
         </label>
       </section>
 
-      {/* ===== Sticky save bar on mobile ===== */}
+      {/* ===== Sticky save bar on mobile + tablet ===== */}
       <div
-        className="fixed inset-x-0 bottom-0 z-30 bg-parchment/95 backdrop-blur-sm border-t border-rule-soft px-4 pt-3 md:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 bg-parchment/95 backdrop-blur-sm border-t border-rule-soft px-4 pt-3 lg:hidden"
         style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
       >
         <div className="flex items-center gap-3 max-w-3xl mx-auto">
@@ -631,7 +631,7 @@ export function AdminRecipeForm({
       </div>
 
       {/* Inline buttons (desktop) */}
-      <div className="hidden md:flex items-center gap-4 pt-2">
+      <div className="hidden lg:flex items-center gap-4 pt-2">
         <button
           type="submit"
           disabled={submitting || !canSubmit}

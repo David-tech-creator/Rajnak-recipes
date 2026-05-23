@@ -15,7 +15,7 @@ interface PhotoUploaderProps {
 const labelClass =
   "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
 const inputClass =
-  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
+  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink"
 
 export function PhotoUploader({ onPhotoUploaded, eventId }: PhotoUploaderProps) {
   const [file, setFile] = useState<File | null>(null)
@@ -58,10 +58,12 @@ export function PhotoUploader({ onPhotoUploaded, eventId }: PhotoUploaderProps) 
       const fileName = `family-${Date.now()}.${fileExt}`
       const filePath = fileName
 
+      // No upsert: per-owner storage RLS means upsert against another user's
+      // file would silently fail (or worse). Date.now() makes collisions
+      // virtually impossible anyway.
       const { error: uploadError } = await supabase.storage
         .from("family-photos")
         .upload(filePath, file, {
-          upsert: true,
           cacheControl: "3600",
         })
 

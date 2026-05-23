@@ -66,6 +66,24 @@ body {
 
 ::selection { background: var(--lingon); color: var(--cream); }
 
+/* Visible focus ring for keyboard users on every interactive element.
+   Mouse users don't see this thanks to :focus-visible heuristics. */
+*:focus-visible {
+  outline: 2px solid var(--lingon);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Respect users who've asked the OS for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--serif);
   font-weight: 500;
@@ -117,6 +135,16 @@ h1, h2, h3, h4, h5, h6 {
   .editorial-h3 { font-size: 26px; }
   .lede { font-size: 19px; }
   body { font-size: 18px; }
+}
+
+/* Tablet step so headings don't leap to desktop scale while body lags. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .display-1 { font-size: 64px; }
+  .display-2 { font-size: 52px; }
+  .editorial-h1 { font-size: 52px; }
+  .editorial-h2 { font-size: 36px; }
+  .editorial-h3 { font-size: 28px; }
+  .lede { font-size: 20px; }
 }
 
 /* —————————————————————————————————————————————————————————————

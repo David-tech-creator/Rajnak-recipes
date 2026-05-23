@@ -14,7 +14,7 @@ import { SprigDivider } from "@/components/sprig-divider"
 const labelClass =
   "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
 const inputClass =
-  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink"
+  "w-full bg-cream border border-rule-soft px-4 py-3 font-serif text-[18px] text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink"
 
 export default function EditEventPage() {
   const [title, setTitle] = useState("")

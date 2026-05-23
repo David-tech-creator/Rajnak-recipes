@@ -85,7 +85,7 @@ export function Header() {
           </Link>
 
           {/* Desktop nav — Recipes + About, with logo serving as Home */}
-          <nav className="hidden md:flex items-center gap-10 lg:gap-14 absolute left-1/2 -translate-x-1/2">
+          <nav className="hidden lg:flex items-center gap-10 lg:gap-14 absolute left-1/2 -translate-x-1/2">
             <div className="relative group">
               <Link href="/recipes" className={`${navLinkClass} flex items-center gap-1.5`}>
                 Recipes <ChevronDown className="h-3 w-3" />
@@ -118,8 +118,10 @@ export function Header() {
               onClick={() => setSearchOpen(!searchOpen)}
               className="text-ink-muted hover:text-lingon-deep transition-colors h-11 w-11 inline-flex items-center justify-center"
               aria-label="Search"
+              aria-expanded={searchOpen}
+              aria-controls="search-panel"
             >
-              <Search size={18} strokeWidth={1.4} />
+              <Search size={18} strokeWidth={1.4} aria-hidden />
             </button>
 
             {user ? (
@@ -167,18 +169,20 @@ export function Header() {
             )}
 
             <button
-              className="md:hidden text-ink-muted hover:text-lingon-deep transition-colors h-11 w-11 inline-flex items-center justify-center"
+              className="lg:hidden text-ink-muted hover:text-lingon-deep transition-colors h-11 w-11 inline-flex items-center justify-center"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Menu"
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-nav"
             >
-              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {isMenuOpen ? <X size={20} aria-hidden /> : <Menu size={20} aria-hidden />}
             </button>
           </div>
         </div>
 
         {/* Mobile drawer */}
         {isMenuOpen && (
-          <nav className="md:hidden border-t border-rule-soft py-3 text-center">
+          <nav id="mobile-nav" className="lg:hidden border-t border-rule-soft py-3 text-center">
             <Link href="/" className={`block py-3 ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
             <Link href="/recipes" className={`block py-3 ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>All Recipes</Link>
             <Link href="/categories" className={`block py-3 ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Categories</Link>
@@ -196,12 +200,12 @@ export function Header() {
 
         {/* Search overlay */}
         {searchOpen && (
-          <div className="absolute top-full left-2 right-2 md:left-auto md:right-6 mt-2 md:w-80 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-30">
+          <div id="search-panel" className="absolute top-full left-2 right-2 md:left-auto md:right-6 mt-2 md:w-80 bg-cream border border-rule-soft shadow-[var(--paper-shadow)] z-30">
             <form onSubmit={handleSearch} className="flex">
               <input
                 type="text"
                 placeholder="Search recipes…"
-                className="w-full py-2 px-4 bg-transparent text-ink placeholder:text-ink-muted/60 focus:outline-none font-serif italic text-lg"
+                className="w-full py-2 px-4 bg-transparent text-ink placeholder:text-ink-muted focus:outline-none font-serif italic text-lg"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 autoFocus
