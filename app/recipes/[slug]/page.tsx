@@ -99,7 +99,16 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
 
   return (
     <article>
-      <div className="container mx-auto px-6 pt-12 md:pt-16 pb-4">
+      <div className="container mx-auto px-6 pt-6 md:pt-8 print:hidden">
+        <Link
+          href="/recipes"
+          className="inline-flex items-center gap-2 font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted hover:text-lingon-deep transition-colors"
+        >
+          <span aria-hidden>&larr;</span> All recipes
+        </Link>
+      </div>
+
+      <div className="container mx-auto px-6 pt-6 md:pt-10 pb-4">
         {/* Editorial composition: photo at its native ~3:4 next to the title block */}
         <div className="grid md:grid-cols-[5fr_6fr] gap-10 md:gap-14 items-center max-w-6xl mx-auto">
           {recipe.image && (

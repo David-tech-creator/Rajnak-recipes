@@ -91,42 +91,23 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Desktop nav — absolutely centered between wordmark and icons */}
-          <nav className="hidden md:flex items-center gap-8 lg:gap-10 absolute left-1/2 -translate-x-1/2">
-            <Link href="/" className={navLinkClass}>Home</Link>
-
+          {/* Desktop nav — Recipes + About, with logo serving as Home */}
+          <nav className="hidden md:flex items-center gap-10 lg:gap-14 absolute left-1/2 -translate-x-1/2">
             <div className="relative group">
-              <Link href="/recipes" className={`${navLinkClass} flex items-center gap-1`}>
+              <Link href="/recipes" className={`${navLinkClass} flex items-center gap-1.5`}>
                 Recipes <ChevronDown className="h-3 w-3" />
               </Link>
               <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-56 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
                 <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
                   <Link href="/recipes" className={dropdownItemClass}>All Recipes</Link>
-                  <Link href="/categories" className={dropdownItemClass}>Categories</Link>
+                  <Link href="/categories" className={dropdownItemClass}>By Category</Link>
                   <Link href="/search" className={dropdownItemClass}>Search</Link>
                 </div>
               </div>
             </div>
 
             <div className="relative group">
-              <Link href="/categories" className={`${navLinkClass} flex items-center gap-1`}>
-                Categories <ChevronDown className="h-3 w-3" />
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-64 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                <div className="bg-cream border border-rule-soft shadow-[var(--paper-shadow)] py-2">
-                  <Link href="/categories" className={dropdownItemClass}>All Categories</Link>
-                  <div className="my-1 border-t border-rule-soft"></div>
-                  {RECIPE_CATEGORIES.map((cat) => (
-                    <Link key={cat.slug} href={`/categories/${cat.slug}`} className={dropdownItemClass}>
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="relative group">
-              <Link href="/about" className={`${navLinkClass} flex items-center gap-1`}>
+              <Link href="/about" className={`${navLinkClass} flex items-center gap-1.5`}>
                 About <ChevronDown className="h-3 w-3" />
               </Link>
               <div className="absolute left-1/2 -translate-x-1/2 pt-3 w-56 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
@@ -207,18 +188,8 @@ export function Header() {
           <nav className="md:hidden border-t border-rule-soft py-5 space-y-3 text-center">
             <Link href="/" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
             <Link href="/recipes" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>All Recipes</Link>
-            <Link href="/search" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Search</Link>
             <Link href="/categories" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Categories</Link>
-            {RECIPE_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/categories/${cat.slug}`}
-                className="block font-serif italic text-ink-soft hover:text-lingon-deep text-base"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {cat.name}
-              </Link>
-            ))}
+            <Link href="/search" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>Search</Link>
             <Link href="/about" className={`block ${navLinkClass}`} onClick={() => setIsMenuOpen(false)}>About</Link>
             <Link
               href="/about/family-events"
