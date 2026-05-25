@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabase"
 import { EVENT_TYPES } from "@/lib/types/family"
 import { SprigDivider } from "@/components/sprig-divider"
 import { EventDescriptionField } from "@/components/family-gallery/event-description-field"
+import { slugify } from "@/lib/slugify"
 
 const labelClass =
   "block font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-muted mb-2"
@@ -50,11 +51,25 @@ export default function CreateEventPage() {
     setIsLoading(true)
 
     try {
+      // Derive a URL slug from the title and make it unique.
+      const base = slugify(title) || "event"
+      let slug = base
+      for (let n = 2; n < 50; n++) {
+        const { data: clash } = await supabase
+          .from("family_events")
+          .select("id")
+          .eq("slug", slug)
+          .maybeSingle()
+        if (!clash) break
+        slug = `${base}-${n}`
+      }
+
       const { error } = await supabase
         .from("family_events")
         .insert([
           {
             title,
+            slug,
             description,
             date: format(new Date(date), "yyyy-MM-dd"),
             event_type: eventType,
@@ -70,7 +85,7 @@ export default function CreateEventPage() {
         description: "Your family event has been created.",
       })
 
-      router.push("/about/family-events")
+      router.push(`/about/family-events/${slug}`)
     } catch (error) {
       console.error("Error creating event:", error)
       toast({

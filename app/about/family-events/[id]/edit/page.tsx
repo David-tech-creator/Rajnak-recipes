@@ -25,6 +25,9 @@ export default function EditEventPage() {
   const [location, setLocation] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  // The URL param may be a slug; resolve the real UUID + slug from the fetch.
+  const [realId, setRealId] = useState("")
+  const [slug, setSlug] = useState("")
   const params = useParams()
   const eventId = params.id as string
   const { user } = useAuth()
@@ -40,10 +43,12 @@ export default function EditEventPage() {
     const fetchEventDetails = async () => {
       setIsLoading(true)
       try {
+        const isUuid =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(eventId)
         const { data, error } = await supabase
           .from("family_events")
           .select("*")
-          .eq("id", eventId)
+          .eq(isUuid ? "id" : "slug", eventId)
           .single()
 
         if (error) throw error
@@ -58,6 +63,8 @@ export default function EditEventPage() {
           return
         }
 
+        setRealId(data.id)
+        setSlug(data.slug || "")
         setTitle(data.title)
         setDescription(data.description || "")
         setDate(data.date)
@@ -112,7 +119,7 @@ export default function EditEventPage() {
           event_type: eventType,
           location,
         })
-        .eq("id", eventId)
+        .eq("id", realId)
         .eq("created_by", user.id)
 
       if (error) throw error
@@ -122,7 +129,7 @@ export default function EditEventPage() {
         description: "Your family event has been updated successfully",
       })
 
-      router.push(`/about/family-events/${eventId}`)
+      router.push(`/about/family-events/${slug || realId}`)
     } catch (error) {
       console.error("Error updating event:", error)
       toast({

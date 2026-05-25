@@ -1,6 +1,7 @@
 export interface FamilyEvent {
   id: string
   title: string
+  slug: string | null
   description: string | null
   date: string
   event_type: string
