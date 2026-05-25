@@ -130,7 +130,7 @@ export function EventsList() {
                 className="recipe-card block"
               >
                 {/* White matte frame around the photo, like a mounted print. */}
-                <div className="p-2.5 sm:p-3">
+                <div className="bg-white p-2.5 sm:p-3">
                   <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep border border-rule-soft flex items-center justify-center">
                     {cover ? (
                       <Image
@@ -156,8 +156,8 @@ export function EventsList() {
                     {format(new Date(event.date), "PPP")}
                   </div>
                   {note && (
-                    <p className="font-serif italic text-lingon-deep text-[14px] leading-snug mt-3">
-                      &ldquo;{note}&rdquo;
+                    <p className="hand text-[18px] md:text-[20px] leading-snug mt-3">
+                      {note}
                     </p>
                   )}
                 </div>
