@@ -123,29 +123,31 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
           <button
             key={photo.id}
             onClick={() => setSelectedIndex(i)}
-            className="recipe-card block text-left w-full"
+            className="recipe-card group block text-left w-full"
             aria-label={photo.caption || "View photo"}
           >
             {/* White matte frame around the print. */}
-            <div className="bg-white p-2 sm:p-2.5">
-              <div className="aspect-[4/5] relative overflow-hidden">
+            <div className="bg-white p-1.5 sm:p-2">
+              <div className="aspect-[4/5] relative overflow-hidden border border-black/5">
                 <Image
                   src={photo.url || "/placeholder.svg"}
                   alt={photo.caption || "Family photo"}
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                   style={{ filter: "saturate(0.92)" }}
                 />
               </div>
             </div>
             {(photo.caption || photo.date) && (
-              <div className="pb-4 px-3 text-center">
+              <div className="px-2.5 sm:px-3 pb-3 pt-2 text-center">
                 {photo.caption && (
-                  <h3 className="recipe-card-title text-[17px]">{photo.caption}</h3>
+                  <p className="font-serif text-[12.5px] sm:text-[14px] text-ink-soft leading-snug line-clamp-2">
+                    {photo.caption}
+                  </p>
                 )}
                 {photo.date && (
-                  <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mt-1">
+                  <div className="font-serif-sc uppercase tracking-[0.2em] text-[9px] sm:text-[10px] text-ink-muted mt-1">
                     {new Date(photo.date).toLocaleDateString()}
                   </div>
                 )}
