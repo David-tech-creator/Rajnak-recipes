@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/lib/auth-context"
@@ -24,6 +24,16 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
   const handleCloseModal = () => {
     setSelectedPhoto(null)
   }
+
+  // Close the lightbox on Escape.
+  useEffect(() => {
+    if (!selectedPhoto) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedPhoto(null)
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [selectedPhoto])
 
   const handleDeletePhoto = async (photo: FamilyPhoto) => {
     if (!confirm("Are you sure you want to delete this photo? This action cannot be undone.")) {
@@ -94,15 +104,18 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
             className="recipe-card block text-left w-full"
             aria-label={photo.caption || "View photo"}
           >
-            <div className="aspect-[4/5] relative overflow-hidden">
-              <Image
-                src={photo.url || "/placeholder.svg"}
-                alt={photo.caption || "Family photo"}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                className="object-cover"
-                style={{ filter: "saturate(0.92)" }}
-              />
+            {/* White matte frame around the print. */}
+            <div className="p-2 sm:p-2.5">
+              <div className="aspect-[4/5] relative overflow-hidden border border-rule-soft">
+                <Image
+                  src={photo.url || "/placeholder.svg"}
+                  alt={photo.caption || "Family photo"}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover"
+                  style={{ filter: "saturate(0.92)" }}
+                />
+              </div>
             </div>
             {(photo.caption || photo.date) && (
               <div className="py-4 px-3 text-center">
@@ -120,64 +133,73 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
         ))}
       </div>
 
-      {/* Photo modal */}
+      {/* Photo lightbox — full-screen, scrollable overlay. Tap outside to close. */}
       {selectedPhoto && (
         <div
-          className="fixed inset-0 bg-ink/80 flex items-center justify-center z-50 p-2 sm:p-4"
+          className="fixed inset-0 z-50 bg-ink/85 overflow-y-auto overscroll-contain"
           onClick={handleCloseModal}
+          role="dialog"
+          aria-modal="true"
+          aria-label={selectedPhoto.caption || "Family photograph"}
         >
-          <div
-            className="relative bg-cream border border-rule-soft shadow-[var(--paper-shadow)] max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col"
-            onClick={(e) => e.stopPropagation()}
+          {/* Always-reachable close button */}
+          <button
+            onClick={handleCloseModal}
+            aria-label="Close"
+            className="fixed right-3 z-10 bg-cream/95 border border-rule-soft h-11 px-4 inline-flex items-center font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink hover:text-lingon-deep"
+            style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
           >
-            <div className="flex justify-between items-center px-4 sm:px-5 py-3 sm:py-4 border-b border-rule-soft flex-shrink-0">
-              <h3 className="font-serif italic text-[18px] sm:text-[20px] text-ink truncate pr-3">
-                {selectedPhoto.caption || "Family photograph"}
-              </h3>
-              <button
-                onClick={handleCloseModal}
-                className="font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-muted hover:text-lingon-deep h-11 px-2 inline-flex items-center flex-shrink-0"
-                aria-label="Close"
-              >
-                Close
-              </button>
-            </div>
+            Close
+          </button>
 
-            <div className="relative flex-1 min-h-0 bg-parchment-deep">
-              <Image
-                src={selectedPhoto.url || "/placeholder.svg"}
-                alt={selectedPhoto.caption || "Family photo"}
-                fill
-                sizes="(max-width: 1280px) 90vw, 1200px"
-                className="object-contain"
-              />
-            </div>
-
+          <div className="min-h-full flex items-start sm:items-center justify-center p-3 sm:p-6">
             <div
-              className="px-4 sm:px-5 pt-3 sm:pt-4 border-t border-rule-soft flex flex-wrap justify-between items-center gap-3 flex-shrink-0"
-              style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+              className="w-full max-w-3xl bg-cream border border-rule-soft shadow-[var(--paper-shadow)]"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
-                {selectedPhoto.date
-                  ? new Date(selectedPhoto.date).toLocaleDateString()
-                  : ""}
+              {/* Natural-height image so tall shots scroll within the overlay */}
+              <div className="bg-parchment-deep">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={selectedPhoto.url || "/placeholder.svg"}
+                  alt={selectedPhoto.caption || "Family photo"}
+                  className="block w-full h-auto"
+                />
               </div>
-              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <button
-                  onClick={() => handleDownloadPhoto(selectedPhoto)}
-                  className="btn btn--ghost"
-                >
-                  Download
-                </button>
-                {user && (
+
+              <div
+                className="px-4 sm:px-5 py-4 border-t border-rule-soft flex flex-wrap items-center justify-between gap-3"
+                style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+              >
+                <div className="min-w-0">
+                  {selectedPhoto.caption && (
+                    <p className="font-serif italic text-[17px] text-ink leading-snug">
+                      {selectedPhoto.caption}
+                    </p>
+                  )}
+                  {selectedPhoto.date && (
+                    <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mt-1">
+                      {new Date(selectedPhoto.date).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                   <button
-                    onClick={() => handleDeletePhoto(selectedPhoto)}
-                    disabled={isDeleting}
-                    className="btn btn--lingon"
+                    onClick={() => handleDownloadPhoto(selectedPhoto)}
+                    className="btn btn--ghost"
                   >
-                    {isDeleting ? "Deleting…" : "Delete"}
+                    Download
                   </button>
-                )}
+                  {user && (
+                    <button
+                      onClick={() => handleDeletePhoto(selectedPhoto)}
+                      disabled={isDeleting}
+                      className="btn btn--lingon"
+                    >
+                      {isDeleting ? "Deleting…" : "Delete"}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

@@ -126,23 +126,26 @@ export function EventsList() {
             return (
               <Link
                 key={event.id}
-                href={`/about/family-events/${event.id}`}
+                href={`/about/family-events/${event.slug || event.id}`}
                 className="recipe-card block"
               >
-                <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep flex items-center justify-center">
-                  {cover ? (
-                    <Image
-                      src={cover}
-                      alt={event.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <span className="font-serif italic text-ink-muted text-base px-6 text-center">
-                      {event.location || format(new Date(event.date), "MMMM yyyy")}
-                    </span>
-                  )}
+                {/* White matte frame around the photo, like a mounted print. */}
+                <div className="p-2.5 sm:p-3">
+                  <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep border border-rule-soft flex items-center justify-center">
+                    {cover ? (
+                      <Image
+                        src={cover}
+                        alt={event.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span className="font-serif italic text-ink-muted text-base px-6 text-center">
+                        {event.location || format(new Date(event.date), "MMMM yyyy")}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="py-5 text-center px-4">
                   <div className="font-serif-sc uppercase tracking-[0.26em] text-[10px] text-ink-muted mb-1">
