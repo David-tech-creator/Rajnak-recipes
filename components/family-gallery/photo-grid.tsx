@@ -139,15 +139,17 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
                 />
               </div>
             </div>
+            {/* On mobile, thumbnails are clean photos only — caption shows in the
+                lightbox. Text returns on tablet/desktop. */}
             {(photo.caption || photo.date) && (
-              <div className="px-2.5 sm:px-3 pb-3 pt-2 text-center">
+              <div className="hidden sm:block px-2.5 sm:px-3 pb-3 pt-2 text-center">
                 {photo.caption && (
-                  <p className="font-serif text-[12.5px] sm:text-[14px] text-ink-soft leading-snug line-clamp-2">
+                  <p className="font-serif text-[14px] text-ink-soft leading-snug line-clamp-2">
                     {photo.caption}
                   </p>
                 )}
                 {photo.date && (
-                  <div className="font-serif-sc uppercase tracking-[0.2em] text-[9px] sm:text-[10px] text-ink-muted mt-1">
+                  <div className="font-serif-sc uppercase tracking-[0.2em] text-[10px] text-ink-muted mt-1">
                     {new Date(photo.date).toLocaleDateString()}
                   </div>
                 )}
