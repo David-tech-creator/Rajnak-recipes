@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { EVENT_TYPES } from "@/lib/types/family"
 import { SprigDivider } from "@/components/sprig-divider"
+import { EventDescriptionField } from "@/components/family-gallery/event-description-field"
 
 const labelClass =
   "block font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted mb-2"
@@ -221,19 +222,17 @@ export default function EditEventPage() {
             />
           </div>
 
-          <div>
-            <label htmlFor="description" className={labelClass}>
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={5}
-              placeholder="Describe the event, who was there, and any special memories…"
-              className={inputClass}
-            />
-          </div>
+          <EventDescriptionField
+            value={description}
+            onChange={setDescription}
+            title={title}
+            eventType={eventType}
+            location={location}
+            date={date}
+            disabled={isSaving}
+            labelClass={labelClass}
+            inputClass={inputClass}
+          />
 
           <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
             <Link href={`/about/family-events/${eventId}`} className="btn btn--link">
