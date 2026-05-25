@@ -19,10 +19,15 @@ export default function EventPage() {
   useEffect(() => {
     async function fetchEvent() {
       try {
+        // The URL param is the event slug (e.g. "gravlax-sunday"); older links
+        // may still carry the UUID, so fall back to id when it looks like one.
+        const param = String(params.id)
+        const isUuid =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(param)
         const { data, error } = await supabase
           .from("family_events")
           .select("*")
-          .eq("id", params.id)
+          .eq(isUuid ? "id" : "slug", param)
           .single()
 
         if (error) throw error
