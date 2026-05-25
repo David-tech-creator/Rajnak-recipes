@@ -127,18 +127,18 @@ export function EventsList() {
               <Link
                 key={event.id}
                 href={`/about/family-events/${event.slug || event.id}`}
-                className="recipe-card block"
+                className="recipe-card group block"
               >
                 {/* White matte frame around the photo, like a mounted print. */}
-                <div className="bg-white p-2.5 sm:p-3">
-                  <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep border border-rule-soft flex items-center justify-center">
+                <div className="bg-white p-2 sm:p-3">
+                  <div className="aspect-[4/5] relative overflow-hidden bg-parchment-deep border border-black/5 flex items-center justify-center">
                     {cover ? (
                       <Image
                         src={cover}
                         alt={event.title}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover"
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                       />
                     ) : (
                       <span className="font-serif italic text-ink-muted text-base px-6 text-center">
@@ -156,7 +156,7 @@ export function EventsList() {
                     {format(new Date(event.date), "PPP")}
                   </div>
                   {note && (
-                    <p className="hand text-[18px] md:text-[20px] leading-snug mt-3">
+                    <p className="hand text-[17px] sm:text-[19px] leading-snug mt-2 line-clamp-2">
                       {note}
                     </p>
                   )}
