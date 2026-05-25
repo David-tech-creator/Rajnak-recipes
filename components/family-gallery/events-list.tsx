@@ -11,11 +11,14 @@ import { format } from "date-fns"
 import type { FamilyEvent } from "@/lib/types/family"
 
 // A short, written-notes-style excerpt for the card — first sentence of the
-// description, trimmed so cards stay uniform.
+// description, cut at a word boundary near 60 chars so cards stay tidy.
 function noteExcerpt(description: string | null): string {
   if (!description) return ""
   const firstSentence = description.trim().split(/(?<=[.!?])\s/)[0]
-  return firstSentence.length > 110 ? firstSentence.slice(0, 107).trimEnd() + "…" : firstSentence
+  if (firstSentence.length <= 64) return firstSentence
+  const cut = firstSentence.slice(0, 60)
+  const lastSpace = cut.lastIndexOf(" ")
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trimEnd() + "…"
 }
 
 export function EventsList() {
@@ -150,7 +153,7 @@ export function EventsList() {
                     {format(new Date(event.date), "PPP")}
                   </div>
                   {note && (
-                    <p className="font-serif italic text-ink-soft text-[15px] leading-snug mt-3">
+                    <p className="font-serif italic text-lingon-deep text-[14px] leading-snug mt-3">
                       &ldquo;{note}&rdquo;
                     </p>
                   )}
