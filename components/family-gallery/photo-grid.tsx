@@ -123,45 +123,46 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
       {/* Photo modal */}
       {selectedPhoto && (
         <div
-          className="fixed inset-0 bg-ink/80 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-ink/80 flex items-center justify-center z-50 p-2 sm:p-4"
           onClick={handleCloseModal}
         >
           <div
-            className="relative bg-cream border border-rule-soft shadow-[var(--paper-shadow)] max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            className="relative bg-cream border border-rule-soft shadow-[var(--paper-shadow)] max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center p-5 border-b border-rule-soft">
-              <h3 className="font-serif italic text-[20px] text-ink">
+            <div className="flex justify-between items-center px-4 sm:px-5 py-3 sm:py-4 border-b border-rule-soft flex-shrink-0">
+              <h3 className="font-serif italic text-[18px] sm:text-[20px] text-ink truncate pr-3">
                 {selectedPhoto.caption || "Family photograph"}
               </h3>
               <button
                 onClick={handleCloseModal}
-                className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted hover:text-lingon-deep"
+                className="font-serif-sc uppercase tracking-[0.22em] text-[12px] text-ink-muted hover:text-lingon-deep h-11 px-2 inline-flex items-center flex-shrink-0"
                 aria-label="Close"
               >
                 Close
               </button>
             </div>
 
-            <div className="relative flex-grow overflow-auto bg-parchment-deep">
-              <div className="relative h-[60vh]">
-                <Image
-                  src={selectedPhoto.url || "/placeholder.svg"}
-                  alt={selectedPhoto.caption || "Family photo"}
-                  fill
-                  sizes="(max-width: 1280px) 90vw, 1200px"
-                  className="object-contain"
-                />
-              </div>
+            <div className="relative flex-1 min-h-0 bg-parchment-deep">
+              <Image
+                src={selectedPhoto.url || "/placeholder.svg"}
+                alt={selectedPhoto.caption || "Family photo"}
+                fill
+                sizes="(max-width: 1280px) 90vw, 1200px"
+                className="object-contain"
+              />
             </div>
 
-            <div className="p-5 border-t border-rule-soft flex justify-between items-center">
+            <div
+              className="px-4 sm:px-5 pt-3 sm:pt-4 border-t border-rule-soft flex flex-wrap justify-between items-center gap-3 flex-shrink-0"
+              style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+            >
               <div className="font-serif-sc uppercase tracking-[0.22em] text-[11px] text-ink-muted">
                 {selectedPhoto.date
                   ? new Date(selectedPhoto.date).toLocaleDateString()
                   : ""}
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                 <button
                   onClick={() => handleDownloadPhoto(selectedPhoto)}
                   className="btn btn--ghost"
